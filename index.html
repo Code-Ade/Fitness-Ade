@@ -2,223 +2,472 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fitness Pro 2.1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>My Fitness App</title>
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
-        :root { --primary: #30D158; --bg: #000; --card: #1C1C1E; --text: #FFF; --secondary: #8E8E93; --danger: #FF453A; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: -apple-system, system-ui; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 50px; }
+        :root { 
+            --primary: #30D158; /* Apple Health Grün */
+            --bg: #000000; 
+            --card: #1C1C1E; 
+            --text: #FFFFFF; 
+            --secondary: #8E8E93; 
+            --danger: #FF453A; 
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: -apple-system, system-ui, sans-serif; }
+        body { background: var(--bg); color: var(--text); margin: 0; padding: env(safe-area-inset-top) 0 calc(80px + env(safe-area-inset-bottom)) 0; }
         
-        .page { display: none; padding: 20px; animation: fadeIn 0.2s ease; }
+        .page { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
         .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        h1, h2, h3 { font-weight: 700; margin-bottom: 15px; }
-        .card { background: var(--card); padding: 18px; border-radius: 16px; margin-bottom: 15px; border: 1px solid #2C2C2E; }
+        h1, h2, h3 { margin-top: 0; margin-bottom: 15px; font-weight: 700; letter-spacing: -0.5px; }
+        .card { background: var(--card); padding: 18px; border-radius: 16px; margin-bottom: 15px; border: 1px solid #2C2C2E; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        
+        /* Buttons */
+        .main-btn { background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: bold; font-size: 16px; margin-bottom: 10px; cursor: pointer; }
+        .sec-btn { background: #2C2C2E; color: #FFF; border: none; padding: 14px; border-radius: 12px; width: 100%; margin-top: 5px; font-size: 15px; cursor: pointer; }
+        .danger-btn { background: var(--danger); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; }
+        .back-btn { color: var(--primary); background: none; border: none; font-size: 16px; margin-bottom: 20px; padding: 0; font-weight: 600; cursor: pointer; }
 
-        .main-btn { background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: bold; font-size: 16px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .secondary-btn { background: #2C2C2E; color: var(--text); border: none; padding: 12px; border-radius: 10px; width: 100%; font-size: 14px; margin-top: 5px; cursor: pointer; }
-        .danger-btn { background: var(--danger); color: white; border: none; padding: 8px; border-radius: 8px; font-size: 12px; }
-        .back-btn { color: var(--primary); background: none; border: none; font-size: 16px; margin-bottom: 20px; padding: 0; cursor: pointer; }
+        /* Inputs */
+        input, select, textarea { width: 100%; background: #2C2C2E; border: 1px solid #3A3A3C; padding: 14px; border-radius: 12px; color: #fff; margin: 8px 0 16px 0; font-size: 16px; }
+        textarea { resize: none; height: 80px; }
+        label { font-size: 12px; color: var(--secondary); text-transform: uppercase; font-weight: 600; padding-left: 5px; }
 
-        input, select, textarea { width: 100%; background: #2C2C2E; border: none; padding: 14px; border-radius: 10px; color: #fff; font-size: 16px; margin: 8px 0; border: 1px solid #3A3A3C; }
-        
-        .set-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; align-items: center; }
-        .set-num { font-size: 11px; color: var(--secondary); }
-        
-        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #2C2C2E; }
-        .img-preview { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background: #333; }
-        
-        /* Bottom Navigation */
-        .nav { position: fixed; bottom: 0; width: 100%; background: #111; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #333; }
-        .nav-item { background: none; border: none; color: var(--secondary); font-size: 10px; text-align: center; }
+        /* Listen & Layouts */
+        .flex-row { display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+        .img-preview { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; background: #333; flex-shrink: 0; }
+        .ex-list-item { padding: 12px 0; border-bottom: 1px solid #2C2C2E; }
+        .ex-list-item:last-child { border-bottom: none; }
+
+        /* Workout View */
+        .set-row { display: grid; grid-template-columns: 80px 1fr 1fr; gap: 10px; align-items: center; margin-bottom: 8px; }
+        .set-label { font-size: 12px; color: var(--secondary); font-weight: bold; }
+        .w-input, .r-input { margin: 0; text-align: center; font-size: 18px; font-weight: bold; }
+        .spontaneous-box { border-top: 1px solid #3A3A3C; padding-top: 20px; margin-top: 20px; }
+
+        /* Stats Bar */
+        .stat-bar-bg { background: #333; height: 8px; border-radius: 4px; width: 100%; margin-top: 5px; overflow: hidden; }
+        .stat-bar-fill { background: var(--primary); height: 100%; border-radius: 4px; }
+
+        /* Navigation */
+        .nav { position: fixed; bottom: 0; width: 100%; background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 15px 0 calc(15px + env(safe-area-inset-bottom)) 0; border-top: 1px solid #3A3A3C; z-index: 1000; }
+        .nav-item { background: none; border: none; color: var(--secondary); font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .nav-item.active { color: var(--primary); }
+        .nav-icon { font-size: 22px; }
     </style>
 </head>
 <body>
 
     <div id="page-home" class="page active">
-        <h1>Fitness Pro</h1>
-        <button class="main-btn" onclick="showPage('workout-select')"><span>▶️</span> Training starten</button>
+        <h1>Dashboard</h1>
+        <button class="main-btn" onclick="nav('workout-select')" style="padding: 20px; font-size: 18px;">▶️ Training starten</button>
         
-        <div class="card">
-            <h3>Konfiguration</h3>
-            <button class="secondary-btn" onclick="showPage('exercise-lib')">💪 Übungen verwalten</button>
-            <button class="secondary-btn" onclick="showPage('create-plan')">📋 Pläne verwalten</button>
-            <button class="secondary-btn" onclick="showPage('weight-track')">⚖️ Körpergewicht</button>
+        <div class="card" style="margin-top: 20px;">
+            <h3>Verwaltung</h3>
+            <button class="sec-btn" onclick="nav('ex-lib')">💪 Übungen Bibliothek</button>
+            <button class="sec-btn" onclick="nav('plan-mgmt')">📋 Trainingspläne</button>
+            <button class="sec-btn" onclick="nav('weight')">⚖️ Körpergewicht</button>
         </div>
     </div>
 
-    <div id="page-exercise-lib" class="page">
-        <button class="back-btn" onclick="showPage('home')">← Zurück</button>
-        <h2>Bibliothek</h2>
-        <button class="main-btn" onclick="openExerciseModal()">+ Neue Übung</button>
-        <div id="libContainer"></div>
+    <div id="page-ex-lib" class="page">
+        <button class="back-btn" onclick="nav('home')">← Zurück</button>
+        <h2>Neue Übung</h2>
+        <div class="card">
+            <label>Name</label>
+            <input type="text" id="newExName" placeholder="z.B. Bankdrücken">
+            <label>Muskelgruppe</label>
+            <select id="newExGroup">
+                <option value="Brust">Brust</option><option value="Rücken">Rücken</option>
+                <option value="Beine">Beine</option><option value="Schultern">Schultern</option>
+                <option value="Bizeps">Bizeps</option><option value="Trizeps">Trizeps</option>
+                <option value="Bauch">Bauch</option>
+            </select>
+            <label>Foto (Kamera/Galerie)</label>
+            <input type="file" id="newExPhoto" accept="image/*" capture="environment">
+            <button class="main-btn" onclick="addExercise()">Speichern</button>
+        </div>
+        <h3>Gespeicherte Übungen</h3>
+        <div id="exListContainer" class="card" style="padding: 0 15px;"></div>
     </div>
 
-    <div id="page-weight-track" class="page">
-        <button class="back-btn" onclick="showPage('home')">← Zurück</button>
-        <h2>Körpergewicht</h2>
+    <div id="page-plan-mgmt" class="page">
+        <button class="back-btn" onclick="nav('home')">← Zurück</button>
+        <h2>Neuen Plan erstellen</h2>
         <div class="card">
-            <input type="date" id="wDate">
-            <input type="number" id="wVal" step="0.1" placeholder="Gewicht in kg">
-            <button class="main-btn" onclick="saveWeight()">Speichern</button>
+            <label>Plan Name</label>
+            <input type="text" id="newPlanName" placeholder="z.B. Push Day">
+            <label>Übungen auswählen</label>
+            <div id="exPickerList" style="margin-bottom: 15px;"></div>
+            <button class="main-btn" onclick="savePlan()">Plan Speichern</button>
         </div>
-        <div id="weightHistory"></div>
+        <h3>Meine Pläne</h3>
+        <div id="planListContainer"></div>
+    </div>
+
+    <div id="page-workout-select" class="page">
+        <button class="back-btn" onclick="nav('home')">← Zurück</button>
+        <h2>Welchen Plan trainierst du heute?</h2>
+        <div id="startPlanList"></div>
     </div>
 
     <div id="page-workout-active" class="page">
-        <h2 id="activePlanTitle">Training</h2>
-        <div id="activeWorkoutContent"></div>
-        <button class="secondary-btn" onclick="addSpontaneousExercise()">➕ Spontane Übung</button>
-        <button class="main-btn" onclick="finishWorkout()" style="margin-top: 20px;">Session beenden</button>
+        <h2 id="currentPlanTitle">Workout</h2>
+        <div id="activeExercises"></div>
+        
+        <div class="card spontaneous-box">
+            <label>Spontane Übung hinzufügen</label>
+            <select id="spontaneousSelect"></select>
+            <button class="sec-btn" onclick="addSpontaneousEx()">➕ Hinzufügen</button>
+        </div>
+
+        <button class="main-btn" onclick="finishWorkout()" style="margin-top: 30px; padding: 20px;">✅ Session abschließen</button>
     </div>
 
     <div id="page-analysis" class="page">
         <h1>Analyse</h1>
-        <div class="card" id="statsOverview">
-            <p>Lade Statistiken...</p>
-        </div>
+        <div class="card" id="analysisStats"></div>
         <h3>Vergangene Trainings</h3>
-        <div id="historyContainer"></div>
+        <div id="logHistory"></div>
+    </div>
+
+    <div id="page-weight" class="page">
+        <button class="back-btn" onclick="nav('home')">← Zurück</button>
+        <h2>Körpergewicht</h2>
+        <div class="card">
+            <label>Datum</label>
+            <input type="date" id="weightDate">
+            <label>Gewicht (kg)</label>
+            <input type="number" id="weightVal" step="0.1" placeholder="z.B. 85.5">
+            <button class="main-btn" onclick="saveWeight()">Eintragen</button>
+        </div>
+        <div id="weightList"></div>
     </div>
 
     <nav class="nav">
-        <button class="nav-item active" onclick="showPage('home')">🏠<br>Home</button>
-        <button class="nav-item" onclick="showPage('analysis'); renderAnalysis();">📈<br>Analyse</button>
+        <button class="nav-item active" onclick="nav('home')"><span class="nav-icon">🏠</span>Home</button>
+        <button class="nav-item" onclick="nav('analysis')"><span class="nav-icon">📈</span>Analyse</button>
     </nav>
 
     <script>
-        let db = JSON.parse(localStorage.getItem('fitDB_v2')) || { exercises: [], plans: [], logs: [], weight: [] };
-        function saveDB() { localStorage.setItem('fitDB_v2', JSON.stringify(db)); }
+        // DATENBANK INITIALISIEREN
+        let db = JSON.parse(localStorage.getItem('myFitnessApp_v3')) || { ex: [], plans: [], logs: [], weight: [] };
+        function saveDB() { localStorage.setItem('myFitnessApp_v3', JSON.stringify(db)); }
 
-        function showPage(id) {
+        // NAVIGATION
+        function nav(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+            
             document.getElementById('page-' + id).classList.add('active');
-            if(id === 'exercise-lib') renderLibrary();
-            if(id === 'weight-track') renderWeightHistory();
-            if(id === 'workout-select') renderPlanSelection(); // (Funktion aus Vorversion)
+            
+            // Aktiviere Menu Button wenn zutreffend
+            if(id === 'home' || id === 'analysis') {
+                event.currentTarget.classList.add('active');
+            }
+
+            // Lade spezifische Daten für die Seiten
+            if(id === 'ex-lib') renderEx();
+            if(id === 'plan-mgmt') renderPlanMgmt();
+            if(id === 'workout-select') renderStartPlans();
+            if(id === 'analysis') renderAnalysis();
+            if(id === 'weight') renderWeight();
         }
 
-        // --- BIBLIOTHEK LOGIK ---
-        function renderLibrary() {
-            const container = document.getElementById('libContainer');
-            container.innerHTML = db.exercises.map((ex, idx) => `
-                <div class="card list-item">
-                    <img src="${ex.img || ''}" class="img-preview">
-                    <div style="flex:1; margin-left:15px;">
-                        <strong>${ex.name}</strong><br><small>${ex.group}</small>
-                    </div>
-                    <button class="danger-btn" onclick="deleteEx(${idx})">Löschen</button>
+        // --- 1. ÜBUNGEN VERWALTEN & BILDER KOMPRIMIEREN ---
+        async function addExercise() {
+            const name = document.getElementById('newExName').value;
+            const group = document.getElementById('newExGroup').value;
+            const file = document.getElementById('newExPhoto').files[0];
+            let imgData = null;
+
+            if(!name) return alert("Bitte gib einen Namen ein.");
+
+            if(file) { imgData = await compressImage(file); }
+
+            db.ex.push({ id: Date.now(), name, group, img: imgData });
+            saveDB(); renderEx();
+            
+            // Formular leeren
+            document.getElementById('newExName').value = '';
+            document.getElementById('newExPhoto').value = '';
+        }
+
+        function compressImage(file) {
+            return new Promise(resolve => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 400; // Perfekte Größe für Thumbnails auf dem iPhone
+                        let w = img.width, h = img.height;
+                        if (w > h) { if (w > MAX_WIDTH) { h *= MAX_WIDTH / w; w = MAX_WIDTH; } }
+                        else { if (h > MAX_WIDTH) { w *= MAX_WIDTH / h; h = MAX_WIDTH; } }
+                        canvas.width = w; canvas.height = h;
+                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                        resolve(canvas.toDataURL('image/jpeg', 0.6)); // 60% Qualität reicht völlig
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function renderEx() {
+            const container = document.getElementById('exListContainer');
+            if(db.ex.length === 0) { container.innerHTML = "<p style='padding: 10px 0; color: #888;'>Noch keine Übungen vorhanden.</p>"; return; }
+            
+            container.innerHTML = db.ex.map((e, i) => `
+                <div class="flex-row ex-list-item">
+                    <img src="${e.img || 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='}" class="img-preview" style="${!e.img ? 'display:none;' : ''}">
+                    <div style="flex:1"><strong>${e.name}</strong><br><small style="color:var(--secondary)">${e.group}</small></div>
+                    <button class="danger-btn" onclick="deleteEx(${i})">X</button>
+                </div>
+            `).join('');
+        }
+        function deleteEx(i) { if(confirm("Übung wirklich löschen?")) { db.ex.splice(i, 1); saveDB(); renderEx(); } }
+
+        // --- 2. PLÄNE VERWALTEN ---
+        function renderPlanMgmt() {
+            document.getElementById('exPickerList').innerHTML = db.ex.map(e => `
+                <div class="flex-row ex-list-item">
+                    <span>${e.name} <small>(${e.group})</small></span>
+                    <input type="checkbox" value="${e.id}" class="plan-ex-checkbox" style="width: 25px; height: 25px; margin:0;">
+                </div>
+            `).join('');
+
+            document.getElementById('planListContainer').innerHTML = db.plans.map((p, i) => `
+                <div class="card flex-row">
+                    <div><strong>${p.name}</strong><br><small>${p.exIds.length} Übungen</small></div>
+                    <button class="danger-btn" onclick="deletePlan(${i})">Löschen</button>
                 </div>
             `).join('');
         }
 
-        function openExerciseModal() {
-            const name = prompt("Name der Übung:");
-            const group = prompt("Muskelgruppe (Beine, Brust, Rücken, Bizeps, Trizeps, Schultern, Bauch):");
-            if(name && group) {
-                db.exercises.push({ id: Date.now(), name, group, img: null });
-                saveDB(); renderLibrary();
-            }
+        function savePlan() {
+            const name = document.getElementById('newPlanName').value;
+            const selectedBoxes = document.querySelectorAll('.plan-ex-checkbox:checked');
+            const exIds = Array.from(selectedBoxes).map(box => parseInt(box.value));
+            
+            if(!name || exIds.length === 0) return alert("Bitte Namen eingeben und mindestens 1 Übung wählen.");
+            
+            db.plans.push({ id: Date.now(), name, exIds });
+            saveDB(); 
+            document.getElementById('newPlanName').value = '';
+            renderPlanMgmt();
+            alert("Plan gespeichert!");
         }
+        function deletePlan(i) { if(confirm("Plan löschen?")) { db.plans.splice(i, 1); saveDB(); renderPlanMgmt(); } }
 
-        function deleteEx(idx) { if(confirm("Löschen?")) { db.exercises.splice(idx, 1); saveDB(); renderLibrary(); } }
-
-        // --- GEWICHT LOGIK ---
-        function saveWeight() {
-            const date = document.getElementById('wDate').value || new Date().toISOString().split('T')[0];
-            const val = document.getElementById('wVal').value;
-            if(val) {
-                db.weight.unshift({ date, val });
-                saveDB(); renderWeightHistory();
-            }
-        }
-
-        function renderWeightHistory() {
-            document.getElementById('wDate').valueAsDate = new Date();
-            const container = document.getElementById('weightHistory');
-            container.innerHTML = "<h3>Verlauf</h3>" + db.weight.map((w, idx) => `
-                <div class="list-item"><span>${w.date}</span> <strong>${w.val} kg</strong> 
-                <button class="danger-btn" onclick="deleteWeight(${idx})">X</button></div>
+        // --- 3. TRAINING ABSOLVIEREN ---
+        function renderStartPlans() {
+            const container = document.getElementById('startPlanList');
+            if(db.plans.length === 0) { container.innerHTML = "<p>Bitte erstelle zuerst einen Plan.</p>"; return; }
+            container.innerHTML = db.plans.map(p => `
+                <button class="main-btn" onclick="startWorkout(${p.id})">${p.name} starten</button>
             `).join('');
         }
-        function deleteWeight(idx) { db.weight.splice(idx, 1); saveDB(); renderWeightHistory(); }
 
-        // --- TRAINING LOGIK (Optimierte Sätze) ---
-        function addExerciseToWorkoutView(ex) {
-            const container = document.getElementById('activeWorkoutContent');
+        function startWorkout(planId) {
+            const plan = db.plans.find(p => p.id === planId);
+            document.getElementById('currentPlanTitle').innerText = plan.name;
+            document.getElementById('activeExercises').innerHTML = ''; // Clear old
+            
+            // Generiere Übungen
+            plan.exIds.forEach(id => {
+                const ex = db.ex.find(e => e.id === id);
+                if(ex) renderWorkoutExercise(ex);
+            });
+
+            // Fülle Dropdown für spontane Übungen
+            document.getElementById('spontaneousSelect').innerHTML = 
+                '<option value="">Übung wählen...</option>' + 
+                db.ex.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+
+            nav('workout-active');
+        }
+
+        function renderWorkoutExercise(ex) {
+            const container = document.getElementById('activeExercises');
             const exDiv = document.createElement('div');
-            exDiv.className = 'card';
+            exDiv.className = 'card workout-ex-card';
+            exDiv.dataset.id = ex.id;
+            
             exDiv.innerHTML = `
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                    <img src="${ex.img || ''}" class="img-preview">
-                    <strong>${ex.name}</strong>
+                <div class="flex-row" style="margin-bottom: 15px;">
+                    ${ex.img ? `<img src="${ex.img}" class="img-preview">` : ''}
+                    <div style="flex:1">
+                        <h3 style="margin:0">${ex.name}</h3>
+                        <small style="color:var(--secondary)">${ex.group}</small>
+                    </div>
                 </div>
-                <div class="sets-container" data-exid="${ex.id}">
-                    ${renderSetRow(1, 12)}
-                    ${renderSetRow(2, 10)}
-                    ${renderSetRow(3, 8)}
+                
+                <div class="sets-wrapper">
+                    <div class="set-row">
+                        <span class="set-label">SATZ 1</span>
+                        <input type="number" placeholder="kg" class="w-input">
+                        <input type="number" placeholder="12" value="12" class="r-input">
+                    </div>
+                    <div class="set-row">
+                        <span class="set-label">SATZ 2</span>
+                        <input type="number" placeholder="kg" class="w-input">
+                        <input type="number" placeholder="10" value="10" class="r-input">
+                    </div>
+                    <div class="set-row">
+                        <span class="set-label">SATZ 3</span>
+                        <input type="number" placeholder="kg" class="w-input">
+                        <input type="number" placeholder="8" value="8" class="r-input">
+                    </div>
                 </div>
-                <button class="secondary-btn" onclick="addCustomSet(this)">+ Satz hinzufügen</button>
-                <textarea placeholder="Notiz..." class="n-in"></textarea>
+                
+                <button class="sec-btn" onclick="addWorkoutSet(this)">+ Satz hinzufügen (8 Wdh)</button>
+                <textarea placeholder="Notizen zu dieser Übung..." class="note-input"></textarea>
             `;
             container.appendChild(exDiv);
         }
 
-        function renderSetRow(num, defReps) {
-            return `
-                <div class="set-row">
-                    <span class="set-num">SATZ ${num}</span>
-                    <input type="number" placeholder="kg" class="w-in">
-                    <input type="number" placeholder="${defReps}" class="r-in" value="${defReps}">
-                </div>
+        function addWorkoutSet(btn) {
+            const wrapper = btn.previousElementSibling;
+            const setNum = wrapper.children.length + 1;
+            const newSet = document.createElement('div');
+            newSet.className = 'set-row';
+            newSet.innerHTML = `
+                <span class="set-label">SATZ ${setNum}</span>
+                <input type="number" placeholder="kg" class="w-input">
+                <input type="number" placeholder="8" value="8" class="r-input">
             `;
+            wrapper.appendChild(newSet);
         }
 
-        function addCustomSet(btn) {
-            const container = btn.previousElementSibling;
-            const num = container.children.length + 1;
-            container.insertAdjacentHTML('beforeend', renderSetRow(num, 8));
+        function addSpontaneousEx() {
+            const select = document.getElementById('spontaneousSelect');
+            const exId = parseInt(select.value);
+            if(!exId) return;
+            const ex = db.ex.find(e => e.id === exId);
+            if(ex) {
+                renderWorkoutExercise(ex);
+                select.value = ""; // Reset
+                window.scrollTo(0, document.body.scrollHeight); // Nach unten scrollen
+            }
         }
 
-        // --- ANALYSE LOGIK ---
+        function finishWorkout() {
+            const date = new Date().toLocaleDateString('de-DE');
+            const workoutData = { date, exercises: [] };
+
+            document.querySelectorAll('.workout-ex-card').forEach(card => {
+                const exId = parseInt(card.dataset.id);
+                const note = card.querySelector('.note-input').value;
+                const sets = [];
+                
+                card.querySelectorAll('.set-row').forEach(row => {
+                    const weight = row.querySelector('.w-input').value;
+                    const reps = row.querySelector('.r-input').value;
+                    if(weight || reps) { // Nur Sätze speichern, bei denen etwas eingetragen wurde
+                        sets.push({ weight, reps });
+                    }
+                });
+
+                if(sets.length > 0) {
+                    workoutData.exercises.push({ exId, note, sets });
+                }
+            });
+
+            if(workoutData.exercises.length === 0) return alert("Du hast keine Daten eingetragen.");
+
+            db.logs.push(workoutData);
+            saveDB();
+            alert("Training erfolgreich gespeichert! Stark gemacht.");
+            nav('home');
+        }
+
+        // --- 4. ANALYSE ---
         function renderAnalysis() {
-            const overview = document.getElementById('statsOverview');
-            const history = document.getElementById('historyContainer');
+            // Muskelgruppen zählen
+            const stats = {};
+            let totalWorkouts = db.logs.length;
             
-            // Muskelgruppen Zählen
-            const groups = {};
             db.logs.forEach(log => {
-                log.entries.forEach(e => {
-                    const ex = db.exercises.find(ex => ex.id == e.exId);
-                    if(ex) groups[ex.group] = (groups[ex.group] || 0) + 1;
+                log.exercises.forEach(logEx => {
+                    const exData = db.ex.find(e => e.id === logEx.exId);
+                    if(exData) {
+                        stats[exData.group] = (stats[exData.group] || 0) + 1;
+                    }
                 });
             });
 
-            overview.innerHTML = "<h4>Muskel-Fokus</h4>" + Object.entries(groups)
-                .map(([name, count]) => `<div>${name}: ${count} Übungen</div>`).join('');
+            // Finde Maximum für die Balkengrafik
+            const maxCount = Math.max(...Object.values(stats), 1);
 
-            history.innerHTML = db.logs.map((log, idx) => `
-                <div class="card">
-                    <strong>${new Date(log.date).toLocaleDateString()}</strong> - ${log.planId ? 'Plan Training' : 'Spontan'}
-                    <button class="danger-btn" style="float:right" onclick="deleteLog(${idx})">Löschen</button>
+            let statsHtml = `<p><strong>Absolvierte Trainings: ${totalWorkouts}</strong></p><h4>Fokus (Trainierte Übungen):</h4>`;
+            for(const [group, count] of Object.entries(stats)) {
+                const percent = (count / maxCount) * 100;
+                statsHtml += `
+                    <div style="margin-bottom: 10px;">
+                        <div style="display:flex; justify-content:space-between; font-size: 12px;">
+                            <span>${group}</span><span>${count}x</span>
+                        </div>
+                        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: ${percent}%;"></div></div>
+                    </div>
+                `;
+            }
+            document.getElementById('analysisStats').innerHTML = Object.keys(stats).length ? statsHtml : "<p>Noch keine Daten vorhanden.</p>";
+
+            // Verlauf Rendern
+            document.getElementById('logHistory').innerHTML = [...db.logs].reverse().map((log, index) => {
+                const realIndex = db.logs.length - 1 - index;
+                return `
+                <div class="card flex-row">
+                    <div>
+                        <strong>${log.date}</strong><br>
+                        <small style="color:var(--secondary)">${log.exercises.length} Übungen absolviert</small>
+                    </div>
+                    <button class="danger-btn" onclick="deleteLog(${realIndex})">Löschen</button>
                 </div>
-            `).join('');
+            `}).join('');
+        }
+        function deleteLog(i) { if(confirm("Training aus Verlauf löschen?")) { db.logs.splice(i, 1); saveDB(); renderAnalysis(); } }
+
+        // --- 5. KÖRPERGEWICHT ---
+        function renderWeight() {
+            document.getElementById('weightDate').valueAsDate = new Date();
+            const container = document.getElementById('weightList');
+            if(db.weight.length === 0) { container.innerHTML = "<p>Keine Einträge.</p>"; return; }
+
+            // Sortieren nach Datum (neueste zuerst)
+            const sortedWeights = [...db.weight].sort((a,b) => new Date(b.date) - new Date(a.date));
+
+            container.innerHTML = sortedWeights.map(w => {
+                // Finde den originalen Index zum Löschen
+                const origIndex = db.weight.indexOf(w);
+                return `
+                <div class="card flex-row" style="padding: 12px 18px;">
+                    <div><span style="color:var(--secondary); font-size:12px;">${new Date(w.date).toLocaleDateString('de-DE')}</span><br>
+                    <strong style="font-size:18px;">${w.val} kg</strong></div>
+                    <button class="danger-btn" onclick="deleteWeight(${origIndex})">X</button>
+                </div>
+            `}).join('');
         }
 
-        function deleteLog(idx) { if(confirm("Training aus Verlauf löschen?")) { db.logs.splice(idx, 1); saveDB(); renderAnalysis(); } }
-
-        // Hilfsfunktionen für Planwahl
-        function renderPlanSelection() {
-            const container = document.getElementById('page-workout-select');
-            container.innerHTML = '<button class="back-btn" onclick="showPage(\'home\')">← Zurück</button><h2>Plan wählen</h2>' + 
-                db.plans.map(p => `<button class="main-btn" onclick="startWorkoutSession('${p.id}')">${p.name}</button>`).join('');
+        function saveWeight() {
+            const val = document.getElementById('weightVal').value;
+            const date = document.getElementById('weightDate').value;
+            if(val && date) { 
+                db.weight.push({date, val}); 
+                saveDB(); 
+                document.getElementById('weightVal').value = '';
+                renderWeight(); 
+            }
         }
-        
-        window.onload = () => showPage('home');
+        function deleteWeight(i) { db.weight.splice(i, 1); saveDB(); renderWeight(); }
+
+        // INIT
+        window.onload = () => nav('home');
     </script>
 </body>
 </html>
