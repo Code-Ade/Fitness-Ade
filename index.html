@@ -3,97 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fitness Tracker PWA</title>
+    <title>Fitness Pro</title>
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
-        :root {
-            --primary: #007AFF;
-            --bg: #F2F2F7;
-            --card: #FFFFFF;
-        }
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); margin: 0; padding: 20px; }
-        h1 { font-size: 24px; text-align: center; }
-        .card { background: var(--card); padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        input, select, textarea { width: 100%; margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 16px; }
-        .exercise-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding: 10px 0; }
-        .stats-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
-        .stats-table th, .stats-table td { text-align: left; padding: 8px; border-bottom: 1px solid #ddd; }
+        :root { --primary: #007AFF; --bg: #F2F2F7; --card: #FFFFFF; }
+        body { font-family: -apple-system, system-ui; background: var(--bg); margin: 0; padding: 15px; padding-bottom: 50px; }
+        .card { background: var(--card); padding: 15px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        input, textarea { width: 100%; margin-bottom: 12px; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
+        button { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: 600; font-size: 16px; cursor: pointer; }
+        
+        /* Foto-Vorschau */
+        #photoPreview { width: 100%; max-height: 200px; object-fit: cover; border-radius: 10px; display: none; margin-bottom: 10px; }
+        
+        /* Liste & Design */
+        .entry { border-bottom: 1px solid #eee; padding: 15px 0; }
+        .entry img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; float: left; margin-right: 12px; }
+        .entry-details { overflow: hidden; }
+        .entry-date { font-size: 12px; color: #888; }
+        .clear { clear: both; }
     </style>
 </head>
 <body>
 
-    <h1>Fitness Tracker</h1>
-
     <div class="card">
-        <h3>Neue Übung loggen</h3>
-        <input type="text" id="exName" placeholder="Übung (z.B. Bankdrücken)">
-        <input type="number" id="exWeight" placeholder="Gewicht in kg">
+        <h2>Neues Training</h2>
+        <input type="date" id="exDate">
+        <input type="text" id="exName" placeholder="Name der Übung">
+        <input type="number" id="exWeight" placeholder="Gewicht (kg)">
         <input type="number" id="exReps" placeholder="Wiederholungen">
+        
+        <input type="file" id="exPhoto" accept="image/*" capture="environment" onchange="previewImage(this)">
+        <img id="photoPreview">
+        
         <textarea id="exNotes" placeholder="Notizen..."></textarea>
-        <button onclick="saveExercise()">Eintrag speichern</button>
+        <button onclick="saveEntry()">Eintrag speichern</button>
     </div>
 
     <div class="card">
-        <h3>Dein Trainingstagebuch</h3>
-        <table class="stats-table" id="logTable">
-            <thead>
-                <tr>
-                    <th>Datum</th>
-                    <th>Übung</th>
-                    <th>kg</th>
-                    <th>Wdh.</th>
-                </tr>
-            </thead>
-            <tbody id="logBody">
-                </tbody>
-        </table>
+        <h3>Verlauf</h3>
+        <div id="logContainer"></div>
     </div>
 
     <script>
-        function saveExercise() {
-            const name = document.getElementById('exName').value;
-            const weight = document.getElementById('exWeight').value;
-            const reps = document.getElementById('exReps').value;
-            const notes = document.getElementById('exNotes').value;
-            const date = new Date().toLocaleDateString('de-DE');
+        // Heute als Standarddatum setzen
+        document.getElementById('exDate').valueAsDate = new Date();
 
-            if(!name || !weight || !reps) return alert("Bitte alles ausfüllen");
+        function previewImage(input) {
+            const preview = document.getElementById('photoPreview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
 
-            const entry = { name, weight, reps, notes, date };
-            
-            // Speichern im LocalStorage (Browser-Datenbank)
+        function saveEntry() {
+            const entry = {
+                date: document.getElementById('exDate').value,
+                name: document.getElementById('exName').value,
+                weight: document.getElementById('exWeight').value,
+                reps: document.getElementById('exReps').value,
+                notes: document.getElementById('exNotes').value,
+                image: document.getElementById('photoPreview').src || null
+            };
+
+            if(!entry.name || !entry.weight) return alert("Name und Gewicht fehlen!");
+
             let logs = JSON.parse(localStorage.getItem('fitnessLogs')) || [];
             logs.unshift(entry);
             localStorage.setItem('fitnessLogs', JSON.stringify(logs));
 
             renderLogs();
-            clearForm();
+            resetForm();
         }
 
         function renderLogs() {
             const logs = JSON.parse(localStorage.getItem('fitnessLogs')) || [];
-            const tbody = document.getElementById('logBody');
-            tbody.innerHTML = logs.map(log => `
-                <tr>
-                    <td>${log.date}</td>
-                    <td>${log.name}</td>
-                    <td>${log.weight}</td>
-                    <td>${log.reps}</td>
-                </tr>
+            const container = document.getElementById('logContainer');
+            container.innerHTML = logs.map(log => `
+                <div class="entry">
+                    ${log.image ? `<img src="${log.image}">` : ''}
+                    <div class="entry-details">
+                        <strong>${log.name}</strong><br>
+                        ${log.weight}kg x ${log.reps} Wdh.<br>
+                        <span class="entry-date">${new Date(log.date).toLocaleDateString()}</span>
+                        <p style="font-size: 13px; color: #555; margin: 5px 0 0 0;">${log.notes}</p>
+                    </div>
+                    <div class="clear"></div>
+                </div>
             `).join('');
         }
 
-        function clearForm() {
+        function resetForm() {
             document.getElementById('exName').value = '';
             document.getElementById('exWeight').value = '';
             document.getElementById('exReps').value = '';
             document.getElementById('exNotes').value = '';
+            document.getElementById('photoPreview').style.display = 'none';
+            document.getElementById('photoPreview').src = '';
+            document.getElementById('exPhoto').value = '';
         }
 
-        // Beim Start laden
         window.onload = renderLogs;
     </script>
 </body>
