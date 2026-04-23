@@ -3,112 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fitness Pro</title>
+    <title>Fitness Pro 2.0</title>
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <style>
-        :root { --primary: #007AFF; --bg: #F2F2F7; --card: #FFFFFF; }
-        body { font-family: -apple-system, system-ui; background: var(--bg); margin: 0; padding: 15px; padding-bottom: 50px; }
-        .card { background: var(--card); padding: 15px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 20px; }
-        input, textarea { width: 100%; margin-bottom: 12px; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
-        button { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: 600; font-size: 16px; cursor: pointer; }
+        :root {
+            --primary: #30D158; /* Grüner Akzent */
+            --bg: #000000;
+            --card: #1C1C1E;
+            --text: #FFFFFF;
+            --secondary: #8E8E93;
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: -apple-system, system-ui; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 30px; }
         
-        /* Foto-Vorschau */
-        #photoPreview { width: 100%; max-height: 200px; object-fit: cover; border-radius: 10px; display: none; margin-bottom: 10px; }
-        
-        /* Liste & Design */
-        .entry { border-bottom: 1px solid #eee; padding: 15px 0; }
-        .entry img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; float: left; margin-right: 12px; }
-        .entry-details { overflow: hidden; }
-        .entry-date { font-size: 12px; color: #888; }
-        .clear { clear: both; }
+        /* Hauptseite / Dashboard */
+        .page { display: none; padding: 20px; animation: fadeIn 0.2s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        h1, h2 { font-weight: 700; margin-bottom: 20px; }
+        .card { background: var(--card); padding: 18px; border-radius: 16px; margin-bottom: 15px; border: 1px solid #2C2C2E; }
+
+        /* Buttons */
+        .main-btn { background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: bold; font-size: 16px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .secondary-btn { background: #2C2C2E; color: var(--text); border: none; padding: 12px; border-radius: 10px; width: 100%; font-size: 14px; margin-top: 5px; }
+        .back-btn { color: var(--primary); background: none; border: none; font-size: 16px; margin-bottom: 20px; padding: 0; }
+
+        /* Formular-Elemente */
+        input, select, textarea { width: 100%; background: #2C2C2E; border: none; padding: 14px; border-radius: 10px; color: #fff; font-size: 16px; margin: 8px 0; }
+        label { font-size: 12px; color: var(--secondary); text-transform: uppercase; margin-left: 5px; }
+
+        /* Training-Sätze Logik */
+        .set-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .set-label { font-size: 11px; color: var(--secondary); }
+
+        .exercise-header { display: flex; gap: 15px; align-items: center; margin-bottom: 15px; }
+        .exercise-header img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; background: #333; }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h2>Neues Training</h2>
-        <input type="date" id="exDate">
-        <input type="text" id="exName" placeholder="Name der Übung">
-        <input type="number" id="exWeight" placeholder="Gewicht (kg)">
-        <input type="number" id="exReps" placeholder="Wiederholungen">
+    <div id="page-home" class="page active">
+        <h1>Dashboard</h1>
+        <button class="main-btn" onclick="showPage('workout-select')"><span>▶️</span> Training starten</button>
         
-        <input type="file" id="exPhoto" accept="image/*" capture="environment" onchange="previewImage(this)">
-        <img id="photoPreview">
-        
-        <textarea id="exNotes" placeholder="Notizen..."></textarea>
-        <button onclick="saveEntry()">Eintrag speichern</button>
+        <div class="card">
+            <h3>Konfiguration</h3>
+            <button class="secondary-btn" onclick="showPage('add-exercise')">➕ Neue Übung erstellen</button>
+            <button class="secondary-btn" onclick="showPage('create-plan')">📋 Neuen Plan erstellen</button>
+        </div>
+
+        <div class="card">
+            <h3>Körpergewicht</h3>
+            <input type="number" id="bodyWeightInput" step="0.1" placeholder="Gewicht in kg">
+            <button class="secondary-btn" onclick="logBodyWeight()">Gewicht tracken</button>
+        </div>
+
+        <button class="secondary-btn" onclick="showPage('analysis')" style="margin-top: 20px;">📈 Datenanalyse & Verlauf</button>
     </div>
 
-    <div class="card">
-        <h3>Verlauf</h3>
-        <div id="logContainer"></div>
+    <div id="page-add-exercise" class="page">
+        <button class="back-btn" onclick="showPage('home')">← Zurück</button>
+        <h2>Übung erstellen</h2>
+        <div class="card">
+            <label>Name der Übung</label>
+            <input type="text" id="exName" placeholder="z.B. Kniebeugen">
+            <label>Muskelgruppe</label>
+            <select id="exGroup">
+                <option value="Beine">Beine</option>
+                <option value="Rücken">Rücken</option>
+                <option value="Brust">Brust</option>
+                <option value="Schultern">Schultern</option>
+                <option value="Bizeps">Bizeps</option>
+                <option value="Trizeps">Trizeps</option>
+                <option value="Bauch">Bauch</option>
+            </select>
+            <label>Foto</label>
+            <input type="file" id="exPhoto" accept="image/*" capture="environment">
+            <button class="main-btn" onclick="saveExerciseToLib()">Speichern</button>
+        </div>
+    </div>
+
+    <div id="page-create-plan" class="page">
+        <button class="back-btn" onclick="showPage('home')">← Zurück</button>
+        <h2>Plan erstellen</h2>
+        <input type="text" id="planName" placeholder="Plan Name (z.B. Split A)">
+        <div id="availableExercisesSelection">
+            </div>
+        <button class="main-btn" onclick="saveNewPlan()">Plan speichern</button>
+    </div>
+
+    <div id="page-workout-select" class="page">
+        <button class="back-btn" onclick="showPage('home')">← Zurück</button>
+        <h2>Welchen Plan?</h2>
+        <div id="planListContainer"></div>
+    </div>
+
+    <div id="page-workout-active" class="page">
+        <h2 id="activePlanTitle">Training</h2>
+        <div id="activeWorkoutContent"></div>
+        <button class="secondary-btn" onclick="addSpontaneousExercise()">➕ Spontane Übung hinzufügen</button>
+        <button class="main-btn" onclick="finishWorkout()" style="margin-top: 30px;">Session abschließen</button>
     </div>
 
     <script>
-        // Heute als Standarddatum setzen
-        document.getElementById('exDate').valueAsDate = new Date();
+        // --- DATEN-MANAGEMENT ---
+        let db = JSON.parse(localStorage.getItem('fitDB')) || { exercises: [], plans: [], logs: [], weight: [] };
 
-        function previewImage(input) {
-            const preview = document.getElementById('photoPreview');
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
+        function saveDB() { localStorage.setItem('fitDB', JSON.stringify(db)); }
+
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + id).classList.add('active');
+            if(id === 'create-plan') renderExerciseCheckboxes();
+            if(id === 'workout-select') renderPlanSelection();
         }
 
-        function saveEntry() {
-            const entry = {
-                date: document.getElementById('exDate').value,
-                name: document.getElementById('exName').value,
-                weight: document.getElementById('exWeight').value,
-                reps: document.getElementById('exReps').value,
-                notes: document.getElementById('exNotes').value,
-                image: document.getElementById('photoPreview').src || null
+        // --- ÜBUNG SPEICHERN ---
+        function saveExerciseToLib() {
+            const name = document.getElementById('exName').value;
+            const group = document.getElementById('exGroup').value;
+            const photoInput = document.getElementById('exPhoto');
+            
+            if(!name) return alert("Name fehlt!");
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                db.exercises.push({ id: Date.now(), name, group, img: e.target.result });
+                saveDB();
+                alert("Übung gespeichert!");
+                showPage('home');
             };
-
-            if(!entry.name || !entry.weight) return alert("Name und Gewicht fehlen!");
-
-            let logs = JSON.parse(localStorage.getItem('fitnessLogs')) || [];
-            logs.unshift(entry);
-            localStorage.setItem('fitnessLogs', JSON.stringify(logs));
-
-            renderLogs();
-            resetForm();
+            if(photoInput.files[0]) reader.readAsDataURL(photoInput.files[0]);
+            else { db.exercises.push({ id: Date.now(), name, group, img: null }); saveDB(); showPage('home'); }
         }
 
-        function renderLogs() {
-            const logs = JSON.parse(localStorage.getItem('fitnessLogs')) || [];
-            const container = document.getElementById('logContainer');
-            container.innerHTML = logs.map(log => `
-                <div class="entry">
-                    ${log.image ? `<img src="${log.image}">` : ''}
-                    <div class="entry-details">
-                        <strong>${log.name}</strong><br>
-                        ${log.weight}kg x ${log.reps} Wdh.<br>
-                        <span class="entry-date">${new Date(log.date).toLocaleDateString()}</span>
-                        <p style="font-size: 13px; color: #555; margin: 5px 0 0 0;">${log.notes}</p>
-                    </div>
-                    <div class="clear"></div>
-                </div>
+        // --- PLAN LOGIK ---
+        function renderExerciseCheckboxes() {
+            const container = document.getElementById('availableExercisesSelection');
+            container.innerHTML = "<h3>Übungen wählen:</h3>";
+            db.exercises.forEach(ex => {
+                container.innerHTML += `
+                    <div class="card" style="display:flex; justify-content:space-between;">
+                        <span>${ex.name} (${ex.group})</span>
+                        <input type="checkbox" value="${ex.id}" class="plan-ex-check" style="width:20px;">
+                    </div>`;
+            });
+        }
+
+        function saveNewPlan() {
+            const name = document.getElementById('planName').value;
+            const selected = Array.from(document.querySelectorAll('.plan-ex-check:checked')).map(el => el.value);
+            if(!name || selected.length === 0) return alert("Daten unvollständig!");
+            db.plans.push({ id: Date.now(), name, exerciseIds: selected });
+            saveDB();
+            showPage('home');
+        }
+
+        function renderPlanSelection() {
+            const container = document.getElementById('planListContainer');
+            container.innerHTML = db.plans.map(p => `
+                <button class="main-btn" onclick="startWorkoutSession('${p.id}')">${p.name}</button>
             `).join('');
         }
 
-        function resetForm() {
-            document.getElementById('exName').value = '';
-            document.getElementById('exWeight').value = '';
-            document.getElementById('exReps').value = '';
-            document.getElementById('exNotes').value = '';
-            document.getElementById('photoPreview').style.display = 'none';
-            document.getElementById('photoPreview').src = '';
-            document.getElementById('exPhoto').value = '';
+        // --- TRACKING SESSION ---
+        let currentSession = { date: '', planId: '', entries: [] };
+
+        function startWorkoutSession(planId) {
+            const plan = db.plans.find(p => p.id == planId);
+            currentSession = { date: new Date().toISOString(), planId: planId, entries: [] };
+            document.getElementById('activePlanTitle').innerText = plan.name;
+            
+            const container = document.getElementById('activeWorkoutContent');
+            container.innerHTML = '';
+
+            plan.exerciseIds.forEach(exId => {
+                const ex = db.exercises.find(e => e.id == exId);
+                addExerciseToWorkoutView(ex);
+            });
+            showPage('workout-active');
         }
 
-        window.onload = renderLogs;
+        function addExerciseToWorkoutView(ex) {
+            const container = document.getElementById('activeWorkoutContent');
+            const exDiv = document.createElement('div');
+            exDiv.className = 'card';
+            exDiv.innerHTML = `
+                <div class="exercise-header">
+                    <img src="${ex.img || ''}">
+                    <div><strong>${ex.name}</strong><br><small>${ex.group}</small></div>
+                </div>
+                <div class="sets-container" data-exid="${ex.id}">
+                    <div class="set-row">
+                        <span class="set-label">SATZ 1</span>
+                        <input type="number" placeholder="kg" class="w-in">
+                        <input type="number" placeholder="12" class="r-in">
+                    </div>
+                </div>
+                <button class="secondary-btn" onclick="addSetRow(this)">+ Satz hinzufügen</button>
+                <textarea placeholder="Notiz zu dieser Übung..." class="n-in"></textarea>
+            `;
+            container.appendChild(exDiv);
+        }
+
+        function addSetRow(btn) {
+            const container = btn.previousElementSibling;
+            const setNum = container.children.length + 1;
+            const div = document.createElement('div');
+            div.className = 'set-row';
+            div.innerHTML = `
+                <span class="set-label">SATZ ${setNum}</span>
+                <input type="number" placeholder="kg" class="w-in">
+                <input type="number" placeholder="10" class="r-in">
+            `;
+            container.appendChild(div);
+        }
+
+        function addSpontaneousExercise() {
+            const exId = prompt("Übungs-Name eingeben oder ID (Hier kommt später eine Liste):");
+            const ex = db.exercises.find(e => e.name === exId || e.id == exId);
+            if(ex) addExerciseToWorkoutView(ex);
+            else alert("Übung nicht gefunden. Bitte erst in der Bibliothek anlegen.");
+        }
+
+        function finishWorkout() {
+            // Sammle alle Daten aus der View
+            document.querySelectorAll('.sets-container').forEach(cont => {
+                const exId = cont.dataset.exid;
+                const weights = Array.from(cont.querySelectorAll('.w-in')).map(i => i.value);
+                const reps = Array.from(cont.querySelectorAll('.r-in')).map(i => i.value);
+                const note = cont.nextElementSibling.nextElementSibling.value;
+                currentSession.entries.push({ exId, weights, reps, note });
+            });
+            db.logs.push(currentSession);
+            saveDB();
+            alert("Training gespeichert!");
+            showPage('home');
+        }
+
+        function logBodyWeight() {
+            const val = document.getElementById('bodyWeightInput').value;
+            if(val) {
+                db.weight.push({ date: new Date().toISOString(), val: val });
+                saveDB();
+                alert("Gewicht gespeichert!");
+            }
+        }
     </script>
 </body>
 </html>
