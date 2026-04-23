@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Fitness Pro 5.0</title>
+    <title>Fitness Pro 5.1 - Analytics</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -26,6 +26,7 @@
         .set-row { display: grid; grid-template-columns: 60px 1fr 1fr 40px; gap: 8px; align-items: center; margin-bottom: 8px; }
         .last-val { font-size: 11px; color: var(--primary); display: block; margin-top: -5px; margin-bottom: 10px; }
         .img-pre { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
+        .chart-wrap { height: 180px; width: 100%; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -33,7 +34,7 @@
     <div id="page-home" class="page active">
         <h1>Fitness Pro</h1>
         <div id="resume-banner" class="card" style="display:none; border-color: var(--accent);">
-            <p style="margin:0 0 10px 0">⚠️ Ungespeichertes Training gefunden!</p>
+            <p style="margin:0 0 10px 0">⚠️ Offenes Training gefunden!</p>
             <button class="main-btn" style="background: var(--accent)" onclick="resumeWorkout()">Fortsetzen</button>
             <button class="sec-btn" onclick="discardTemp()">Verwerfen</button>
         </div>
@@ -58,15 +59,25 @@
     </div>
 
     <div id="page-analysis" class="page">
-        <h1>Analyse & Verlauf</h1>
-        <div class="card"><canvas id="weightChartAnal"></canvas></div>
-        <div id="exStats"></div>
-        <h3>Letzte Trainings</h3>
+        <h1>Analyse</h1>
+        <div id="analyticsDashboard">
+            </div>
+        <h3 style="margin-top: 30px;">Letzte Trainings</h3>
         <div id="historyLogs"></div>
     </div>
 
-    <div id="page-weight" class="page"><button class="sec-btn" onclick="nav('home')">←</button><h2>Gewicht</h2><input type="date" id="wD"><input type="number" id="wV"><button class="main-btn" onclick="saveWeight()">OK</button><div id="wList"></div></div>
-    <div id="page-ex-lib" class="page"><button class="sec-btn" onclick="nav('home')">←</button><h2>Übungen</h2><div class="card"><input id="exN" placeholder="Name"><select id="exG"><option>Brust</option><option>Rücken</option><option>Beine</option><option>Schultern</option><option>Bizeps</option><option>Trizeps</option><option>Bauch</option></select><input type="file" id="exF"><button class="main-btn" onclick="addEx()">Speichern</button></div><div id="exL"></div></div>
+    <div id="page-weight" class="page">
+        <button class="sec-btn" onclick="nav('home')">← Zurück</button>
+        <h2>Gewicht</h2>
+        <div class="card">
+            <input type="date" id="wD">
+            <input type="number" id="wV" step="0.1" placeholder="kg">
+            <button class="main-btn" onclick="saveWeight()">Speichern</button>
+        </div>
+        <div id="wList"></div>
+    </div>
+
+    <div id="page-ex-lib" class="page"><button class="sec-btn" onclick="nav('home')">←</button><h2>Bibliothek</h2><div class="card"><input id="exN" placeholder="Name"><select id="exG"><option>Brust</option><option>Rücken</option><option>Beine</option><option>Schultern</option><option>Bizeps</option><option>Trizeps</option><option>Bauch</option></select><input type="file" id="exF"><button class="main-btn" onclick="addEx()">Speichern</button></div><div id="exL"></div></div>
     <div id="page-plan-mgmt" class="page"><button class="sec-btn" onclick="nav('home')">←</button><h2>Pläne</h2><input id="plN" placeholder="Plan Name"><div id="plPick"></div><button class="main-btn" onclick="savePl()">Speichern</button><div id="plL"></div></div>
     <div id="page-workout-select" class="page"><button class="sec-btn" onclick="nav('home')">←</button><h2>Plan wählen</h2><div id="selL"></div></div>
 
@@ -78,10 +89,9 @@
     <script>
         let db = JSON.parse(localStorage.getItem('myFitnessApp_v3')) || { ex: [], plans: [], logs: [], weight: [] };
         let editingLogIndex = null;
+        let activeCharts = [];
 
-        function save() { 
-            localStorage.setItem('myFitnessApp_v3', JSON.stringify(db)); 
-        }
+        function save() { localStorage.setItem('myFitnessApp_v3', JSON.stringify(db)); }
 
         function nav(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -94,19 +104,99 @@
             if(id === 'workout-select') renderPlanChoice();
         }
 
-        // --- AUTOSAVE LOGIK ---
+        // --- ANALYSE MIT AKTIEN-LOOK ---
+        function renderAnalysis() {
+            const dashboard = document.getElementById('analyticsDashboard');
+            const hist = document.getElementById('historyLogs');
+            dashboard.innerHTML = '';
+            
+            // 1. KÖRPERGEWICHT CHART
+            if(db.weight.length > 1) {
+                db.weight.sort((a,b) => new Date(a.date) - new Date(b.date));
+                createStockChart(dashboard, "Körpergewicht (kg)", db.weight.map(w => ({x: w.date, y: w.val})));
+            }
+
+            // 2. ÜBUNGS CHARTS (Max Weight pro Session)
+            db.ex.forEach(ex => {
+                const history = db.logs
+                    .filter(l => l.exercises.some(e => e.exId == ex.id))
+                    .map(l => {
+                        const entry = l.exercises.find(e => e.exId == ex.id);
+                        const maxW = Math.max(...entry.sets.map(s => parseFloat(s.weight) || 0));
+                        return { x: l.date.split('.').reverse().join('-'), y: maxW };
+                    })
+                    .sort((a,b) => new Date(a.x) - new Date(b.x));
+
+                if(history.length > 1) {
+                    createStockChart(dashboard, ex.name + " (Max kg)", history);
+                }
+            });
+
+            // 3. HISTORIE LISTE
+            db.logs.sort((a,b) => new Date(b.date.split('.').reverse().join('-')) - new Date(a.date.split('.').reverse().join('-')));
+            hist.innerHTML = db.logs.map((log, i) => `
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between">
+                        <strong>${log.date}</strong>
+                        <div>
+                            <button class="edit-btn" onclick="editPastLog(${i})">Edit</button>
+                            <button class="danger-btn" onclick="deleteLog(${i})">X</button>
+                        </div>
+                    </div>
+                    <small style="color:var(--secondary)">${log.exercises.length} Übungen</small>
+                </div>
+            `).join('');
+        }
+
+        function createStockChart(container, title, dataPoints) {
+            const wrap = document.createElement('div');
+            wrap.className = 'card';
+            wrap.innerHTML = `<h4 style="margin:0 0 10px 0">${title}</h4><div class="chart-wrap"><canvas></canvas></div>`;
+            container.appendChild(wrap);
+
+            const ctx = wrap.querySelector('canvas').getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 0, 180);
+            gradient.addColorStop(0, 'rgba(48, 209, 88, 0.4)');
+            gradient.addColorStop(1, 'rgba(48, 209, 88, 0.0)');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dataPoints.map(d => new Date(d.x).toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit'})),
+                    datasets: [{
+                        data: dataPoints.map(d => d.y),
+                        borderColor: '#30D158',
+                        borderWidth: 3,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        fill: true,
+                        backgroundColor: gradient,
+                        tension: 0.4 // Macht die Linie weich (Aktien-Look)
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: '#8E8E93', font: { size: 10 } } },
+                        y: { 
+                            grid: { color: '#2C2C2E' }, 
+                            ticks: { color: '#8E8E93', font: { size: 10 } },
+                            beginAtZero: false // Besser für kleine Fortschritte
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- RESTLICHE LOGIK (UNVERÄNDERT AUS V5.0) ---
         function autosave() {
-            const data = {
-                title: document.getElementById('activeTitle').innerText,
-                exercises: []
-            };
+            const data = { title: document.getElementById('activeTitle').innerText, exercises: [] };
             document.querySelectorAll('.workout-card').forEach(card => {
                 const sets = [];
                 card.querySelectorAll('.set-row').forEach(row => {
-                    sets.push({ 
-                        w: row.querySelector('.w-in').value, 
-                        r: row.querySelector('.r-in').value 
-                    });
+                    sets.push({ w: row.querySelector('.w-in').value, r: row.querySelector('.r-in').value });
                 });
                 data.exercises.push({ id: card.dataset.id, sets, note: card.querySelector('.n-in').value });
             });
@@ -120,19 +210,10 @@
 
         function resumeWorkout() {
             const temp = JSON.parse(localStorage.getItem('activeSession_temp'));
-            if(!temp) return;
-            startWorkoutLogic(temp.title, temp.exercises);
+            if(temp) startWorkoutLogic(temp.title, temp.exercises);
         }
 
-        function discardTemp() {
-            localStorage.removeItem('activeSession_temp');
-            checkTemp();
-        }
-
-        // --- TRAINING START & EDIT ---
-        function renderPlanChoice() {
-            document.getElementById('selL').innerHTML = db.plans.map(p => `<button class="main-btn" onclick="initNewWorkout('${p.id}')">${p.name}</button>`).join('');
-        }
+        function discardTemp() { localStorage.removeItem('activeSession_temp'); checkTemp(); }
 
         function initNewWorkout(planId) {
             editingLogIndex = null;
@@ -145,11 +226,7 @@
             document.getElementById('activeTitle').innerText = title;
             const cont = document.getElementById('activeContent');
             cont.innerHTML = '';
-            
-            // Dropdown füllen
-            document.getElementById('spontSelect').innerHTML = '<option value="">+ Spontane Übung...</option>' + 
-                db.ex.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
-
+            document.getElementById('spontSelect').innerHTML = '<option value="">+ Spontane Übung...</option>' + db.ex.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
             exercises.forEach(exObj => renderExCard(exObj));
             nav('workout-active');
         }
@@ -158,11 +235,9 @@
             const exBase = db.ex.find(e => e.id == exObj.id);
             if(!exBase) return;
             const lastSets = getLastSession(exObj.id);
-            
             const div = document.createElement('div');
             div.className = 'card workout-card';
             div.dataset.id = exObj.id;
-            
             let sHtml = `<div class="s-wrap">`;
             exObj.sets.forEach((s, i) => {
                 const lStr = (lastSets && lastSets[i]) ? `L: ${lastSets[i].weight}kg` : '-';
@@ -176,30 +251,15 @@
                     <span class="last-val">${lStr}</span>`;
             });
             sHtml += `</div>`;
-
-            div.innerHTML = `
-                <div style="display:flex; gap:10px; align-items:center">
-                    ${exBase.img ? `<img src="${exBase.img}" class="img-pre">` : ''}
-                    <strong>${exBase.name}</strong>
-                </div>
-                ${sHtml}
-                <button class="sec-btn" onclick="addSetUI(this)">+ Satz</button>
-                <textarea class="n-in" placeholder="Notiz..." oninput="autosave()">${exObj.note || ''}</textarea>
-            `;
+            div.innerHTML = `<div style="display:flex; gap:10px; align-items:center">${exBase.img ? `<img src="${exBase.img}" class="img-pre">` : ''}<strong>${exBase.name}</strong></div>
+                ${sHtml}<button class="sec-btn" onclick="addSetUI(this)">+ Satz</button><textarea class="n-in" placeholder="Notiz..." oninput="autosave()">${exObj.note || ''}</textarea>`;
             document.getElementById('activeContent').appendChild(div);
         }
 
         function addSetUI(btn) {
             const wrap = btn.parentElement.querySelector('.s-wrap');
             const num = wrap.querySelectorAll('.set-row').length + 1;
-            wrap.insertAdjacentHTML('beforeend', `
-                <div class="set-row">
-                    <span style="font-size:10px">S${num}</span>
-                    <input type="number" placeholder="kg" class="w-in" oninput="autosave()">
-                    <input type="number" placeholder="8" value="8" class="r-in" oninput="autosave()">
-                    <button class="danger-btn" style="padding:4px" onclick="this.parentElement.remove(); autosave();">X</button>
-                </div>
-            `);
+            wrap.insertAdjacentHTML('beforeend', `<div class="set-row"><span style="font-size:10px">S${num}</span><input type="number" class="w-in" oninput="autosave()"><input type="number" value="8" class="r-in" oninput="autosave()"><button class="danger-btn" style="padding:4px" onclick="this.parentElement.remove(); autosave();">X</button></div>`);
             autosave();
         }
 
@@ -209,7 +269,6 @@
             autosave();
         }
 
-        // --- SPEICHERN (VALIDIERUNG) ---
         function finishWorkout() {
             const logs = [];
             document.querySelectorAll('.workout-card').forEach(card => {
@@ -219,54 +278,19 @@
                     const r = row.querySelector('.r-in').value;
                     if(w && r) sets.push({ weight: w, reps: r });
                 });
-                if(sets.length > 0) {
-                    logs.push({ exId: card.dataset.id, sets, note: card.querySelector('.n-in').value });
-                }
+                if(sets.length > 0) logs.push({ exId: card.dataset.id, sets, note: card.querySelector('.n-in').value });
             });
-
-            if(logs.length === 0) return alert("Keine Werte eingetragen!");
-
-            const finalData = {
-                date: editingLogIndex !== null ? db.logs[editingLogIndex].date : new Date().toLocaleDateString('de-DE'),
-                exercises: logs
-            };
-
+            if(logs.length === 0) return alert("Keine Werte!");
+            const finalData = { date: editingLogIndex !== null ? db.logs[editingLogIndex].date : new Date().toLocaleDateString('de-DE'), exercises: logs };
             if(editingLogIndex !== null) db.logs[editingLogIndex] = finalData;
             else db.logs.push(finalData);
-
-            save();
-            discardTemp();
-            alert("Gespeichert!");
-            nav('home');
-        }
-
-        // --- VERLAUF & EDIT ---
-        function renderAnalysis() {
-            const hist = document.getElementById('historyLogs');
-            db.logs.sort((a,b) => new Date(b.date.split('.').reverse().join('-')) - new Date(a.date.split('.').reverse().join('-')));
-            
-            hist.innerHTML = db.logs.map((log, i) => `
-                <div class="card">
-                    <div style="display:flex; justify-content:space-between">
-                        <strong>${log.date}</strong>
-                        <div>
-                            <button class="edit-btn" onclick="editPastLog(${i})">Bearbeiten</button>
-                            <button class="danger-btn" onclick="deleteLog(${i})">X</button>
-                        </div>
-                    </div>
-                    <small>${log.exercises.length} Übungen</small>
-                </div>
-            `).join('');
+            save(); discardTemp(); nav('home');
         }
 
         function editPastLog(index) {
             editingLogIndex = index;
             const log = db.logs[index];
-            const exercises = log.exercises.map(e => ({
-                id: e.exId,
-                sets: e.sets.map(s => ({ w: s.weight, r: s.reps })),
-                note: e.note
-            }));
+            const exercises = log.exercises.map(e => ({ id: e.exId, sets: e.sets.map(s => ({ w: s.weight, r: s.reps })), note: e.note }));
             startWorkoutLogic("Bearbeite: " + log.date, exercises);
         }
 
@@ -277,41 +301,34 @@
             return entries.length > 0 ? entries[0].exercises.find(e => e.exId == exId).sets : null;
         }
 
-        // --- EXPORT ---
-        function exportCSV() {
-            let csv = "Datum,Typ,Wert,Einheit\n";
-            db.weight.forEach(w => {
-                csv += `${w.date},BodyWeight,${w.val},kg\n`;
-            });
-            db.logs.forEach(l => {
-                l.exercises.forEach(e => {
-                    const exName = db.ex.find(x => x.id == e.exId)?.name || 'Unbekannt';
-                    csv += `${l.date.split('.').reverse().join('-')},Workout,${exName},Sets:${e.sets.length}\n`;
-                });
-            });
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Fitness_Export_${new Date().toISOString().split('T')[0]}.csv`;
-            a.click();
-        }
-
-        // Hilfsfunktionen (Rest wie gehabt)
+        // --- BASIS FUNKTIONEN ---
         async function addEx() {
-            const name = document.getElementById('exN').value;
+            const n = document.getElementById('exN').value;
             const file = document.getElementById('exF').files[0];
             let img = null;
             if(file) img = await compress(file);
-            db.ex.push({ id: Date.now(), name, group: document.getElementById('exG').value, img });
+            db.ex.push({ id: Date.now(), name: n, group: document.getElementById('exG').value, img });
             save(); renderExLib();
         }
         function compress(f) { return new Promise(r => { const reader = new FileReader(); reader.onload = (e) => { const img = new Image(); img.onload = () => { const canvas = document.createElement('canvas'); canvas.width = 300; canvas.height = 300; canvas.getContext('2d').drawImage(img,0,0,300,300); r(canvas.toDataURL('image/jpeg',0.7)); }; img.src = e.target.result; }; reader.readAsDataURL(f); }); }
         function renderExLib() { document.getElementById('exL').innerHTML = db.ex.map(e => `<div class="card">${e.name}</div>`).join(''); }
         function renderPlanMgmt() { document.getElementById('plPick').innerHTML = db.ex.map(e => `<div><input type="checkbox" value="${e.id}" class="p-ck"> ${e.name}</div>`).join(''); }
         function savePl() { const ids = Array.from(document.querySelectorAll('.p-ck:checked')).map(c => c.value); db.plans.push({ id: Date.now(), name: document.getElementById('plN').value, exIds: ids }); save(); nav('home'); }
-        function renderWeight() { db.weight.sort((a,b)=>new Date(b.date)-new Date(a.date)); document.getElementById('wList').innerHTML = db.weight.map(w => `<div class="card">${w.date}: ${w.val}kg</div>`).join(''); }
+        function renderWeight() { db.weight.sort((a,b)=>new Date(b.date)-new Date(a.date)); document.getElementById('wList').innerHTML = db.weight.map(w => `<div class="card" style="display:flex; justify-content:space-between"><span>${w.date}</span><strong>${w.val} kg</strong></div>`).join(''); }
         function saveWeight() { db.weight.push({ date: document.getElementById('wD').value, val: document.getElementById('wV').value }); save(); renderWeight(); }
+        function renderPlanChoice() { document.getElementById('selL').innerHTML = db.plans.map(p => `<button class="main-btn" onclick="initNewWorkout('${p.id}')">${p.name}</button>`).join(''); }
+        
+        function exportCSV() {
+            let csv = "Datum,Typ,Wert,Details\n";
+            db.weight.forEach(w => csv += `${w.date},Gewicht,${w.val},kg\n`);
+            db.logs.forEach(l => l.exercises.forEach(e => {
+                const name = db.ex.find(x => x.id == e.exId)?.name || 'Ex';
+                csv += `${l.date},Training,${name},Sets:${e.sets.length}\n`;
+            }));
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = `Fitness_Export.csv`; a.click();
+        }
 
         window.onload = () => { nav('home'); checkTemp(); };
     </script>
