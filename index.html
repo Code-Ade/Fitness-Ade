@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fitness Tracker PWA</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <style>
+        :root {
+            --primary: #007AFF;
+            --bg: #F2F2F7;
+            --card: #FFFFFF;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); margin: 0; padding: 20px; }
+        h1 { font-size: 24px; text-align: center; }
+        .card { background: var(--card); padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        input, select, textarea { width: 100%; margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 16px; }
+        .exercise-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding: 10px 0; }
+        .stats-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+        .stats-table th, .stats-table td { text-align: left; padding: 8px; border-bottom: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+
+    <h1>Fitness Tracker</h1>
+
+    <div class="card">
+        <h3>Neue Übung loggen</h3>
+        <input type="text" id="exName" placeholder="Übung (z.B. Bankdrücken)">
+        <input type="number" id="exWeight" placeholder="Gewicht in kg">
+        <input type="number" id="exReps" placeholder="Wiederholungen">
+        <textarea id="exNotes" placeholder="Notizen..."></textarea>
+        <button onclick="saveExercise()">Eintrag speichern</button>
+    </div>
+
+    <div class="card">
+        <h3>Dein Trainingstagebuch</h3>
+        <table class="stats-table" id="logTable">
+            <thead>
+                <tr>
+                    <th>Datum</th>
+                    <th>Übung</th>
+                    <th>kg</th>
+                    <th>Wdh.</th>
+                </tr>
+            </thead>
+            <tbody id="logBody">
+                </tbody>
+        </table>
+    </div>
+
+    <script>
+        function saveExercise() {
+            const name = document.getElementById('exName').value;
+            const weight = document.getElementById('exWeight').value;
+            const reps = document.getElementById('exReps').value;
+            const notes = document.getElementById('exNotes').value;
+            const date = new Date().toLocaleDateString('de-DE');
+
+            if(!name || !weight || !reps) return alert("Bitte alles ausfüllen");
+
+            const entry = { name, weight, reps, notes, date };
+            
+            // Speichern im LocalStorage (Browser-Datenbank)
+            let logs = JSON.parse(localStorage.getItem('fitnessLogs')) || [];
+            logs.unshift(entry);
+            localStorage.setItem('fitnessLogs', JSON.stringify(logs));
+
+            renderLogs();
+            clearForm();
+        }
+
+        function renderLogs() {
+            const logs = JSON.parse(localStorage.getItem('fitnessLogs')) || [];
+            const tbody = document.getElementById('logBody');
+            tbody.innerHTML = logs.map(log => `
+                <tr>
+                    <td>${log.date}</td>
+                    <td>${log.name}</td>
+                    <td>${log.weight}</td>
+                    <td>${log.reps}</td>
+                </tr>
+            `).join('');
+        }
+
+        function clearForm() {
+            document.getElementById('exName').value = '';
+            document.getElementById('exWeight').value = '';
+            document.getElementById('exReps').value = '';
+            document.getElementById('exNotes').value = '';
+        }
+
+        // Beim Start laden
+        window.onload = renderLogs;
+    </script>
+</body>
+</html>
