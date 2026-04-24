@@ -124,13 +124,7 @@
             }
             applyTheme(); checkBackupReminder(); nav('home');
         }
-function addSetUI(btn, type) {
-            const wrap = btn.parentElement.querySelector('.s-wrap'); const num = wrap.querySelectorAll('.set-row, .cardio-row').length + 1;
-            if(type === 'cardio') wrap.insertAdjacentHTML('beforeend', `<div class="cardio-row"><input type="number" placeholder="Min" class="min-in" oninput="autosave()"><input type="number" placeholder="BPM" class="hr-in" oninput="autosave()"><input type="text" placeholder="Int" class="int-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">-</span>`);
-            else if(type === 'bw') wrap.insertAdjacentHTML('beforeend', `<div class="set-row"><span>S${num}</span><input type="number" placeholder="Reps" class="r-in" style="grid-column: span 2" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">-</span>`);
-            else wrap.insertAdjacentHTML('beforeend', `<div class="set-row"><span>S${num}</span><input type="number" class="w-in" placeholder="kg" oninput="autosave()"><input type="number" placeholder="R" class="r-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">-</span>`);
-            autosave();
-        }
+
         function save() { localStorage.setItem('trackyfit_db', JSON.stringify(db)); }
         function applyTheme() { document.documentElement.style.setProperty('--primary', db.settings.primary); document.documentElement.style.setProperty('--accent', db.settings.accent); document.documentElement.style.setProperty('--bg', db.settings.bg); document.getElementById('colPrimary').value = db.settings.primary; document.getElementById('colAccent').value = db.settings.accent; document.getElementById('colBg').value = db.settings.bg; document.getElementById('backupInt').value = db.settings.backupInt; }
         function updateTheme() { db.settings.primary = document.getElementById('colPrimary').value; db.settings.accent = document.getElementById('colAccent').value; db.settings.bg = document.getElementById('colBg').value; applyTheme(); save(); }
@@ -233,29 +227,16 @@ function addSetUI(btn, type) {
                 else if(exBase.type === 'bw') sHtml += `<div class="set-row"><span>S${i+1}</span><input type="number" value="${s.r||''}" placeholder="Reps" class="r-in" style="grid-column: span 2" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">${lStr}</span>`;
                 else sHtml += `<div class="set-row"><span>S${i+1}</span><input type="number" value="${s.w||''}" placeholder="kg" class="w-in" oninput="autosave()"><input type="number" value="${s.r||''}" placeholder="R" class="r-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">${lStr}</span>`;
             });
-            div.innerHTML = `
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-    <div style="display:flex; gap:10px; align-items:center;">
-        ${exBase.img ? `<img src="${exBase.img}" class="img-pre">` : '<div class="img-pre"></div>'}
-        <strong>${exBase.name}</strong>
-    </div>
-    <button class="danger-btn" onclick="removeExercise(this)">✕</button>
-</div>
-
-${sHtml}
-
-<button class="sec-btn" onclick="addSetUI(this, '${exBase.type}')">+ Satz</button>
-<textarea class="n-in" placeholder="Notiz..." oninput="autosave()">${exObj.note || ''}</textarea>
-`;
-        
-        function removeExercise(btn) {
-    if (!confirm("Übung wirklich aus diesem Training entfernen?")) return;
-
-    const card = btn.closest('.workout-card');
-    card.remove();
-
-    autosave();
-}
+            div.innerHTML = `<div style="display:flex; gap:10px; align-items:center; margin-bottom:15px;">${exBase.img ? `<img src="${exBase.img}" class="img-pre">` : '<div class="img-pre"></div>'}<strong>${exBase.name}</strong></div>${sHtml}</div><button class="sec-btn" onclick="addSetUI(this, '${exBase.type}')">+ Satz</button><textarea class="n-in" placeholder="Notiz..." oninput="autosave()">${exObj.note || ''}</textarea>`;
+            document.getElementById('activeContent').appendChild(div);
+        }
+        function addSetUI(btn, type) {
+            const wrap = btn.parentElement.querySelector('.s-wrap'); const num = wrap.querySelectorAll('.set-row, .cardio-row').length + 1;
+            if(type === 'cardio') wrap.insertAdjacentHTML('beforeend', `<div class="cardio-row"><input type="number" placeholder="Min" class="min-in" oninput="autosave()"><input type="number" placeholder="BPM" class="hr-in" oninput="autosave()"><input type="text" placeholder="Int" class="int-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">-</span>`);
+            else if(type === 'bw') wrap.insertAdjacentHTML('beforeend', `<div class="set-row"><span>S${num}</span><input type="number" placeholder="Reps" class="r-in" style="grid-column: span 2" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">-</span>`);
+            else wrap.insertAdjacentHTML('beforeend', `<div class="set-row"><span>S${num}</span><input type="number" class="w-in" placeholder="kg" oninput="autosave()"><input type="number" placeholder="R" class="r-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">-</span>`);
+            autosave();
+        }
 
         // Restliche Funktionen (Analyse, KI, Weight, etc.) bleiben exakt wie in 9.1
         function runAICoach() {
