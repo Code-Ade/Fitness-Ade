@@ -283,11 +283,35 @@
             box.innerHTML = feedback;
         }
         function renderAnalysis() {
-            const dashboard = document.getElementById('analyticsDashboard'); dashboard.innerHTML = '';
-            if(db.weight.length > 1) { const wData = db.weight.map(w => ({ x: w.date, y: parseFloat(w.val) })).sort((a,b) => new Date(a.x) - new Date(b.x)); createStockChart(dashboard, "Körpergewicht", wData, db.settings.accent); }
-            db.logs.sort((a,b) => new Date(b.date.split('.').reverse().join('-')) - new Date(a.date.split('.').reverse().join('-')));
-            document.getElementById('historyLogs').innerHTML = db.logs.map((log, i) => `<div class="card flex-between"><div><strong>${log.date}</strong><br><small>${log.exercises.length} Übungen</small></div><div><button class="edit-btn" onclick="editPastLog(${i})">Edit</button> <button class="danger-btn" onclick="deleteLog(${i})">X</button></div></div>`).join('');
-        }
+    // 1. Dashboard leeren und Standard-Historie (die Karten) rendern
+    const dashboard = document.getElementById('analyticsDashboard');
+    if (dashboard) dashboard.innerHTML = '';
+    
+    // 2. Gewichtschart (dein alter Code-Teil)
+    if(db.weight && db.weight.length > 1) { 
+        const wData = db.weight.map(w => ({ x: w.date, y: parseFloat(w.val) }))
+                      .sort((a,b) => new Date(a.x.split('.').reverse().join('-')) - new Date(b.x.split('.').reverse().join('-')));
+        createStockChart(dashboard, "Körpergewicht", wData, db.settings.accent); 
+    }
+
+    // 3. Die neuen Super-Analyse-Teile starten
+    renderMuscleHeatmap(); // Die Muskel-Tags
+    renderExAnSelect();    // Das Dropdown-Menü füllen
+    
+    // 4. Die Liste der vergangenen Trainings (dein alter Code-Teil)
+    db.logs.sort((a,b) => new Date(b.date.split('.').reverse().join('-')) - new Date(a.date.split('.').reverse().join('-')));
+    const historyCont = document.getElementById('historyLogs');
+    if (historyCont) {
+        historyCont.innerHTML = db.logs.map((log, i) => `
+            <div class="card flex-between">
+                <div><strong>${log.date}</strong><br><small>${log.exercises.length} Übungen</small></div>
+                <div>
+                    <button class="edit-btn" onclick="editPastLog(${i})">Edit</button> 
+                    <button class="danger-btn" onclick="deleteLog(${i})">X</button>
+                </div>
+            </div>`).join('');
+    }
+}
         function createStockChart(container, title, dataPoints, color) {
             const wrap = document.createElement('div'); wrap.className = 'card'; wrap.innerHTML = `<h4 style="margin:0">${title}</h4><div class="chart-wrap"><canvas></canvas></div>`; container.appendChild(wrap);
             const ctx = wrap.querySelector('canvas').getContext('2d');
@@ -435,6 +459,20 @@ function renderMuscleHeatmap() {
         return `<div class="muscle-tag ${cls}">${g}<br><small>${days === Infinity ? 'OFF' : Math.floor(days) + 'd'}</small></div>`;
     }).join('');
 }
+function renderExAnSelect() {
+    const sel = document.getElementById('exAnSelect');
+    if (!sel) return;
+    
+    // Holt alle Übungs-IDs, die jemals in Logs vorkamen
+    const loggedExIds = [...new Set(db.logs.flatMap(l => l.exercises.map(e => e.exId)))];
+    
+    sel.innerHTML = '<option value="">-- Übung wählen --</option>' + 
+        loggedExIds.map(id => {
+            const ex = db.ex.find(e => e.id == id);
+            return ex ? `<option value="${id}">${ex.name}</option>` : '';
+        }).join('');
+}
+        
 
 // Erweitere deine vorhandene renderAnalysis Funktion um diesen Aufruf:
 // function renderAnalysis() { 
