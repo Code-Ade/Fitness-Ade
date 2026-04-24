@@ -301,6 +301,7 @@
         </div>
     </div>`
 ).join('');
+     } 
         function saveWeight() { db.weight.push({ date: document.getElementById('wD').value, val: document.getElementById('wV').value }); save(); renderWeight(); }
 function editWeight(index) {
     const entry = db.weight[index];
