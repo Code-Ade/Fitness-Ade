@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TrackyFit 9.2</title>
+    <title>TrackyFit 9.3</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://via.placeholder.com/180/30D158/000000?text=TF">
@@ -59,7 +59,16 @@
         <h3 style="margin-top: 30px;">Verlauf</h3>
         <div id="historyLogs"></div>
     </div>
+<div id="page-stats" class="page">
+    <h1>Statistik</h1>
+    <div class="card">
+        <h3>Übungen</h3>
+        <div id="statsExList"></div>
+    </div>
 
+    <div id="statsDetail"></div>
+</div>
+    
     <div id="page-settings" class="page">
         <h1>Einstellungen</h1>
         <div class="card"><h3>🎨 Theme Designer</h3><label>Primärfarbe</label><input type="color" id="colPrimary" onchange="updateTheme()"><label>Akzentfarbe</label><input type="color" id="colAccent" onchange="updateTheme()"><label>Hintergrundfarbe</label><input type="color" id="colBg" onchange="updateTheme()"></div>
@@ -94,6 +103,7 @@
     <nav class="nav">
         <button class="nav-item" onclick="nav('home')">🏠<br>Home</button>
         <button class="nav-item" onclick="nav('analysis')">📈<br>Analyse</button>
+        <button class="nav-item" onclick="nav('stats')">📊<br>Statistik</button>
         <button class="nav-item" onclick="nav('settings')">⚙️<br>Settings</button>
     </nav>
 
@@ -125,9 +135,104 @@
 
         function nav(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById('page-' + id).classList.add('active');
-            if(id === 'home') checkTemp(); if(id === 'weight') renderWeight(); if(id === 'analysis') renderAnalysis(); if(id === 'ex-lib') renderExLib(); if(id === 'plan-mgmt') renderPlanMgmt(); if(id === 'workout-select') renderPlanChoice();
+            if(id === 'home') checkTemp(); if(id === 'weight') renderWeight(); if(id === 'analysis') renderAnalysis(); if(id === 'ex-lib') renderExLib(); if(id === 'plan-mgmt') renderPlanMgmt(); if(id === 'workout-select') renderPlanChoice(); if(id === 'stats') renderStats();
         }
 
+        function renderStats() {
+    const list = document.getElementById('statsExList');
+
+    list.innerHTML = db.ex.map(ex => `
+        <div class="sort-item" onclick="showExerciseStats('${ex.id}')">
+            <span>${ex.name}</span>
+            <span>→</span>
+        </div>
+    `).join('');
+}
+        function showExerciseStats(exId) {
+    const ex = db.ex.find(e => e.id === exId);
+    const logs = db.logs
+        .filter(l => l.exercises.some(e => e.exId === exId))
+        .sort((a,b) => new Date(a.date) - new Date(b.date));
+
+    const labels = [];
+    const weightData = [];
+    const repData = [];
+
+    logs.forEach(log => {
+        const entry = log.exercises.find(e => e.exId === exId);
+        if(!entry) return;
+
+        labels.push(log.date);
+
+        // Gewicht max aus Sets
+        let maxW = 0;
+        let reps = 0;
+
+        entry.sets.forEach(s => {
+            if(s.w) maxW = Math.max(maxW, parseFloat(s.w));
+            if(s.r) reps += parseInt(s.r || 0);
+        });
+
+        weightData.push(maxW);
+        repData.push(reps);
+    });
+
+    const container = document.getElementById('statsDetail');
+
+    container.innerHTML = `
+        <div class="card">
+            <h3>${ex.name} – Entwicklung</h3>
+
+            <div class="chart-wrap">
+                <canvas id="chartW"></canvas>
+            </div>
+
+            <div class="chart-wrap">
+                <canvas id="chartR"></canvas>
+            </div>
+        </div>
+    `;
+
+    // GRÜNE FARBE
+    const green = '#30D158';
+
+    new Chart(document.getElementById('chartW'), {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                data: weightData,
+                borderColor: green,
+                fill: false,
+                tension: 0.3
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            responsive: true
+        }
+    });
+
+    new Chart(document.getElementById('chartR'), {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                data: repData,
+                borderColor: green,
+                fill: false,
+                tension: 0.3
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            responsive: true
+        }
+    });
+}
+
+
+        
         // --- PLAN MANAGEMENT MIT SORTIERUNG ---
         function renderPlanMgmt() {
             document.getElementById('plPick').innerHTML = db.ex.map(e => `<div style="padding: 5px 0"><input type="checkbox" value="${e.id}" class="p-ck" onchange="syncSortList()" ${tempSelectedExIds.includes(e.id) ? 'checked' : ''}> ${e.name}</div>`).join('');
