@@ -3,43 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TrackyFit 9.2.5</title>
+    <title>TrackyFit 9.2.6</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --primary: #30D158; --bg: #000000; --card: #1C1C1E; --text: #FFFFFF; --secondary: #8E8E93; --danger: #FF453A; --accent: #0A84FF; --warning: #FF9F0A; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: -apple-system, sans-serif; }
-        body { background: var(--bg); color: var(--text); margin: 0; padding-top: env(safe-area-inset-top); padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+        :root { --primary: #30D158; --bg: #000000; --card: #1C1C1E; --text: #FFFFFF; --secondary: #8E8E93; --danger: #FF453A; --accent: #0A84FF; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        body { background: var(--bg); color: var(--text); margin: 0; padding-bottom: 100px; }
         .page { display: none; padding: 20px; animation: fadeIn 0.2s ease; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .card { background: var(--card); padding: 18px; border-radius: 16px; margin-bottom: 15px; border: 1px solid #2C2C2E; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        .card { background: var(--card); padding: 18px; border-radius: 16px; margin-bottom: 15px; border: 1px solid #2C2C2E; }
         .main-btn { background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: bold; font-size: 16px; margin-bottom: 10px; cursor: pointer; }
         .sec-btn { background: #2C2C2E; color: #FFF; border: none; padding: 12px; border-radius: 10px; width: 100%; margin-top: 5px; cursor: pointer; }
         .danger-btn { background: var(--danger); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-size: 12px; }
         .edit-btn { background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-size: 12px; }
         input, select, textarea { width: 100%; background: #2C2C2E; border: 1px solid #3A3A3C; padding: 12px; border-radius: 10px; color: #fff; margin: 8px 0; font-size: 16px; }
-        .nav { position: fixed; bottom: 0; width: 100%; background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 15px 0 calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid #3A3A3C; z-index: 999; }
+        .nav { position: fixed; bottom: 0; width: 100%; background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 15px 0 calc(15px + env(safe-area-inset-bottom)); border-top: 1px solid #3A3A3C; }
         .nav-item { background: none; border: none; color: var(--secondary); font-size: 11px; display: flex; flex-direction: column; align-items: center; }
         .nav-item.active { color: var(--primary); }
         .set-row { display: grid; grid-template-columns: 40px 1fr 1fr 40px; gap: 8px; align-items: center; margin-bottom: 6px; }
         .last-val { font-size: 11px; color: var(--primary); display: block; margin-bottom: 12px; margin-top: -4px; padding-left: 48px; }
-        .ex-img-preview { width: 100%; height: 180px; object-fit: cover; border-radius: 12px; margin-bottom: 10px; background: #111; display: none; }
-        .ex-img-preview.visible { display: block; }
-        .chart-wrap { height: 220px; width: 100%; margin: 15px 0; }
+        .chart-wrap { height: 200px; width: 100%; margin: 15px 0; }
+        .ex-pic { width: 100%; height: 160px; object-fit: cover; border-radius: 12px; margin-bottom: 10px; background: #111; }
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
 
     <div id="page-home" class="page active">
-        <h1 style="color: var(--primary)">TrackyFit <small style="color: var(--secondary); font-size: 14px;">9.2.5</small></h1>
-        <div id="resume-banner" class="card" style="display:none; border-color: var(--accent);"><p>⚡ Training läuft noch!</p><button class="main-btn" style="background: var(--accent)" onclick="resumeWorkout()">Fortsetzen</button><button class="sec-btn" onclick="discardTemp()">Verwerfen</button></div>
+        <h1 style="color: var(--primary)">TrackyFit <small style="color: var(--secondary); font-size: 12px;">9.2.6</small></h1>
         <button class="main-btn" onclick="nav('workout-select')">▶️ Training starten</button>
         <div class="card">
             <h3>Verwaltung</h3>
-            <button class="sec-btn" onclick="nav('ex-lib')">💪 Übungen & Fotos</button>
+            <button class="sec-btn" onclick="nav('ex-lib')">💪 Übungen & Mediathek</button>
             <button class="sec-btn" onclick="nav('plan-mgmt')">📋 Trainingspläne</button>
             <button class="sec-btn" onclick="nav('weight')">⚖️ Körpergewicht</button>
         </div>
@@ -47,44 +45,42 @@
 
     <div id="page-workout-active" class="page">
         <h2 id="activeTitle">Workout</h2>
-        <div class="card"><label style="font-size: 12px; color: var(--secondary)">Datum:</label><input type="date" id="workoutDateInput"></div>
+        <input type="date" id="workoutDateInput" class="card">
         <div id="activeContent"></div>
-        <div class="card" style="border-style: dashed; border-color: var(--secondary);"><select id="spontSelect"></select><button class="sec-btn" onclick="addSpontEx()">+ Übung</button></div>
-        <button class="main-btn" onclick="finishWorkout()" style="margin-top: 20px;">✅ Training beenden</button>
+        <button class="main-btn" onclick="finishWorkout()">✅ Training beenden</button>
     </div>
 
     <div id="page-ex-lib" class="page">
         <button class="sec-btn" onclick="nav('home')">← Zurück</button>
-        <h2>Übungen & Fotos</h2>
+        <h2>Übungs-Mediathek</h2>
         <div class="card">
-            <input id="exN" placeholder="Name der Übung">
-            <select id="exType"><option value="kraft">Kraft</option><option value="bw">Eigengewicht</option><option value="cardio">Cardio</option></select>
-            <label style="display:block; margin: 10px 0; color: var(--accent); cursor: pointer; text-align: center; border: 1px dashed var(--accent); padding: 10px; border-radius: 10px;">
+            <input id="exN" placeholder="Name">
+            <select id="exType"><option value="kraft">Kraft</option><option value="bw">Eigengewicht</option></select>
+            <label style="display:block; padding:12px; text-align:center; border:1px dashed var(--accent); border-radius:10px; color:var(--accent); margin:10px 0;">
                 📸 Übungsfoto wählen
-                <input type="file" id="exImgInput" accept="image/*" style="display:none" onchange="previewExImg(this)">
+                <input type="file" id="exImgIn" accept="image/*" style="display:none" onchange="handleExImage(this)">
             </label>
-            <img id="newExImgPreview" class="ex-img-preview">
-            <button class="main-btn" onclick="addEx()">Speichern</button>
+            <img id="exPrev" style="width:100%; height:120px; object-fit:cover; display:none; border-radius:8px; margin-bottom:10px;">
+            <button class="main-btn" onclick="addEx()">Übung speichern</button>
         </div>
         <div id="exL"></div>
     </div>
 
     <div id="page-analysis" class="page">
         <h1>Analyse</h1>
-        <div class="card"><h3>Körpergewicht</h3><div id="weightChartContainer" class="chart-wrap"></div></div>
+        <div class="card"><h3>Gewichtskurve</h3><div id="wChartCont" class="chart-wrap"></div></div>
         <div class="card">
-            <h3>Übungs-Fortschritt</h3>
-            <select id="exAnalysisSelect" onchange="renderExProgressChart()"></select>
-            <div id="exChartContainer" class="chart-wrap"></div>
+            <h3>Fortschritt Übung</h3>
+            <select id="exAnSelect" onchange="renderExProgress()"></select>
+            <div id="exChartCont" class="chart-wrap"></div>
         </div>
-        <h3 style="margin-top: 30px;">Letzte Trainings</h3>
         <div id="historyLogs"></div>
     </div>
 
-    <div id="page-weight" class="page"><button class="sec-btn" onclick="nav('home')">← Zurück</button><h2>Gewicht</h2><div class="card"><input type="date" id="wD"><input type="number" id="wV" step="0.1" placeholder="kg"><button class="main-btn" onclick="saveWeight()">Speichern</button></div><div id="wList"></div></div>
-    <div id="page-settings" class="page"><h1>Settings</h1><div class="card"><h3>Theme</h3><input type="color" id="colPrimary" onchange="updateTheme()"></div><div class="card"><h3>Backup</h3><button class="sec-btn" onclick="exportData()">📤 Export</button><input type="file" id="importFile" onchange="importData()"></div></div>
-    <div id="page-plan-mgmt" class="page"><button class="sec-btn" onclick="nav('home')">← Zurück</button><h2>Pläne</h2><div class="card"><input id="plN" placeholder="Name"><div id="plPick"></div><button class="main-btn" onclick="savePl()">Speichern</button></div><div id="plL"></div></div>
-    <div id="page-workout-select" class="page"><button class="sec-btn" onclick="nav('home')">← Zurück</button><h2>Plan wählen</h2><div id="selL"></div></div>
+    <div id="page-weight" class="page"><button class="sec-btn" onclick="nav('home')">← Zurück</button><h2>Körpergewicht</h2><div class="card"><input type="date" id="wD"><input type="number" id="wV" step="0.1" placeholder="kg"><button class="main-btn" onclick="saveWeight()">Speichern</button></div><div id="wList"></div></div>
+    <div id="page-settings" class="page"><h1>Settings</h1><div class="card"><button class="sec-btn" onclick="exportData()">📤 Backup Export</button><input type="file" id="importFile" onchange="importData()"><hr><label>Primärfarbe</label><input type="color" id="colPri" onchange="updateTheme()"></div></div>
+    <div id="page-plan-mgmt" class="page"><button class="sec-btn" onclick="nav('home')">← Zurück</button><h2>Trainingspläne</h2><div class="card"><input id="plN" placeholder="Plan Name"><div id="plPick" style="max-height:150px; overflow-y:auto; border:1px solid #333; padding:10px; border-radius:8px;"></div><button class="main-btn" onclick="savePl()">Plan speichern</button></div><div id="plL"></div></div>
+    <div id="page-workout-select" class="page"><button class="sec-btn" onclick="nav('home')">← Zurück</button><h2>Wähle deinen Plan</h2><div id="selL"></div></div>
 
     <nav class="nav">
         <button class="nav-item" onclick="nav('home')">🏠<br>Home</button>
@@ -93,23 +89,23 @@
     </nav>
 
     <script>
-        let db = JSON.parse(localStorage.getItem('trackyfit_db')) || { settings: { primary: '#30D158', accent: '#0A84FF', bg: '#000000' }, ex: [], plans: [], logs: [], weight: [] };
-        let tempExImg = null;
+        let db = JSON.parse(localStorage.getItem('trackyfit_db')) || { settings: { primary: '#30D158' }, ex: [], plans: [], logs: [], weight: [] };
+        let tempImg = null;
 
         function save() { localStorage.setItem('trackyfit_db', JSON.stringify(db)); }
         function nav(id) { 
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); 
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById('page-' + id).classList.add('active');
             if(id==='analysis') renderAnalysis(); if(id==='ex-lib') renderExLib(); if(id==='weight') renderWeight(); if(id==='plan-mgmt') renderPlanMgmt(); if(id==='workout-select') renderPlanChoice();
         }
 
-        // --- BILDER HANDLING ---
-        function previewExImg(input) {
+        // --- BILDER & ÜBUNGEN ---
+        function handleExImage(input) {
             const reader = new FileReader();
             reader.onload = (e) => { 
-                tempExImg = e.target.result; 
-                const prev = document.getElementById('newExImgPreview');
-                prev.src = tempExImg; prev.classList.add('visible');
+                tempImg = e.target.result; 
+                document.getElementById('exPrev').src = tempImg; 
+                document.getElementById('exPrev').style.display = 'block'; 
             };
             reader.readAsDataURL(input.files[0]);
         }
@@ -117,112 +113,103 @@
         function addEx() {
             const n = document.getElementById('exN').value;
             if(!n) return;
-            db.ex.push({ id: Date.now().toString(), name: n, type: document.getElementById('exType').value, img: tempExImg });
-            save(); tempExImg = null; document.getElementById('exN').value = ''; 
-            document.getElementById('newExImgPreview').classList.remove('visible');
-            renderExLib();
+            db.ex.push({ id: Date.now().toString(), name: n, type: document.getElementById('exType').value, img: tempImg });
+            save(); tempImg = null; document.getElementById('exPrev').style.display = 'none'; renderExLib();
         }
 
         function renderExLib() {
-            document.getElementById('exL').innerHTML = db.ex.map(e => `
-                <div class="card flex-between">
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        ${e.img ? `<img src="${e.img}" style="width:40px; height:40px; border-radius:5px; object-fit:cover;">` : `<div style="width:40px; height:40px; background:#333; border-radius:5px;"></div>`}
-                        <span>${e.name}</span>
-                    </div>
-                    <button class="danger-btn" onclick="db.ex=db.ex.filter(x=>x.id!='${e.id}');save();renderExLib()">X</button>
-                </div>`).join('');
+            document.getElementById('exL').innerHTML = db.ex.map(e => `<div class="card flex-between"><span>${e.name}</span><button class="danger-btn" onclick="db.ex=db.ex.filter(x=>x.id!='${e.id}');save();renderExLib()">X</button></div>`).join('');
         }
 
-        // --- TRAINING MIT BILDERN ---
-        function renderExCard(exObj) {
-            const exBase = db.ex.find(e => e.id == exObj.id); if(!exBase) return;
-            const lastSets = getLastSessionData(exObj.id);
-            const div = document.createElement('div'); div.className = 'card workout-card'; div.dataset.id = exObj.id;
-            
-            let sHtml = `<div class="s-wrap">`;
-            exObj.sets.forEach((s, i) => {
-                const lastData = (lastSets && lastSets[i]) ? lastSets[i] : null; let lStr = '-';
-                if(lastData && (lastData.w || lastData.r)) lStr = exBase.type==='kraft' ? `${lastData.w}kg x ${lastData.r}` : `${lastData.r} Reps`;
-                sHtml += `<div class="set-row"><span>S${i+1}</span><input type="number" value="${s.w||''}" placeholder="kg" class="w-in" ${exBase.type==='bw'?'style="display:none"':''}> <input type="number" value="${s.r||''}" placeholder="R" class="r-in"></div><span class="last-val">Zuletzt: ${lStr}</span>`;
-            });
-
-            div.innerHTML = `
-                ${exBase.img ? `<img src="${exBase.img}" style="width:100%; height:150px; object-fit:cover; border-radius:10px; margin-bottom:10px;">` : ''}
-                <strong style="font-size:18px">${exBase.name}</strong>
-                ${sHtml}</div><button class="sec-btn" onclick="addSetUI(this, '${exBase.type}')">+ Satz</button>
-                <textarea class="n-in" placeholder="Notiz...">${exObj.note||''}</textarea>`;
-            document.getElementById('activeContent').appendChild(div);
-        }
-
-        // --- ANALYSE: FILTERT LEERE WERTE ---
-        function renderExProgressChart() {
-            const exId = document.getElementById('exAnalysisSelect').value; if(!exId) return;
-            const data = db.logs.filter(l => l.exercises.some(e => e.exId == exId))
-                .map(l => {
-                    const sets = l.exercises.find(e => e.exId == exId).sets;
-                    // FILTER: Nur Sätze mit Gewicht > 0 ODER Reps > 0 einbeziehen
-                    const validSets = sets.filter(s => (parseFloat(s.w) > 0 || parseFloat(s.r) > 0));
-                    if(validSets.length === 0) return null;
-                    return { x: l.date, y: Math.max(...validSets.map(s => parseFloat(s.w)||0)) };
-                }).filter(entry => entry !== null).sort((a,b)=>parseDeDate(a.x)-parseDeDate(b.x));
-            
-            const ctx = document.getElementById('exChartContainer'); ctx.innerHTML = '<canvas id="exChart"></canvas>';
-            new Chart(document.getElementById('exChart'), { type: 'line', data: { labels: data.map(d=>d.x), datasets: [{ label: 'Max kg', data: data.map(d=>d.y), borderColor: db.settings.primary }] }, options: { responsive: true, maintainAspectRatio: false } });
-        }
-
-        // --- STANDARDS (9.2.1-9.2.4) ---
-        function parseDeDate(s) { const p = s.split('.'); return new Date(p[2], p[1]-1, p[0]); }
-        function formatDateDe(dStr) { const d = new Date(dStr); return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`; }
+        // --- WORKOUT ---
         function getLastSessionData(exId) {
             const sorted = [...db.logs].sort((a,b) => parseDeDate(b.date) - parseDeDate(a.date));
             const lastLog = sorted.find(l => l.exercises.some(e => e.exId == exId && e.sets.some(s => s.w || s.r)));
             return lastLog ? lastLog.exercises.find(e => e.exId == exId).sets : null;
         }
-        function startWorkoutLogic(title, exercises, dateStr = null) {
-            document.getElementById('activeTitle').innerText = title;
-            document.getElementById('workoutDateInput').value = dateStr || new Date().toISOString().split('T')[0];
-            document.getElementById('activeContent').innerHTML = '';
-            document.getElementById('spontSelect').innerHTML = db.ex.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
-            exercises.forEach(ex => renderExCard(ex)); nav('workout-active');
+
+        function renderExCard(exObj) {
+            const exBase = db.ex.find(e => e.id == exObj.id); if(!exBase) return;
+            const lastSets = getLastSessionData(exObj.id);
+            const div = document.createElement('div'); div.className = 'card workout-card'; div.dataset.id = exObj.id;
+            let sHtml = `<div class="s-wrap">`;
+            exObj.sets.forEach((s, i) => {
+                const lastData = (lastSets && lastSets[i]) ? lastSets[i] : null;
+                const lStr = lastData ? (exBase.type==='kraft' ? `${lastData.w}kg x ${lastData.r}` : `${lastData.r} Reps`) : '-';
+                sHtml += `<div class="set-row"><span>S${i+1}</span><input type="number" placeholder="kg" class="w-in" ${exBase.type==='bw'?'style="display:none"':''}> <input type="number" placeholder="R" class="r-in"></div><span class="last-val">Zuletzt: ${lStr}</span>`;
+            });
+            div.innerHTML = `${exBase.img ? `<img src="${exBase.img}" class="ex-pic">` : ''}<strong>${exBase.name}</strong>${sHtml}</div><button class="sec-btn" onclick="addSetUI(this, '${exBase.type}')">+ Satz</button>`;
+            document.getElementById('activeContent').appendChild(div);
         }
+
         function finishWorkout() {
             const date = formatDateDe(document.getElementById('workoutDateInput').value);
             const logs = []; document.querySelectorAll('.workout-card').forEach(card => {
-                const sets = []; card.querySelectorAll('.set-row').forEach(row => { 
+                const sets = []; card.querySelectorAll('.set-row').forEach(row => {
                     const w = row.querySelector('.w-in')?.value; const r = row.querySelector('.r-in')?.value;
-                    if(w || r) sets.push({ w, r }); // Nur speichern wenn etwas eingetragen wurde
+                    if(w || r) sets.push({ w, r });
                 });
-                if(sets.length > 0) logs.push({ exId: card.dataset.id, sets, note: card.querySelector('.n-in').value });
+                if(sets.length > 0) logs.push({ exId: card.dataset.id, sets });
             });
             if(logs.length > 0) db.logs.push({ date, exercises: logs });
             save(); nav('home');
         }
-        function renderWeight() {
-            db.weight.sort((a,b)=>new Date(b.date)-new Date(a.date));
-            document.getElementById('wList').innerHTML = db.weight.map((w,i)=>`<div class="card flex-between"><span>${formatDateDe(w.date)}: ${w.val}kg</span><button onclick="db.weight.splice(${i},1);save();renderWeight()">X</button></div>`).join('');
+
+        // --- ANALYSE ---
+        function renderExProgress() {
+            const exId = document.getElementById('exAnSelect').value; if(!exId) return;
+            const data = db.logs.filter(l => l.exercises.some(e => e.exId == exId))
+                .map(l => {
+                    const sets = l.exercises.find(e => e.exId == exId).sets.filter(s => s.w > 0 || s.r > 0);
+                    return sets.length > 0 ? { x: l.date, y: Math.max(...sets.map(s => parseFloat(s.w)||0)) } : null;
+                }).filter(x => x).sort((a,b)=>parseDeDate(a.x)-parseDeDate(b.x));
+            const ctx = document.getElementById('exChartCont'); ctx.innerHTML = '<canvas id="exChart"></canvas>';
+            new Chart(document.getElementById('exChart'), { type: 'line', data: { labels: data.map(d=>d.x), datasets: [{ label: 'Max kg', data: data.map(d=>d.y), borderColor: db.settings.primary }] }, options: { responsive: true, maintainAspectRatio: false } });
         }
-        function saveWeight() { const d=document.getElementById('wD').value, v=document.getElementById('wV').value; if(d&&v){db.weight.push({date:d,val:v});save();renderWeight();} }
+
         function renderAnalysis() {
-            const select = document.getElementById('exAnalysisSelect');
-            const uniqueExIds = [...new Set(db.logs.flatMap(l => l.exercises.map(e => e.exId)))];
-            select.innerHTML = '<option value="">Wähle Übung</option>' + uniqueExIds.map(id => `<option value="${id}">${db.ex.find(e=>e.id==id)?.name}</option>`).join('');
-            db.logs.sort((a,b) => parseDeDate(b.date) - parseDeDate(a.date));
-            document.getElementById('historyLogs').innerHTML = db.logs.map(l => `<div class="card"><b>${l.date}</b><br><small>${l.exercises.map(e=>db.ex.find(x=>x.id==e.exId)?.name).join(', ')}</small></div>`).join('');
+            const sel = document.getElementById('exAnSelect');
+            const ids = [...new Set(db.logs.flatMap(l => l.exercises.map(e => e.exId)))];
+            sel.innerHTML = '<option value="">Wähle Übung</option>' + ids.map(id => `<option value="${id}">${db.ex.find(e=>e.id==id)?.name}</option>`).join('');
+            
+            const wCtx = document.getElementById('wChartCont'); wCtx.innerHTML = '<canvas id="wChart"></canvas>';
+            if(db.weight.length > 1) {
+                const wData = [...db.weight].sort((a,b)=>new Date(a.date)-new Date(b.date));
+                new Chart(document.getElementById('wChart'), { type: 'line', data: { labels: wData.map(w=>formatDateDe(w.date)), datasets: [{ data: wData.map(w=>w.val), borderColor: '#0A84FF' }] }, options: { responsive: true, maintainAspectRatio: false } });
+            }
+            db.logs.sort((a,b)=>parseDeDate(b.date)-parseDeDate(a.date));
+            document.getElementById('historyLogs').innerHTML = db.logs.map(l => `<div class="card"><b>${l.date}</b><br><small>${l.exercises.length} Übungen</small></div>`).join('');
         }
+
+        // --- HELPER ---
+        function parseDeDate(s) { const p = s.split('.'); return new Date(p[2], p[1]-1, p[0]); }
+        function formatDateDe(dStr) { const d = new Date(dStr); return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`; }
+        function saveWeight() { const d=document.getElementById('wD').value, v=document.getElementById('wV').value; if(d&&v){db.weight.push({date:d,val:v});save();renderWeight();} }
+        function renderWeight() { document.getElementById('wList').innerHTML = db.weight.map(w=>`<div class="card">${formatDateDe(w.date)}: ${w.val}kg</div>`).join(''); }
         function renderPlanChoice() { document.getElementById('selL').innerHTML = db.plans.map(p => `<button class="main-btn" onclick="initNewWorkout('${p.id}')">${p.name}</button>`).join(''); }
-        function initNewWorkout(id) { const p = db.plans.find(x=>x.id==id); startWorkoutLogic(p.name, p.exIds.map(id=>({id, sets:[{w:'',r:''},{w:'',r:''},{w:'',r:''}], note:''}))); }
+        function initNewWorkout(id) { 
+            const p = db.plans.find(x=>x.id==id); 
+            document.getElementById('activeTitle').innerText = p.name;
+            document.getElementById('workoutDateInput').value = new Date().toISOString().split('T')[0];
+            document.getElementById('activeContent').innerHTML = '';
+            p.exIds.forEach(id => renderExCard({id, sets:[{},{},{}]}));
+            nav('workout-active');
+        }
         function addSetUI(btn, type) { btn.parentElement.querySelector('.s-wrap').insertAdjacentHTML('beforeend', `<div class="set-row"><span>S+</span><input type="number" placeholder="kg" class="w-in" ${type==='bw'?'style="display:none"':''}> <input type="number" placeholder="R" class="r-in"></div>`); }
-        function updateTheme() { db.settings.primary = document.getElementById('colPrimary').value; document.documentElement.style.setProperty('--primary', db.settings.primary); save(); }
-        function exportData() { alert(JSON.stringify(db)); }
-        function importData() { const f = document.getElementById('importFile').files[0]; const r = new FileReader(); r.onload=(e)=>{ db=JSON.parse(e.target.result); save(); location.reload(); }; r.readAsText(f); }
         function renderPlanMgmt() {
             document.getElementById('plPick').innerHTML = db.ex.map(e => `<div><input type="checkbox" value="${e.id}" class="p-ck"> ${e.name}</div>`).join('');
             document.getElementById('plL').innerHTML = db.plans.map(p => `<div class="card flex-between"><span>${p.name}</span><button onclick="db.plans=db.plans.filter(x=>x.id!='${p.id}');save();renderPlanMgmt()">X</button></div>`).join('');
         }
-        function savePl() { const n = document.getElementById('plN').value; const ids = Array.from(document.querySelectorAll('.p-ck:checked')).map(c=>c.value); if(n&&ids.length){db.plans.push({id:Date.now().toString(), name:n, exIds:ids});save();renderPlanMgmt();} }
+        function savePl() { const n=document.getElementById('plN').value; const ids=Array.from(document.querySelectorAll('.p-ck:checked')).map(c=>c.value); if(n&&ids.length){db.plans.push({id:Date.now().toString(),name:n,exIds:ids});save();renderPlanMgmt();} }
+        function updateTheme() { db.settings.primary = document.getElementById('colPri').value; document.documentElement.style.setProperty('--primary', db.settings.primary); save(); }
+        function exportData() { alert(JSON.stringify(db)); }
+        function importData() { const f = document.getElementById('importFile').files[0]; const r = new FileReader(); r.onload=(e)=>{ db=JSON.parse(e.target.result); save(); location.reload(); }; r.readAsText(f); }
 
-        window.onload = () => { document.documentElement.style.setProperty('--primary', db.settings.primary); document.getElementById('colPrimary').value = db.settings.primary; nav('home'); };
+        window.onload = () => { 
+            document.documentElement.style.setProperty('--primary', db.settings.primary); 
+            document.getElementById('colPri').value = db.settings.primary;
+            nav('home'); 
+        };
     </script>
 </body>
 </html>
