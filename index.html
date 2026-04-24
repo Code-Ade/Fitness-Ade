@@ -157,32 +157,56 @@ function renderStats() {
 }
         function showExerciseStats(exId) {
     const ex = db.ex.find(e => e.id === exId);
+    const container = document.getElementById('statsDetail');
+
     const logs = db.logs
         .filter(l => l.exercises.some(e => e.exId === exId))
         .sort((a,b) => new Date(a.date) - new Date(b.date));
 
-    const labels = [];
-    const weightData = [];
-    const repData = [];
+    let html = `
+        <div class="card">
+            <h3>${ex.name} – Verlauf</h3>
+    `;
+
+    if(logs.length === 0) {
+        container.innerHTML = `<div class="card">Keine Daten vorhanden</div>`;
+        return;
+    }
 
     logs.forEach(log => {
         const entry = log.exercises.find(e => e.exId === exId);
-        if(!entry) return;
 
-        labels.push(log.date);
+        html += `
+            <div class="card" style="margin-top:10px; padding:12px;">
+                <strong>📅 ${log.date}</strong>
+                <div style="margin-top:8px;">
+        `;
 
-        // Gewicht max aus Sets
-        let maxW = 0;
-        let reps = 0;
+        entry.sets.forEach((s, i) => {
+            const weight = s.w || '-';
+            const reps = s.r || '-';
 
-        entry.sets.forEach(s => {
-            if(s.w) maxW = Math.max(maxW, parseFloat(s.w));
-            if(s.r) reps += parseInt(s.r || 0);
+            html += `
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    padding:6px 0;
+                    border-bottom:1px solid #2C2C2E;
+                    font-size:14px;
+                ">
+                    <span>Satz ${i + 1}</span>
+                    <span>${weight} kg × ${reps} Wdh</span>
+                </div>
+            `;
         });
 
-        weightData.push(maxW);
-        repData.push(reps);
+        html += `</div></div>`;
     });
+
+    html += `</div>`;
+
+    container.innerHTML = html;
+}
 
     const container = document.getElementById('statsDetail');
 
