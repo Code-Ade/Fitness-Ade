@@ -198,7 +198,9 @@
         }
         function startWorkoutLogic(title, exercises) {
             document.getElementById('activeTitle').innerHTML = `     ${title}     <input type="date" id="workoutDate" style="margin-top:10px;"> `; document.getElementById('workoutDate').value = new Date().toISOString().split('T')[0]; const cont = document.getElementById('activeContent'); cont.innerHTML = '';
-            document.getElementById('spontSelect').innerHTML = '<option value="">Übung hinzufügen...</option>' + db.ex.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+            document.getElementById('spontSelect').innerHTML = '<option value="">Übung hinzufügen...</option>' + [...db.ex]
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(e => `<option value="${e.id}">${e.name}</option>`).join('');
             exercises.forEach(exObj => renderExCard(exObj)); nav('workout-active');
         }
         function getLastSession(exId) {const entries = db.logs
