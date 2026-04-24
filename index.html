@@ -235,12 +235,12 @@
     </div>
     <button class="danger-btn" onclick="removeExercise(this)">✕</button>
 </div>
-${sHtml}</div>
+
+${sHtml}
+
 <button class="sec-btn" onclick="addSetUI(this, '${exBase.type}')">+ Satz</button>
 <textarea class="n-in" placeholder="Notiz..." oninput="autosave()">${exObj.note || ''}</textarea>
-`;${exBase.img ? `<img src="${exBase.img}" class="img-pre">` : '<div class="img-pre"></div>'}<strong>${exBase.name}</strong></div>${sHtml}</div><button class="sec-btn" onclick="addSetUI(this, '${exBase.type}')">+ Satz</button><textarea class="n-in" placeholder="Notiz..." oninput="autosave()">${exObj.note || ''}</textarea>`;
-            document.getElementById('activeContent').appendChild(div);
-        }
+`;
         function addSetUI(btn, type) {
             const wrap = btn.parentElement.querySelector('.s-wrap'); const num = wrap.querySelectorAll('.set-row, .cardio-row').length + 1;
             if(type === 'cardio') wrap.insertAdjacentHTML('beforeend', `<div class="cardio-row"><input type="number" placeholder="Min" class="min-in" oninput="autosave()"><input type="number" placeholder="BPM" class="hr-in" oninput="autosave()"><input type="text" placeholder="Int" class="int-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">-</span>`);
