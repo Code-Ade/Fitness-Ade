@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TrackyFit 9.2 GPT </title>
+    <title>TrackyFit 9.2</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://via.placeholder.com/180/30D158/000000?text=TF">
@@ -229,26 +229,7 @@
             feedback += missing.length > 0 ? `⚠️ Fokus fehlt auf: ${missing.join(', ')}<br>` : `✅ Gute Balance!<br>`;
             box.innerHTML = feedback;
         }
-        function renderAnalysis() {// === NEU: TRAININGS-AKTIE / FREQUENZ CHART ===
-const freqMap = {};
-
-db.logs.forEach(l => {
-    const d = l.date;
-    freqMap[d] = (freqMap[d] || 0) + 1;
-});
-
-const chartData = Object.keys(freqMap)
-    .sort((a,b) => new Date(a.split('.').reverse().join('-')) - new Date(b.split('.').reverse().join('-')))
-    .map(d => ({ x: d, y: freqMap[d] }));
-
-if(chartData.length > 0) {
-    createStockChart(
-        dashboard,
-        "Trainings-Volumen (Aktien-Style)",
-        chartData,
-        db.settings.primary
-    );
-}
+        function renderAnalysis() {
             const dashboard = document.getElementById('analyticsDashboard'); dashboard.innerHTML = '';
             if(db.weight.length > 1) { const wData = db.weight.map(w => ({ x: w.date, y: parseFloat(w.val) })).sort((a,b) => new Date(a.x) - new Date(b.x)); createStockChart(dashboard, "Körpergewicht", wData, db.settings.accent); }
             db.logs.sort((a,b) => new Date(b.date.split('.').reverse().join('-')) - new Date(a.date.split('.').reverse().join('-')));
@@ -257,11 +238,7 @@ if(chartData.length > 0) {
         function createStockChart(container, title, dataPoints, color) {
             const wrap = document.createElement('div'); wrap.className = 'card'; wrap.innerHTML = `<h4 style="margin:0">${title}</h4><div class="chart-wrap"><canvas></canvas></div>`; container.appendChild(wrap);
             const ctx = wrap.querySelector('canvas').getContext('2d');
-            new Chart(ctx, { type: 'line',options: {
-    elements: {
-        line: { tension: 0.3 }
-    }
-} data: { labels: dataPoints.map(d => d.x), datasets: [{ data: dataPoints.map(d => d.y), borderColor: color, fill: false, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+            new Chart(ctx, { type: 'line', data: { labels: dataPoints.map(d => d.x), datasets: [{ data: dataPoints.map(d => d.y), borderColor: color, fill: false, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
         }
         async function addEx() {
             const n = document.getElementById('exN').value; const g = document.getElementById('exG').value; const t = document.getElementById('exType').value; const f = document.getElementById('exF').files[0];
@@ -282,21 +259,10 @@ if(chartData.length > 0) {
                 const sets = []; card.querySelectorAll('.set-row, .cardio-row').forEach(row => { sets.push({ w: row.querySelector('.w-in')?.value||'', r: row.querySelector('.r-in')?.value||'', min: row.querySelector('.min-in')?.value||'', hr: row.querySelector('.hr-in')?.value||'', int: row.querySelector('.int-in')?.value||'' }); });
                 if(sets.length > 0) logs.push({ exId: card.dataset.id, sets, note: card.querySelector('.n-in').value });
             });
-            if(logs.length === 0) return; const manualDate = prompt("Datum eingeben (TT.MM.JJJJ)", new Date().toLocaleDateString('de-DE'));
-const finalData = { date: manualDate || new Date().toLocaleDateString('de-DE'), exercises: logs };
+            if(logs.length === 0) return; const finalData = { date: editingLogIndex !== null ? db.logs[editingLogIndex].date : new Date().toLocaleDateString('de-DE'), exercises: logs };
             if(editingLogIndex !== null) db.logs[editingLogIndex] = finalData; else db.logs.push(finalData); save(); discardTemp(); nav('home');
         }
-        function editPastLog(index) {
-    editingLogIndex = index;
-    const log = db.logs[index];
-
-    const newDate = prompt("Datum ändern (TT.MM.JJJJ)", log.date);
-
-    if(newDate) log.date = newDate;
-
-    const ex = log.exercises.map(e => ({ id: e.exId, sets: e.sets, note: e.note }));
-    startWorkoutLogic("Edit: " + log.date, ex);
-}
+        function editPastLog(index) { editingLogIndex = index; const log = db.logs[index]; const ex = log.exercises.map(e => ({ id: e.exId, sets: e.sets, note: e.note })); startWorkoutLogic("Edit: " + log.date, ex); }
         function deleteLog(i) { if(confirm("Löschen?")) { db.logs.splice(i,1); save(); renderAnalysis(); } }
         function autosave() {
             const data = { title: document.getElementById('activeTitle').innerText, exercises: [] };
