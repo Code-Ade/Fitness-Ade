@@ -138,15 +138,22 @@
             if(id === 'home') checkTemp(); if(id === 'weight') renderWeight(); if(id === 'analysis') renderAnalysis(); if(id === 'ex-lib') renderExLib(); if(id === 'plan-mgmt') renderPlanMgmt(); if(id === 'workout-select') renderPlanChoice(); if(id === 'stats') renderStats();
         }
 
-        function renderStats() {
+function renderStats() {
     const list = document.getElementById('statsExList');
 
-    list.innerHTML = db.ex.map(ex => `
-        <div class="sort-item" onclick="showExerciseStats('${ex.id}')">
-            <span>${ex.name}</span>
-            <span>→</span>
-        </div>
-    `).join('');
+    list.innerHTML = '';
+
+    db.ex.forEach(ex => {
+        const div = document.createElement('div');
+        div.className = 'sort-item';
+        div.innerHTML = `<span>${ex.name}</span><span>→</span>`;
+
+        div.addEventListener('click', () => {
+            showExerciseStats(ex.id);
+        });
+
+        list.appendChild(div);
+    });
 }
         function showExerciseStats(exId) {
     const ex = db.ex.find(e => e.id === exId);
