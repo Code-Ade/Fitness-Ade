@@ -32,18 +32,6 @@
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
         .ai-box { background: rgba(10, 132, 255, 0.1); border: 1px solid var(--accent); padding: 15px; border-radius: 12px; margin-top: 15px; font-size: 14px; line-height: 1.5; display: none; }
         .sort-item { display: flex; align-items: center; justify-content: space-between; background: #2C2C2E; padding: 8px 12px; border-radius: 8px; margin-bottom: 5px; font-size: 14px; }
-        /* Muskel-Map Styles */
-.heatmap-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 10px; margin-bottom: 20px; }
-.muscle-tag { padding: 8px; border-radius: 8px; text-align: center; font-size: 11px; font-weight: bold; text-transform: uppercase; border: 1px solid #333; }
-.muscle-high { background: rgba(48, 209, 88, 0.2); color: var(--primary); border-color: var(--primary); }
-.muscle-med { background: rgba(255, 159, 10, 0.2); color: var(--warning); border-color: var(--warning); }
-.muscle-low { background: #1C1C1E; color: var(--secondary); }
-
-/* Tabellen Styles */
-.history-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
-.history-table th { text-align: left; color: var(--secondary); padding: 8px; border-bottom: 1px solid #333; }
-.history-table td { padding: 10px 8px; border-bottom: 1px solid #222; }
-.pr-badge { background: var(--warning); color: #000; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-left: 5px; }    
     </style>
 </head>
 <body>
@@ -64,43 +52,12 @@
     </div>
 
     <div id="page-analysis" class="page">
-        <div id="page-analysis" class="page">
-    <h1>Super-Analyse</h1>
-    
-    <div class="card">
-        <h3>Muskel-Aktivität (30 Tage)</h3>
-        <div id="muscleHeatmap" class="heatmap-container"></div>
-    </div>
-
-    <div class="card">
-        <h3>Übungs-Fortschritt</h3>
-        <select id="exAnSelect" onchange="updateSuperAnalysis()"></select>
-        
-        <div id="analysisDetail" style="display:none;">
-            <div id="exChartCont" class="chart-wrap"></div>
-            
-            <div class="flex-between" style="margin-top:20px;">
-                <div id="prDisplay"></div>
-                <div id="volDisplay"></div>
-            </div>
-
-            <h4>Historie (gefiltert)</h4>
-            <table class="history-table">
-                <thead>
-                    <tr>
-                        <th>Datum</th>
-                        <th>Bestleistung</th>
-                        <th>Sätze</th>
-                    </tr>
-                </thead>
-                <tbody id="historyTableBody"></tbody>
-            </table>
-        </div>
-    </div>
-    
-    <h3 style="margin-top: 30px;">Letzte Trainings-Logs</h3>
-    <div id="historyLogs"></div>
-</div>
+        <h1>Analyse</h1>
+        <button class="main-btn" style="background: var(--accent); color: #fff;" onclick="runAICoach()">🤖 KI Coach fragen</button>
+        <div id="aiFeedbackBox" class="ai-box"></div>
+        <div id="analyticsDashboard" style="margin-top: 20px;"></div>
+        <h3 style="margin-top: 30px;">Verlauf</h3>
+        <div id="historyLogs"></div>
     </div>
 
     <div id="page-settings" class="page">
@@ -283,35 +240,11 @@
             box.innerHTML = feedback;
         }
         function renderAnalysis() {
-    // 1. Dashboard leeren und Standard-Historie (die Karten) rendern
-    const dashboard = document.getElementById('analyticsDashboard');
-    if (dashboard) dashboard.innerHTML = '';
-    
-    // 2. Gewichtschart (dein alter Code-Teil)
-    if(db.weight && db.weight.length > 1) { 
-        const wData = db.weight.map(w => ({ x: w.date, y: parseFloat(w.val) }))
-                      .sort((a,b) => new Date(a.x.split('.').reverse().join('-')) - new Date(b.x.split('.').reverse().join('-')));
-        createStockChart(dashboard, "Körpergewicht", wData, db.settings.accent); 
-    }
-
-    // 3. Die neuen Super-Analyse-Teile starten
-    renderMuscleHeatmap(); // Die Muskel-Tags
-    renderExAnSelect();    // Das Dropdown-Menü füllen
-    
-    // 4. Die Liste der vergangenen Trainings (dein alter Code-Teil)
-    db.logs.sort((a,b) => new Date(b.date.split('.').reverse().join('-')) - new Date(a.date.split('.').reverse().join('-')));
-    const historyCont = document.getElementById('historyLogs');
-    if (historyCont) {
-        historyCont.innerHTML = db.logs.map((log, i) => `
-            <div class="card flex-between">
-                <div><strong>${log.date}</strong><br><small>${log.exercises.length} Übungen</small></div>
-                <div>
-                    <button class="edit-btn" onclick="editPastLog(${i})">Edit</button> 
-                    <button class="danger-btn" onclick="deleteLog(${i})">X</button>
-                </div>
-            </div>`).join('');
-    }
-}
+            const dashboard = document.getElementById('analyticsDashboard'); dashboard.innerHTML = '';
+            if(db.weight.length > 1) { const wData = db.weight.map(w => ({ x: w.date, y: parseFloat(w.val) })).sort((a,b) => new Date(a.x) - new Date(b.x)); createStockChart(dashboard, "Körpergewicht", wData, db.settings.accent); }
+            db.logs.sort((a,b) => new Date(b.date.split('.').reverse().join('-')) - new Date(a.date.split('.').reverse().join('-')));
+            document.getElementById('historyLogs').innerHTML = db.logs.map((log, i) => `<div class="card flex-between"><div><strong>${log.date}</strong><br><small>${log.exercises.length} Übungen</small></div><div><button class="edit-btn" onclick="editPastLog(${i})">Edit</button> <button class="danger-btn" onclick="deleteLog(${i})">X</button></div></div>`).join('');
+        }
         function createStockChart(container, title, dataPoints, color) {
             const wrap = document.createElement('div'); wrap.className = 'card'; wrap.innerHTML = `<h4 style="margin:0">${title}</h4><div class="chart-wrap"><canvas></canvas></div>`; container.appendChild(wrap);
             const ctx = wrap.querySelector('canvas').getContext('2d');
@@ -358,128 +291,7 @@
         function compress(f) { return new Promise(r => { const reader = new FileReader(); reader.onload = (e) => { const img = new Image(); img.onload = () => { const cv = document.createElement('canvas'); cv.width = 300; cv.height = 300; cv.getContext('2d').drawImage(img,0,0,300,300); r(cv.toDataURL('image/jpeg',0.7)); }; img.src = e.target.result; }; reader.readAsDataURL(f); }); }
         function renderWeight() { db.weight.sort((a,b)=>new Date(b.date)-new Date(a.date)); document.getElementById('wList').innerHTML = db.weight.map(w => `<div class="card flex-between"><span>${w.date}</span><strong>${w.val} kg</strong></div>`).join(''); }
         function saveWeight() { db.weight.push({ date: document.getElementById('wD').value, val: document.getElementById('wV').value }); save(); renderWeight(); }
-function updateSuperAnalysis() {
-    const exId = document.getElementById('exAnSelect').value;
-    if (!exId) {
-        document.getElementById('analysisDetail').style.display = 'none';
-        return;
-    }
-    document.getElementById('analysisDetail').style.display = 'block';
 
-    // 1. Daten filtern (KEINE leeren Werte!)
-    const relevantLogs = db.logs.filter(l => l.exercises.some(e => e.exId == exId))
-        .map(l => {
-            const exEntry = l.exercises.find(e => e.exId == exId);
-            // Filtere Sätze: Nur wo Gewicht > 0 oder Reps > 0
-            const validSets = exEntry.sets.filter(s => (parseFloat(s.w) > 0 || parseFloat(s.r) > 0));
-            if (validSets.length === 0) return null;
-            
-            return {
-                date: l.date,
-                timestamp: new Date(l.date.split('.').reverse().join('-')),
-                maxWeight: Math.max(...validSets.map(s => parseFloat(s.w) || 0)),
-                sets: validSets
-            };
-        })
-        .filter(entry => entry !== null)
-        .sort((a, b) => a.timestamp - b.timestamp);
-
-    // 2. Chart rendern
-    renderSuperChart(relevantLogs);
-
-    // 3. Tabelle & PR rendern
-    renderSuperTable(relevantLogs);
-}
-
-function renderSuperChart(data) {
-    const ctxCont = document.getElementById('exChartCont');
-    ctxCont.innerHTML = '<canvas id="superChart"></canvas>';
-    if (data.length === 0) return;
-
-    new Chart(document.getElementById('superChart'), {
-        type: 'line',
-        data: {
-            labels: data.map(d => d.date),
-            datasets: [{
-                label: 'Max Gewicht (kg)',
-                data: data.map(d => d.maxWeight),
-                borderColor: db.settings.primary,
-                backgroundColor: db.settings.primary + '22',
-                fill: true,
-                tension: 0.3
-            }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-    });
-}
-
-function renderSuperTable(data) {
-    const tbody = document.getElementById('historyTableBody');
-    const sortedData = [...data].sort((a, b) => b.timestamp - a.timestamp);
-    const overallPR = Math.max(...data.map(d => d.maxWeight));
-
-    document.getElementById('prDisplay').innerHTML = `<small>All-Time PR:</small><br><strong>${overallPR} kg</strong>`;
-
-    tbody.innerHTML = sortedData.map(d => `
-        <tr>
-            <td>${d.date}</td>
-            <td>${d.maxWeight} kg ${d.maxWeight === overallPR ? '<span class="pr-badge">PR</span>' : ''}</td>
-            <td>${d.sets.map(s => `${s.w||0}x${s.r}`).join(' | ')}</td>
-        </tr>
-    `).join('');
-}
-
-function renderMuscleHeatmap() {
-    const now = new Date();
-    const muscleStats = {};
-    const groups = ['Brust', 'Rücken', 'Beine', 'Schultern', 'Bizeps', 'Trizeps', 'Bauch', 'Cardio'];
-
-    // Initialisierung
-    groups.forEach(g => muscleStats[g] = Infinity); // Infinity = nie trainiert
-
-    db.logs.forEach(l => {
-        const logDate = new Date(l.date.split('.').reverse().join('-'));
-        const daysAgo = (now - logDate) / (1000 * 60 * 60 * 24);
-        
-        l.exercises.forEach(e => {
-            const exDef = db.ex.find(x => x.id == e.exId);
-            if (exDef && daysAgo < muscleStats[exDef.group]) {
-                muscleStats[exDef.group] = daysAgo;
-            }
-        });
-    });
-
-    const cont = document.getElementById('muscleHeatmap');
-    cont.innerHTML = groups.map(g => {
-        let cls = 'muscle-low';
-        const days = muscleStats[g];
-        if (days <= 7) cls = 'muscle-high';
-        else if (days <= 14) cls = 'muscle-med';
-        
-        return `<div class="muscle-tag ${cls}">${g}<br><small>${days === Infinity ? 'OFF' : Math.floor(days) + 'd'}</small></div>`;
-    }).join('');
-}
-function renderExAnSelect() {
-    const sel = document.getElementById('exAnSelect');
-    if (!sel) return;
-    
-    // Holt alle Übungs-IDs, die jemals in Logs vorkamen
-    const loggedExIds = [...new Set(db.logs.flatMap(l => l.exercises.map(e => e.exId)))];
-    
-    sel.innerHTML = '<option value="">-- Übung wählen --</option>' + 
-        loggedExIds.map(id => {
-            const ex = db.ex.find(e => e.id == id);
-            return ex ? `<option value="${id}">${ex.name}</option>` : '';
-        }).join('');
-}
-        
-
-// Erweitere deine vorhandene renderAnalysis Funktion um diesen Aufruf:
-// function renderAnalysis() { 
-//    ... dein alter code ...
-//    renderMuscleHeatmap(); 
-//    renderExAnSelect(); // Befüllt das Select-Feld mit Übungen aus den Logs
-// }
         window.onload = initApp;
     </script>
 </body>
