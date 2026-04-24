@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TrackyFit 9.3</title>
+    <title>TrackyFit 9.2</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://via.placeholder.com/180/30D158/000000?text=TF">
@@ -59,16 +59,7 @@
         <h3 style="margin-top: 30px;">Verlauf</h3>
         <div id="historyLogs"></div>
     </div>
-<div id="page-stats" class="page">
-    <h1>Statistik</h1>
-    <div class="card">
-        <h3>Übungen</h3>
-        <div id="statsExList"></div>
-    </div>
 
-    <div id="statsDetail"></div>
-</div>
-    
     <div id="page-settings" class="page">
         <h1>Einstellungen</h1>
         <div class="card"><h3>🎨 Theme Designer</h3><label>Primärfarbe</label><input type="color" id="colPrimary" onchange="updateTheme()"><label>Akzentfarbe</label><input type="color" id="colAccent" onchange="updateTheme()"><label>Hintergrundfarbe</label><input type="color" id="colBg" onchange="updateTheme()"></div>
@@ -103,7 +94,6 @@
     <nav class="nav">
         <button class="nav-item" onclick="nav('home')">🏠<br>Home</button>
         <button class="nav-item" onclick="nav('analysis')">📈<br>Analyse</button>
-        <button class="nav-item" onclick="nav('stats')">📊<br>Statistik</button>
         <button class="nav-item" onclick="nav('settings')">⚙️<br>Settings</button>
     </nav>
 
@@ -135,209 +125,9 @@
 
         function nav(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById('page-' + id).classList.add('active');
-            if(id === 'home') checkTemp(); if(id === 'weight') renderWeight(); if(id === 'analysis') renderAnalysis(); if(id === 'ex-lib') renderExLib(); if(id === 'plan-mgmt') renderPlanMgmt(); if(id === 'workout-select') renderPlanChoice(); if(id === 'stats') renderStats();
+            if(id === 'home') checkTemp(); if(id === 'weight') renderWeight(); if(id === 'analysis') renderAnalysis(); if(id === 'ex-lib') renderExLib(); if(id === 'plan-mgmt') renderPlanMgmt(); if(id === 'workout-select') renderPlanChoice();
         }
 
-function renderStats() {
-    const list = document.getElementById('statsExList');
-
-    list.innerHTML = '';
-
-    db.ex.forEach(ex => {
-        const div = document.createElement('div');
-        div.className = 'sort-item';
-        div.innerHTML = `<span>${ex.name}</span><span>→</span>`;
-
-        div.addEventListener('click', () => {
-            showExerciseStats(ex.id);
-        });
-
-        list.appendChild(div);
-    });
-}
-        function showExerciseStats(exId) {
-    const ex = db.ex.find(e => e.id === exId);
-    const container = document.getElementById('statsDetail');
-
-    const logs = db.logs
-        .filter(l => l.exercises.some(e => e.exId === exId))
-        .sort((a,b) => new Date(a.date) - new Date(b.date));
-
-    let html = `
-        <div class="card">
-            <h3>${ex.name} – Verlauf</h3>
-    `;
-
-    if(logs.length === 0) {
-        container.innerHTML = `<div class="card">Keine Daten vorhanden</div>`;
-        return;
-    }
-
-    logs.forEach(log => {
-        const entry = log.exercises.find(e => e.exId === exId);
-
-        html += `
-            <div class="card" style="margin-top:10px; padding:12px;">
-                <strong>📅 ${log.date}</strong>
-                <div style="margin-top:8px;">
-        `;
-
-        entry.sets.forEach((s, i) => {
-            const weight = s.w || '-';
-            const reps = s.r || '-';
-
-            html += `
-                <div style="
-                    display:flex;
-                    justify-content:space-between;
-                    padding:6px 0;
-                    border-bottom:1px solid #2C2C2E;
-                    font-size:14px;
-                ">
-                    <span>Satz ${i + 1}</span>
-                    <span>${weight} kg × ${reps} Wdh</span>
-                </div>
-            `;
-        });
-
-        html += `</div></div>`;
-    });
-
-    html += `</div>`;
-
-    container.innerHTML = html;
-}
-
-    const container = document.getElementById('statsDetail');
-
-    container.innerHTML = `
-        <div class="card">
-            <h3>${ex.name} – Entwicklung</h3>
-
-            <div class="chart-wrap">
-                <canvas id="chartW"></canvas>
-            </div>
-
-            <div class="chart-wrap">
-                <canvas id="chartR"></canvas>
-            </div>
-        </div>
-    `;
-
-    // GRÜNE FARBE
-    const green = '#30D158';
-
-    new Chart(document.getElementById('chartW'), {
-        type: 'line',
-        data: {
-            labels,
-            datasets: [{
-                data: weightData,
-                borderColor: green,
-                fill: false,
-                tension: 0.3
-            }]
-        },
-        options: {
-            plugins: { legend: { display: false } },
-            responsive: true
-        }
-    });
-
-    new Chart(document.getElementById('chartR'), {
-        type: 'line',
-        data: {
-            labels,
-            datasets: [{
-                data: repData,
-                borderColor: green,
-                fill: false,
-                tension: 0.3
-            }]
-        },
-        options: {
-            plugins: { legend: { display: false } },
-            responsive: true
-        }
-    });
-}
-function renderAnalysis() {
-    const dashboard = document.getElementById('analyticsDashboard');
-    dashboard.innerHTML = '';
-
-    // 1. Gewicht (bestehendes Feature bleibt)
-    if(db.weight.length > 1) {
-        const wData = db.weight
-            .map(w => ({ x: w.date, y: parseFloat(w.val) }))
-            .sort((a,b) => new Date(a.x) - new Date(b.x));
-
-        createStockChart(dashboard, "Körpergewicht", wData, '#30D158');
-    }
-
-    // 2. NEU: Übungen aus Logs sammeln
-    const exerciseMap = {};
-
-    db.logs.forEach(log => {
-        log.exercises.forEach(ex => {
-            const exDef = db.ex.find(e => e.id === ex.exId);
-            if(!exDef) return;
-
-            if(exDef.type === 'cardio') return; // nur Kraft + BW optional
-
-            if(!exerciseMap[ex.exId]) {
-                exerciseMap[ex.exId] = {
-                    name: exDef.name,
-                    data: []
-                };
-            }
-
-            // bestes Gewicht pro Training
-            let maxW = 0;
-
-            ex.sets.forEach(s => {
-                if(s.w) maxW = Math.max(maxW, parseFloat(s.w));
-            });
-
-            exerciseMap[ex.exId].data.push({
-                x: log.date,
-                y: maxW
-            });
-        });
-    });
-
-    // 3. Charts rendern
-    Object.values(exerciseMap).forEach(ex => {
-        const sorted = ex.data.sort((a,b) => new Date(a.x) - new Date(b.x));
-
-        createStockChart(
-            dashboard,
-            ex.name + " (Gewicht)",
-            sorted,
-            '#30D158'
-        );
-    });
-
-    // 4. Log Liste bleibt
-    db.logs.sort((a,b) =>
-        new Date(b.date) - new Date(a.date)
-    );
-
-    document.getElementById('historyLogs').innerHTML =
-        db.logs.map((log, i) => `
-            <div class="card flex-between">
-                <div>
-                    <strong>${log.date}</strong><br>
-                    <small>${log.exercises.length} Übungen</small>
-                </div>
-                <div>
-                    <button class="edit-btn" onclick="editPastLog(${i})">Edit</button>
-                    <button class="danger-btn" onclick="deleteLog(${i})">X</button>
-                </div>
-            </div>
-        `).join('');
-}
-
-        
         // --- PLAN MANAGEMENT MIT SORTIERUNG ---
         function renderPlanMgmt() {
             document.getElementById('plPick').innerHTML = db.ex.map(e => `<div style="padding: 5px 0"><input type="checkbox" value="${e.id}" class="p-ck" onchange="syncSortList()" ${tempSelectedExIds.includes(e.id) ? 'checked' : ''}> ${e.name}</div>`).join('');
