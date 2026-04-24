@@ -289,9 +289,43 @@
         function resumeWorkout() { const temp = JSON.parse(localStorage.getItem('activeSession_temp')); if(temp) startWorkoutLogic(temp.title, temp.exercises); }
         function discardTemp() { localStorage.removeItem('activeSession_temp'); checkTemp(); }
         function compress(f) { return new Promise(r => { const reader = new FileReader(); reader.onload = (e) => { const img = new Image(); img.onload = () => { const cv = document.createElement('canvas'); cv.width = 300; cv.height = 300; cv.getContext('2d').drawImage(img,0,0,300,300); r(cv.toDataURL('image/jpeg',0.7)); }; img.src = e.target.result; }; reader.readAsDataURL(f); }); }
-        function renderWeight() { db.weight.sort((a,b)=>new Date(b.date)-new Date(a.date)); document.getElementById('wList').innerHTML = db.weight.map(w => `<div class="card flex-between"><span>${w.date}</span><strong>${w.val} kg</strong></div>`).join(''); }
+        function renderWeight() { db.weight.sort((a,b)=>new Date(b.date)-new Date(a.date)); document.getElementById('wList').innerHTML = db.weight.map((w, i) => 
+    `<div class="card flex-between">
+        <div>
+            <span>${w.date}</span><br>
+            <strong>${w.val} kg</strong>
+        </div>
+        <div>
+            <button class="edit-btn" onclick="editWeight(${i})">Edit</button>
+            <button class="danger-btn" onclick="deleteWeight(${i})">X</button>
+        </div>
+    </div>`
+).join('');
         function saveWeight() { db.weight.push({ date: document.getElementById('wD').value, val: document.getElementById('wV').value }); save(); renderWeight(); }
+function editWeight(index) {
+    const entry = db.weight[index];
 
+    const newDate = prompt("Datum ändern:", entry.date);
+    if (!newDate) return;
+
+    const newVal = prompt("Gewicht (kg) ändern:", entry.val);
+    if (!newVal) return;
+
+    db.weight[index] = {
+        date: newDate,
+        val: newVal
+    };
+
+    save();
+    renderWeight();
+}
+                                 function deleteWeight(index) {
+    if (confirm("Eintrag löschen?")) {
+        db.weight.splice(index, 1);
+        save();
+        renderWeight();
+    }
+}
         window.onload = initApp;
     </script>
 </body>
