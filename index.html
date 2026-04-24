@@ -230,7 +230,81 @@
         }
     });
 }
+function renderAnalysis() {
+    const dashboard = document.getElementById('analyticsDashboard');
+    dashboard.innerHTML = '';
 
+    // 1. Gewicht (bestehendes Feature bleibt)
+    if(db.weight.length > 1) {
+        const wData = db.weight
+            .map(w => ({ x: w.date, y: parseFloat(w.val) }))
+            .sort((a,b) => new Date(a.x) - new Date(b.x));
+
+        createStockChart(dashboard, "Körpergewicht", wData, '#30D158');
+    }
+
+    // 2. NEU: Übungen aus Logs sammeln
+    const exerciseMap = {};
+
+    db.logs.forEach(log => {
+        log.exercises.forEach(ex => {
+            const exDef = db.ex.find(e => e.id === ex.exId);
+            if(!exDef) return;
+
+            if(exDef.type === 'cardio') return; // nur Kraft + BW optional
+
+            if(!exerciseMap[ex.exId]) {
+                exerciseMap[ex.exId] = {
+                    name: exDef.name,
+                    data: []
+                };
+            }
+
+            // bestes Gewicht pro Training
+            let maxW = 0;
+
+            ex.sets.forEach(s => {
+                if(s.w) maxW = Math.max(maxW, parseFloat(s.w));
+            });
+
+            exerciseMap[ex.exId].data.push({
+                x: log.date,
+                y: maxW
+            });
+        });
+    });
+
+    // 3. Charts rendern
+    Object.values(exerciseMap).forEach(ex => {
+        const sorted = ex.data.sort((a,b) => new Date(a.x) - new Date(b.x));
+
+        createStockChart(
+            dashboard,
+            ex.name + " (Gewicht)",
+            sorted,
+            '#30D158'
+        );
+    });
+
+    // 4. Log Liste bleibt
+    db.logs.sort((a,b) =>
+        new Date(b.date) - new Date(a.date)
+    );
+
+    document.getElementById('historyLogs').innerHTML =
+        db.logs.map((log, i) => `
+            <div class="card flex-between">
+                <div>
+                    <strong>${log.date}</strong><br>
+                    <small>${log.exercises.length} Übungen</small>
+                </div>
+                <div>
+                    <button class="edit-btn" onclick="editPastLog(${i})">Edit</button>
+                    <button class="danger-btn" onclick="deleteLog(${i})">X</button>
+                </div>
+            </div>
+        `).join('');
+}
 
         
         // --- PLAN MANAGEMENT MIT SORTIERUNG ---
