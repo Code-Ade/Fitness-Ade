@@ -262,7 +262,7 @@
             if(logs.length === 0) return; const finalData = { date: editingLogIndex !== null ? db.logs[editingLogIndex].date : new Date().toLocaleDateString('de-DE'), exercises: logs };
             if(editingLogIndex !== null) db.logs[editingLogIndex] = finalData; else db.logs.push(finalData); save(); discardTemp(); nav('home');
         }
-        function editPastLog(index) { editingLogIndex = index; const log = db.logs[index]; const ex = log.exercises.map(e => ({ id: e.exId, sets: e.sets, note: e.note })); startWorkoutLogic("Edit: " + log.date, ex); }
+        function editPastLog(index) { editingLogIndex = index; const log = db.logs[index]; const newDate = prompt("Datum ändern (TT.MM.JJJJ)", log.date); if(newDate) log.date = newDate; const ex = log.exercises.map(e => ({ id: e.exId, sets: e.sets, note: e.note })); startWorkoutLogic("Edit: " + log.date, ex); }
         function deleteLog(i) { if(confirm("Löschen?")) { db.logs.splice(i,1); save(); renderAnalysis(); } }
         function autosave() {
             const data = { title: document.getElementById('activeTitle').innerText, exercises: [] };
