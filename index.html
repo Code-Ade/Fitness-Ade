@@ -55,18 +55,20 @@
         <h1>Analyse</h1>
         <button class="main-btn" style="background: var(--accent); color: #fff;" onclick="runAICoach()">🤖 KI Coach fragen</button>
         <div id="aiFeedbackBox" class="ai-box"></div>
+         <!-- ✅ HIER EINFÜGEN -->
+    <div class="card">
+        <label>📊 Anzeige:</label>
+        <select id="chartMode" onchange="renderAnalysis()">
+            <option value="max">Max Gewicht</option>
+            <option value="volume">Trainingsvolumen</option>
+        </select>
+    </div>
         <div id="analyticsDashboard" style="margin-top: 20px;"></div>
         <h3 style="margin-top: 30px;">Verlauf</h3>
         <div id="historyLogs"></div>
     </div>
     
-<div class="card">
-    <label>📊 Anzeige:</label>
-    <select id="chartMode" onchange="renderAnalysis()">
-        <option value="max">Max Gewicht</option>
-        <option value="volume">Trainingsvolumen</option>
-    </select>
-</div>
+
     
     <div id="page-settings" class="page">
         <h1>Einstellungen</h1>
@@ -275,7 +277,7 @@ db.ex.forEach(ex => {
         function createStockChart(container, title, dataPoints, color) {
             const wrap = document.createElement('div'); wrap.className = 'card'; wrap.innerHTML = `<h4 style="margin:0">${title}</h4><div class="chart-wrap"><canvas></canvas></div>`; container.appendChild(wrap);
             const ctx = wrap.querySelector('canvas').getContext('2d');
-            new Chart(ctx, { type: 'line', data: { labels: dataPoints.map(d => d.x), datasets: [{ data: dataPoints.map(d => d.y), borderColor: color + "33", fill: true, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+            new Chart(ctx, { type: 'line', data: { labels: dataPoints.map(d => d.x), datasets: [{ data: dataPoints.map(d => d.y), borderColor: color, backgroundColor: color + "33", fill: true, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
         }
         async function addEx() {
             const n = document.getElementById('exN').value; const g = document.getElementById('exG').value; const t = document.getElementById('exType').value; const f = document.getElementById('exF').files[0];
