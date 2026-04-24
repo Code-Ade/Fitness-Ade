@@ -191,7 +191,17 @@
             document.getElementById('spontSelect').innerHTML = '<option value="">Übung hinzufügen...</option>' + db.ex.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
             exercises.forEach(exObj => renderExCard(exObj)); nav('workout-active');
         }
-        function getLastSession(exId) { const entries = db.logs.filter(l => l.exercises.some(e => e.exId == exId)); return entries.length > 0 ? entries[0].exercises.find(e => e.exId == exId).sets : null; }
+        function getLastSession(exId) {const entries = db.logs
+        .filter(l => l.exercises.some(e => e.exId == exId))
+        .sort((a, b) =>
+            new Date(b.date.split('.').reverse().join('-')) -
+            new Date(a.date.split('.').reverse().join('-'))
+        );
+
+    return entries.length > 0
+        ? entries[0].exercises.find(e => e.exId == exId).sets
+        : null;
+}
         function renderExCard(exObj) {
             const exBase = db.ex.find(e => e.id == exObj.id); if(!exBase) return;
             const lastSets = getLastSession(exObj.id); const div = document.createElement('div'); div.className = 'card workout-card'; div.dataset.id = exObj.id;
