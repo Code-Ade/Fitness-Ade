@@ -3,72 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TrackyFit 9.2.3</title>
+    <title>TrackyFit 9.2.4</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://via.placeholder.com/180/30D158/000000?text=TF">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --primary: #30D158; --bg: #000000; --card: #1C1C1E; --text: #FFFFFF; --secondary: #8E8E93; --danger: #FF453A; --accent: #0A84FF; --warning: #FF9F0A; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: -apple-system, sans-serif; }
         body { background: var(--bg); color: var(--text); margin: 0; padding-top: env(safe-area-inset-top); padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+        
         .page { display: none; padding: 20px; animation: fadeIn 0.2s ease; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .card { background: var(--card); padding: 18px; border-radius: 16px; margin-bottom: 15px; border: 1px solid #2C2C2E; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .main-btn { background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: bold; font-size: 16px; margin-bottom: 10px; cursor: pointer; }
+        
+        .card { background: var(--card); padding: 18px; border-radius: 16px; margin-bottom: 15px; border: 1px solid #2C2C2E; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        .main-btn { background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: bold; font-size: 16px; margin-bottom: 10px; cursor: pointer; transition: transform 0.1s; }
+        .main-btn:active { transform: scale(0.98); }
         .sec-btn { background: #2C2C2E; color: #FFF; border: none; padding: 12px; border-radius: 10px; width: 100%; margin-top: 5px; cursor: pointer; }
         .danger-btn { background: var(--danger); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-size: 12px; }
         .edit-btn { background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-size: 12px; }
+        
         input, select, textarea { width: 100%; background: #2C2C2E; border: 1px solid #3A3A3C; padding: 12px; border-radius: 10px; color: #fff; margin: 8px 0; font-size: 16px; }
-        .nav { position: fixed; bottom: 0; width: 100%; background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 15px 0 calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid #3A3A3C; z-index: 999; }
-        .nav-item { background: none; border: none; color: var(--secondary); font-size: 11px; display: flex; flex-direction: column; align-items: center; }
+        .nav { position: fixed; bottom: 0; width: 100%; background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 15px 0 calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid #3A3A3C; z-index: 999; }
+        .nav-item { background: none; border: none; color: var(--secondary); font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .nav-item.active { color: var(--primary); }
-        .set-row { display: grid; grid-template-columns: 40px 1fr 1fr 40px; gap: 8px; align-items: center; margin-bottom: 4px; }
-        .cardio-row { display: grid; grid-template-columns: 1fr 1fr 1fr 40px; gap: 8px; align-items: center; margin-bottom: 4px; }
-        .last-val { font-size: 11px; color: var(--primary); display: block; margin-bottom: 12px; margin-top: -2px; padding-left: 48px; }
-        .ai-box { background: rgba(10, 132, 255, 0.1); border: 1px solid var(--accent); padding: 15px; border-radius: 12px; margin-top: 15px; font-size: 14px; display: none; }
-        .sort-item { display: flex; align-items: center; justify-content: space-between; background: #2C2C2E; padding: 8px 12px; border-radius: 8px; margin-bottom: 5px; font-size: 14px; }
-        .chart-wrap { height: 200px; width: 100%; margin-top: 10px; }
+        
+        .set-row { display: grid; grid-template-columns: 40px 1fr 1fr 40px; gap: 8px; align-items: center; margin-bottom: 6px; }
+        .last-val { font-size: 11px; color: var(--primary); display: block; margin-bottom: 12px; margin-top: -4px; padding-left: 48px; opacity: 0.9; }
+        .ai-box { background: rgba(10, 132, 255, 0.1); border: 1px solid var(--accent); padding: 15px; border-radius: 12px; margin-bottom: 20px; font-size: 14px; display: none; line-height: 1.4; }
+        
+        .img-preview-log { width: 100%; height: 150px; border-radius: 10px; object-fit: cover; background: #111; margin-top: 10px; display: none; border: 1px solid #333; }
+        .img-preview-log.visible { display: block; }
+        .chart-wrap { height: 220px; width: 100%; margin: 15px 0; }
+        .sort-item { display: flex; align-items: center; justify-content: space-between; background: #2C2C2E; padding: 10px; border-radius: 10px; margin-bottom: 8px; }
     </style>
 </head>
 <body>
 
     <div id="page-home" class="page active">
-        <h1 style="color: var(--primary)">TrackyFit <small style="color: var(--secondary); font-size: 14px;">9.2.3</small></h1>
-        <div id="resume-banner" class="card" style="display:none; border-color: var(--accent);"><p style="margin:0 0 10px 0">⚠️ Offenes Training gefunden!</p><button class="main-btn" style="background: var(--accent)" onclick="resumeWorkout()">Fortsetzen</button><button class="sec-btn" onclick="discardTemp()">Verwerfen</button></div>
+        <h1 style="color: var(--primary); letter-spacing: -1px;">TrackyFit <small style="color: var(--secondary); font-size: 14px; font-weight: normal;">9.2.4</small></h1>
+        <div id="resume-banner" class="card" style="display:none; border-color: var(--accent);"><p style="margin:0 0 10px 0">⚡ Training läuft noch!</p><button class="main-btn" style="background: var(--accent)" onclick="resumeWorkout()">Fortsetzen</button><button class="sec-btn" onclick="discardTemp()">Verwerfen</button></div>
         <button class="main-btn" onclick="nav('workout-select')">▶️ Training starten</button>
-        <div class="card"><h3>Verwaltung</h3><button class="sec-btn" onclick="nav('ex-lib')">💪 Übungen & Fotos</button><button class="sec-btn" onclick="nav('plan-mgmt')">📋 Trainingspläne</button><button class="sec-btn" onclick="nav('weight')">⚖️ Körpergewicht</button></div>
+        <div class="card">
+            <h3 style="margin-top:0">Verwaltung</h3>
+            <button class="sec-btn" onclick="nav('ex-lib')">💪 Übungen & Mediathek</button>
+            <button class="sec-btn" onclick="nav('plan-mgmt')">📋 Trainingspläne</button>
+            <button class="sec-btn" onclick="nav('weight')">⚖️ Körpergewicht</button>
+        </div>
     </div>
 
     <div id="page-workout-active" class="page">
         <h2 id="activeTitle">Workout</h2>
-        <div class="card"><label style="font-size: 12px; color: var(--secondary)">Trainingsdatum:</label><input type="date" id="workoutDateInput"></div>
+        <div class="card">
+            <label style="font-size: 12px; color: var(--secondary)">Datum anpassen:</label>
+            <input type="date" id="workoutDateInput">
+        </div>
         <div id="activeContent"></div>
-        <div class="card" style="border-style: dashed; border-color: var(--secondary);"><select id="spontSelect"></select><button class="sec-btn" onclick="addSpontEx()">+ Hinzufügen</button></div>
-        <button class="main-btn" onclick="finishWorkout()" style="margin-top: 20px;">✅ Training beenden</button>
+        <div class="card" style="border-style: dashed; border-color: var(--secondary);">
+            <select id="spontSelect"></select>
+            <button class="sec-btn" onclick="addSpontEx()">+ Übung hinzufügen</button>
+        </div>
+        <button class="main-btn" onclick="finishWorkout()" style="margin-top: 20px; box-shadow: 0 0 20px rgba(48, 209, 88, 0.3);">✅ Training beenden</button>
     </div>
 
     <div id="page-analysis" class="page">
         <h1>Analyse</h1>
-        <button class="main-btn" style="background: var(--accent); color: #fff;" onclick="runAICoach()">🤖 KI Coach fragen</button>
+        <button class="main-btn" style="background: var(--accent); color: #fff;" onclick="runAICoach()">🤖 KI Coach Analyse</button>
         <div id="aiFeedbackBox" class="ai-box"></div>
-        <div class="card" style="margin-top:20px">
-            <h3>Übungs-Fortschritt</h3>
+        
+        <div class="card">
+            <h3 style="margin-top:0">Körpergewicht</h3>
+            <div id="weightChartContainer" class="chart-wrap"></div>
+        </div>
+
+        <div class="card">
+            <h3 style="margin-top:0">Übungs-Fortschritt</h3>
             <select id="exAnalysisSelect" onchange="renderExProgressChart()"></select>
             <div id="exChartContainer" class="chart-wrap"></div>
         </div>
-        <div id="analyticsDashboard"></div>
-        <h3 style="margin-top: 30px;">Verlauf</h3>
+
+        <h3 style="margin-top: 30px;">Letzte Trainings</h3>
         <div id="historyLogs"></div>
     </div>
 
     <div id="page-weight" class="page">
         <button class="sec-btn" onclick="nav('home')">← Zurück</button>
-        <h2 id="weightPageTitle">Körpergewicht</h2>
+        <h2 id="weightPageTitle">Gewicht tracken</h2>
         <div class="card">
             <input type="date" id="wD">
-            <input type="number" id="wV" step="0.1" placeholder="kg">
+            <input type="number" id="wV" step="0.1" placeholder="Gewicht in kg">
             <button class="main-btn" id="weightSaveBtn" onclick="saveWeight()">Speichern</button>
             <button class="sec-btn" id="weightCancelBtn" style="display:none" onclick="resetWeightForm()">Abbrechen</button>
         </div>
@@ -77,13 +100,25 @@
 
     <div id="page-settings" class="page">
         <h1>Einstellungen</h1>
-        <div class="card"><h3>🎨 Theme Designer</h3><label>Primärfarbe</label><input type="color" id="colPrimary" onchange="updateTheme()"><label>Akzentfarbe</label><input type="color" id="colAccent" onchange="updateTheme()"><label>Hintergrund</label><input type="color" id="colBg" onchange="updateTheme()"></div>
-        <div class="card"><h3>💾 Backup & Import</h3><button class="main-btn" onclick="exportData()">📤 Backup speichern (JSON)</button><hr style="border:0; border-top:1px solid #333; margin:15px 0;"><label>Backup laden:</label><input type="file" id="importFile" accept=".json"><button class="sec-btn" style="color: var(--danger)" onclick="importData()">📥 Daten überschreiben</button></div>
+        <div class="card">
+            <h3>🎨 Theme & Design</h3>
+            <label>Primärfarbe</label><input type="color" id="colPrimary" onchange="updateTheme()">
+            <label>Akzentfarbe</label><input type="color" id="colAccent" onchange="updateTheme()">
+            <label>Hintergrund</label><input type="color" id="colBg" onchange="updateTheme()">
+        </div>
+        <div class="card">
+            <h3>💾 Daten Management</h3>
+            <button class="main-btn" onclick="exportData()">📤 Backup exportieren (JSON)</button>
+            <hr style="border:0; border-top:1px solid #333; margin:15px 0;">
+            <label>Backup importieren:</label>
+            <input type="file" id="importFile" accept=".json">
+            <button class="sec-btn" style="color: var(--danger)" onclick="importData()">📥 Daten wiederherstellen</button>
+        </div>
     </div>
 
-    <div id="page-ex-lib" class="page"><button class="sec-btn" onclick="nav('home')">← Zurück</button><h2>Übungen</h2><div class="card"><input id="exN" placeholder="Name"><select id="exType"><option value="kraft">Kraft</option><option value="bw">Bodyweight</option><option value="cardio">Cardio</option></select><button class="main-btn" onclick="addEx()">Speichern</button></div><div id="exL"></div></div>
-    <div id="page-plan-mgmt" class="page"><button class="sec-btn" onclick="nav('home')">← Zurück</button><h2>Pläne</h2><div class="card"><input id="plN" placeholder="Plan Name"><div id="plPick" style="max-height:150px; overflow-y:auto; margin-bottom:10px;"></div><p style="font-size:12px; color:var(--secondary)">Reihenfolge:</p><div id="plSortArea"></div><button class="main-btn" onclick="savePl()">Speichern</button></div><div id="plL"></div></div>
-    <div id="page-workout-select" class="page"><button class="sec-btn" onclick="nav('home')">← Zurück</button><h2>Wähle Plan</h2><button class="main-btn" style="background:var(--warning); color:#000" onclick="initFreeWorkout()">⚡ Freies Training</button><div id="selL"></div></div>
+    <div id="page-ex-lib" class="page"><button class="sec-btn" onclick="nav('home')">← Zurück</button><h2>Übungen</h2><div class="card"><input id="exN" placeholder="Name der Übung"><select id="exType"><option value="kraft">Kraft (Gewicht + Reps)</option><option value="bw">Eigengewicht (Reps)</option><option value="cardio">Cardio (Zeit + Puls)</option></select><button class="main-btn" onclick="addEx()">Übung hinzufügen</button></div><div id="exL"></div></div>
+    <div id="page-plan-mgmt" class="page"><button class="sec-btn" onclick="nav('home')">← Zurück</button><h2>Pläne editieren</h2><div class="card"><input id="plN" placeholder="Plan Name"><div id="plPick" style="max-height:150px; overflow-y:auto; margin-bottom:10px; background:#111; padding:10px; border-radius:8px;"></div><p style="font-size:12px; color:var(--secondary)">Reihenfolge (↑/↓):</p><div id="plSortArea"></div><button class="main-btn" onclick="savePl()">Plan speichern</button></div><div id="plL"></div></div>
+    <div id="page-workout-select" class="page"><button class="sec-btn" onclick="nav('home')">← Zurück</button><h2>Training wählen</h2><button class="main-btn" style="background:var(--warning); color:#000" onclick="initFreeWorkout()">⚡ Freies Training</button><div id="selL"></div></div>
 
     <nav class="nav">
         <button class="nav-item" onclick="nav('home')">🏠<br>Home</button>
@@ -96,19 +131,40 @@
         let editingLogIndex = null; let editingWeightIndex = null; let editingPlanId = null; let tempSelectedExIds = [];
 
         function save() { localStorage.setItem('trackyfit_db', JSON.stringify(db)); }
-        function applyTheme() { document.documentElement.style.setProperty('--primary', db.settings.primary); document.documentElement.style.setProperty('--accent', db.settings.accent); document.documentElement.style.setProperty('--bg', db.settings.bg); document.getElementById('colPrimary').value = db.settings.primary; document.getElementById('colAccent').value = db.settings.accent; document.getElementById('colBg').value = db.settings.bg; }
-        function updateTheme() { db.settings.primary = document.getElementById('colPrimary').value; db.settings.accent = document.getElementById('colAccent').value; db.settings.bg = document.getElementById('colBg').value; applyTheme(); save(); }
         
-        function nav(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById('page-' + id).classList.add('active');
-            if(id === 'home') checkTemp(); if(id === 'weight') renderWeight(); if(id === 'analysis') renderAnalysis(); if(id === 'ex-lib') renderExLib(); if(id === 'plan-mgmt') renderPlanMgmt(); if(id === 'workout-select') renderPlanChoice();
+        function applyTheme() { 
+            document.documentElement.style.setProperty('--primary', db.settings.primary); 
+            document.documentElement.style.setProperty('--accent', db.settings.accent); 
+            document.documentElement.style.setProperty('--bg', db.settings.bg); 
+            document.getElementById('colPrimary').value = db.settings.primary;
+            document.getElementById('colAccent').value = db.settings.accent;
+            document.getElementById('colBg').value = db.settings.bg;
         }
 
-        // --- HILFSFUNKTIONEN DATUM ---
+        function updateTheme() { 
+            db.settings.primary = document.getElementById('colPrimary').value; 
+            db.settings.accent = document.getElementById('colAccent').value; 
+            db.settings.bg = document.getElementById('colBg').value; 
+            applyTheme(); save(); 
+        }
+
+        function nav(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + id).classList.add('active');
+            if(id === 'home') checkTemp();
+            if(id === 'analysis') renderAnalysis();
+            if(id === 'weight') renderWeight();
+            if(id === 'plan-mgmt') renderPlanMgmt();
+            if(id === 'workout-select') renderPlanChoice();
+            if(id === 'ex-lib') renderExLib();
+            window.scrollTo(0,0);
+        }
+
+        // --- DATUM HELFER ---
         function parseDeDate(s) { const p = s.split('.'); return new Date(p[2], p[1]-1, p[0]); }
         function formatDateDe(dStr) { const d = new Date(dStr); return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`; }
 
-        // --- HISTORIE: LADE TATSÄCHLICH LETZTE SESSION ---
+        // --- LAST SESSION LOGIC ---
         function getLastSessionData(exId) {
             if (db.logs.length === 0) return null;
             const sorted = [...db.logs].sort((a,b) => parseDeDate(b.date) - parseDeDate(a.date));
@@ -116,47 +172,173 @@
             return lastLog ? lastLog.exercises.find(e => e.exId == exId).sets : null;
         }
 
-        // --- WORKOUT LOGIK ---
-        function startWorkoutLogic(title, exercises, dateStr = null) {
-            document.getElementById('activeTitle').innerText = title;
-            document.getElementById('workoutDateInput').value = dateStr || new Date().toISOString().split('T')[0];
-            const cont = document.getElementById('activeContent'); cont.innerHTML = '';
-            document.getElementById('spontSelect').innerHTML = '<option value="">+ Übung</option>' + db.ex.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
-            exercises.forEach(ex => renderExCard(ex)); nav('workout-active');
+        // --- WORKOUT & IMAGE UPLOAD ---
+        async function handleLogImage(input) {
+            const file = input.files[0]; if(!file) return;
+            const compressed = await compressImage(file);
+            const preview = input.parentElement.querySelector('.img-preview-log');
+            preview.src = compressed;
+            preview.classList.add('visible');
+            autosave();
         }
 
         function renderExCard(exObj) {
             const exBase = db.ex.find(e => e.id == exObj.id); if(!exBase) return;
             const lastSets = getLastSessionData(exObj.id);
             const div = document.createElement('div'); div.className = 'card workout-card'; div.dataset.id = exObj.id;
+            
             let sHtml = `<div class="s-wrap">`;
             exObj.sets.forEach((s, i) => {
                 const lastData = (lastSets && lastSets[i]) ? lastSets[i] : null; let lStr = '-';
-                if(lastData) lStr = exBase.type==='kraft' ? `${lastData.w}kg x ${lastData.r}` : (exBase.type==='bw' ? `${lastData.r} Reps` : `${lastData.min}m / ${lastData.hr}bpm`);
-                if(exBase.type === 'cardio') sHtml += `<div class="cardio-row"><input type="number" value="${s.min||''}" placeholder="Min" class="min-in"><input type="number" value="${s.hr||''}" placeholder="BPM" class="hr-in"><button class="danger-btn" onclick="this.parentElement.remove()">X</button></div><span class="last-val">Zuletzt: ${lStr}</span>`;
-                else sHtml += `<div class="set-row"><span>S${i+1}</span><input type="number" value="${s.w||''}" placeholder="kg" class="w-in" ${exBase.type==='bw'?'style="display:none"':''}><input type="number" value="${s.r||''}" placeholder="R" class="r-in"><button class="danger-btn" onclick="this.parentElement.remove()">X</button></div><span class="last-val">Zuletzt: ${lStr}</span>`;
+                if(lastData) lStr = exBase.type==='kraft' ? `${lastData.w}kg x ${lastData.r}` : (exBase.type==='bw' ? `${lastData.r} Reps` : `${lastData.min}m`);
+                
+                if(exBase.type === 'cardio') {
+                    sHtml += `<div class="cardio-row" style="display:grid; grid-template-columns: 1fr 1fr 40px; gap:8px; margin-bottom:6px;">
+                        <input type="number" value="${s.min||''}" placeholder="Min" class="min-in" oninput="autosave()">
+                        <input type="number" value="${s.hr||''}" placeholder="BPM" class="hr-in" oninput="autosave()">
+                        <button class="danger-btn" onclick="this.parentElement.remove(); autosave();">X</button>
+                    </div><span class="last-val">Zuletzt: ${lStr}</span>`;
+                } else {
+                    sHtml += `<div class="set-row">
+                        <span>S${i+1}</span>
+                        <input type="number" value="${s.w||''}" placeholder="kg" class="w-in" ${exBase.type==='bw'?'style="display:none"':''} oninput="autosave()">
+                        <input type="number" value="${s.r||''}" placeholder="R" class="r-in" oninput="autosave()">
+                        <button class="danger-btn" onclick="this.parentElement.remove(); autosave();">X</button>
+                    </div><span class="last-val">Zuletzt: ${lStr}</span>`;
+                }
             });
-            div.innerHTML = `<strong>${exBase.name}</strong>${sHtml}</div><button class="sec-btn" onclick="addSetUI(this, '${exBase.type}')">+ Satz</button><textarea class="n-in" placeholder="Notiz...">${exObj.note||''}</textarea>`;
+
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:15px;">
+                    <strong style="font-size:18px">${exBase.name}</strong>
+                    <label style="background:var(--accent); color:white; padding:6px 10px; border-radius:8px; font-size:12px; cursor:pointer;">
+                        📷 Foto <input type="file" accept="image/*" style="display:none" onchange="handleLogImage(this)">
+                    </label>
+                </div>
+                ${sHtml}
+                </div>
+                <img src="${exObj.img || ''}" class="img-preview-log ${exObj.img ? 'visible' : ''}">
+                <button class="sec-btn" onclick="addSetUI(this, '${exBase.type}')">+ Satz hinzufügen</button>
+                <textarea class="n-in" placeholder="Notiz..." oninput="autosave()">${exObj.note||''}</textarea>
+            `;
             document.getElementById('activeContent').appendChild(div);
         }
 
         function finishWorkout() {
             const date = formatDateDe(document.getElementById('workoutDateInput').value);
-            const logs = []; document.querySelectorAll('.workout-card').forEach(card => {
-                const sets = []; card.querySelectorAll('.set-row, .cardio-row').forEach(row => { sets.push({ w: row.querySelector('.w-in')?.value||'', r: row.querySelector('.r-in')?.value||'', min: row.querySelector('.min-in')?.value||'', hr: row.querySelector('.hr-in')?.value||'' }); });
-                logs.push({ exId: card.dataset.id, sets, note: card.querySelector('.n-in').value });
+            const logs = []; 
+            document.querySelectorAll('.workout-card').forEach(card => {
+                const sets = []; 
+                card.querySelectorAll('.set-row, .cardio-row').forEach(row => {
+                    sets.push({ 
+                        w: row.querySelector('.w-in')?.value || '', 
+                        r: row.querySelector('.r-in')?.value || '', 
+                        min: row.querySelector('.min-in')?.value || '', 
+                        hr: row.querySelector('.hr-in')?.value || '' 
+                    });
+                });
+                const imgSrc = card.querySelector('.img-preview-log').src;
+                logs.push({ exId: card.dataset.id, sets, note: card.querySelector('.n-in').value, img: imgSrc.startsWith('data') ? imgSrc : null });
             });
             const entry = { date, exercises: logs };
             if(editingLogIndex !== null) db.logs[editingLogIndex] = entry; else db.logs.push(entry);
             save(); discardTemp(); nav('home');
         }
 
-        function editPastLog(idx) { editingLogIndex = idx; const log = db.logs[idx]; startWorkoutLogic("Bearbeiten", log.exercises.map(e=>({id:e.exId, sets:e.sets, note:e.note})), log.date.split('.').reverse().join('-')); }
+        // --- ANALYSE & CHARTS ---
+        function renderAnalysis() {
+            // Gewichtschart
+            const wCtx = document.getElementById('weightChartContainer');
+            wCtx.innerHTML = '<canvas id="weightChart"></canvas>';
+            if(db.weight.length > 1) {
+                const sortedW = [...db.weight].sort((a,b) => new Date(a.date) - new Date(b.date));
+                new Chart(document.getElementById('weightChart'), {
+                    type: 'line',
+                    data: { labels: sortedW.map(w => formatDateDe(w.date)), datasets: [{ label: 'kg', data: sortedW.map(w => w.val), borderColor: db.settings.accent, tension: 0.3, fill: true, backgroundColor: 'rgba(10, 132, 255, 0.1)' }] },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                });
+            } else { wCtx.innerHTML = '<p style="text-align:center; color:var(--secondary); padding-top:80px;">Nicht genug Daten für Grafik</p>'; }
 
-        // --- GEWICHT ---
+            // Übungsauswahl für Fortschritt
+            const select = document.getElementById('exAnalysisSelect');
+            const uniqueExIds = [...new Set(db.logs.flatMap(l => l.exercises.map(e => e.exId)))];
+            select.innerHTML = '<option value="">Übung wählen...</option>' + uniqueExIds.map(id => `<option value="${id}">${db.ex.find(e=>e.id==id)?.name || '?'}</option>`).join('');
+            
+            // Trainings-Historie
+            db.logs.sort((a,b) => parseDeDate(b.date) - parseDeDate(a.date));
+            document.getElementById('historyLogs').innerHTML = db.logs.map((l, i) => `
+                <div class="card flex-between" style="display:flex; justify-content:space-between; align-items:center;">
+                    <span><b>${l.date}</b> - ${l.exercises.length} Übungen</span>
+                    <button class="edit-btn" onclick="editPastLog(${i})">Edit</button>
+                </div>`).join('');
+        }
+
+        function renderExProgressChart() {
+            const exId = document.getElementById('exAnalysisSelect').value; if(!exId) return;
+            const data = db.logs.filter(l => l.exercises.some(e => e.exId == exId))
+                .map(l => ({ x: l.date, y: Math.max(...l.exercises.find(e => e.exId == exId).sets.map(s => parseFloat(s.w)||0)) }))
+                .sort((a,b)=>parseDeDate(a.x)-parseDeDate(b.x));
+            const ctx = document.getElementById('exChartContainer'); ctx.innerHTML = '<canvas id="exChart"></canvas>';
+            new Chart(document.getElementById('exChart'), { 
+                type: 'line', 
+                data: { labels: data.map(d=>d.x), datasets: [{ label: 'Max kg', data: data.map(d=>d.y), borderColor: db.settings.primary, tension: 0.3 }] },
+                options: { responsive: true, maintainAspectRatio: false } 
+            });
+        }
+
+        // --- SONSTIGE FUNKTIONEN ---
+        function runAICoach() {
+            const box = document.getElementById('aiFeedbackBox'); box.style.display = 'block';
+            if(db.logs.length < 2) { box.innerHTML = "🤖 <b>KI Coach:</b> Trainiere noch ein paar Mal, damit ich deine Progression analysieren kann!"; return; }
+            box.innerHTML = "🤖 <b>KI Coach:</b> Deine Frequenz ist top! Im letzten Training konntest du dich bei " + (db.ex.find(e => e.id == db.logs[0].exercises[0].exId)?.name || "einer Übung") + " steigern. Behalte das Volumen bei!";
+        }
+
+        function compressImage(file) {
+            return new Promise(resolve => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 600; let width = img.width; let height = img.height;
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                        canvas.width = width; canvas.height = height;
+                        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.6));
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function autosave() {
+            const data = { title: document.getElementById('activeTitle').innerText, date: document.getElementById('workoutDateInput').value, exercises: [] };
+            document.querySelectorAll('.workout-card').forEach(card => {
+                const sets = []; card.querySelectorAll('.set-row, .cardio-row').forEach(row => {
+                    sets.push({ w: row.querySelector('.w-in')?.value||'', r: row.querySelector('.r-in')?.value||'', min: row.querySelector('.min-in')?.value||'', hr: row.querySelector('.hr-in')?.value||'' });
+                });
+                data.exercises.push({ id: card.dataset.id, sets, note: card.querySelector('.n-in').value, img: card.querySelector('.img-preview-log').src });
+            });
+            localStorage.setItem('activeSession_temp', JSON.stringify(data));
+        }
+
+        // --- BACKUP & IMPORT ---
+        function exportData() {
+            const blob = new Blob([JSON.stringify(db)], {type:'application/json'});
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+            a.download = `trackyfit_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
+        function importData() {
+            const f = document.getElementById('importFile').files[0]; if(!f) return;
+            const r = new FileReader(); r.onload=(e)=>{ db=JSON.parse(e.target.result); save(); location.reload(); }; r.readAsText(f);
+        }
+
+        // --- BOILERPLATE 9.2 (Weight, Plans, Ex) ---
         function renderWeight() {
             db.weight.sort((a,b)=>new Date(b.date)-new Date(a.date));
-            document.getElementById('wList').innerHTML = db.weight.map((w,i)=>`<div class="card flex-between"><span>${formatDateDe(w.date)}: <b>${w.val}kg</b></span><div><button class="edit-btn" onclick="editWeight(${i})">Edit</button><button class="danger-btn" onclick="deleteWeight(${i})">X</button></div></div>`).join('');
+            document.getElementById('wList').innerHTML = db.weight.map((w,i)=>`<div class="card" style="display:flex; justify-content:space-between; align-items:center;"><span><b>${formatDateDe(w.date)}</b>: ${w.val}kg</span><div><button class="edit-btn" onclick="editWeight(${i})">Edit</button> <button class="danger-btn" onclick="deleteWeight(${i})">X</button></div></div>`).join('');
         }
         function saveWeight() {
             const d = document.getElementById('wD').value, v = document.getElementById('wV').value; if(!d || !v) return;
@@ -167,35 +349,30 @@
         function resetWeightForm() { editingWeightIndex=null; document.getElementById('wD').value=''; document.getElementById('wV').value=''; document.getElementById('weightCancelBtn').style.display='none'; }
         function deleteWeight(i) { if(confirm("Löschen?")) { db.weight.splice(i,1); save(); renderWeight(); } }
 
-        // --- ANALYSE & KI COACH ---
-        function runAICoach() {
-            const box = document.getElementById('aiFeedbackBox'); box.style.display = 'block';
-            if(db.logs.length < 2) { box.innerHTML = "🤖 <b>Coach:</b> Mehr Daten nötig!"; return; }
-            box.innerHTML = "🤖 <b>Coach:</b> Du hast in den letzten Sessions gut trainiert. Achte beim Bankdrücken auf die Steigerung!";
-        }
-        function renderAnalysis() {
-            const select = document.getElementById('exAnalysisSelect');
-            const uniqueExIds = [...new Set(db.logs.flatMap(l => l.exercises.map(e => e.exId)))];
-            select.innerHTML = '<option value="">Übung wählen...</option>' + uniqueExIds.map(id => `<option value="${id}">${db.ex.find(e=>e.id==id)?.name || '?'}</option>`).join('');
-            db.logs.sort((a,b) => parseDeDate(b.date) - parseDeDate(a.date));
-            document.getElementById('historyLogs').innerHTML = db.logs.map((l, i) => `<div class="card flex-between"><span>${l.date}</span><button class="edit-btn" onclick="editPastLog(${i})">Edit</button></div>`).join('');
-        }
-        function renderExProgressChart() {
-            const exId = document.getElementById('exAnalysisSelect').value; if(!exId) return;
-            const data = db.logs.filter(l => l.exercises.some(e => e.exId == exId)).map(l => ({ x: l.date, y: Math.max(...l.exercises.find(e => e.exId == exId).sets.map(s => parseFloat(s.w)||0)) })).sort((a,b)=>parseDeDate(a.x)-parseDeDate(b.x));
-            const ctx = document.getElementById('exChartContainer'); ctx.innerHTML = '<canvas id="exChart"></canvas>';
-            new Chart(document.getElementById('exChart'), { type: 'line', data: { labels: data.map(d=>d.x), datasets: [{ label: 'Max kg', data: data.map(d=>d.y), borderColor: db.settings.primary }] }, options: { responsive: true, maintainAspectRatio: false } });
+        function startWorkoutLogic(title, exercises, dateStr = null) {
+            document.getElementById('activeTitle').innerText = title;
+            document.getElementById('workoutDateInput').value = dateStr || new Date().toISOString().split('T')[0];
+            const cont = document.getElementById('activeContent'); cont.innerHTML = '';
+            document.getElementById('spontSelect').innerHTML = '<option value="">Übung schnell wählen...</option>' + db.ex.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+            exercises.forEach(ex => renderExCard(ex)); nav('workout-active');
         }
 
-        // --- BACKUP & IMPORT ---
-        function exportData() { const blob = new Blob([JSON.stringify(db)], {type:'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download='trackyfit_backup.json'; a.click(); }
-        function importData() { const f = document.getElementById('importFile').files[0]; if(!f) return; const r = new FileReader(); r.onload=(e)=>{ db=JSON.parse(e.target.result); save(); location.reload(); }; r.readAsText(f); }
-
-        // --- PLAN & EX MANAGEMENT (9.2) ---
+        function initNewWorkout(id) { const p = db.plans.find(x=>x.id==id); startWorkoutLogic(p.name, p.exIds.map(id=>({id, sets:db.ex.find(e=>e.id==id).type==='kraft'?[{w:'',r:'12'},{w:'',r:'10'},{w:'',r:'8'}]:[{r:'12'},{r:'12'},{r:'12'}], note:'', img:'' }))); }
+        function initFreeWorkout() { startWorkoutLogic("Freies Training", []); }
+        function addSpontEx() { const id = document.getElementById('spontSelect').value; if(id) renderExCard({id, sets:[{w:'',r:'10'}], note:'', img:''}); }
+        function addSetUI(btn, type) { btn.parentElement.querySelector('.s-wrap').insertAdjacentHTML('beforeend', `<div class="set-row"><span>S+</span><input type="number" placeholder="kg" class="w-in" ${type==='bw'?'style="display:none"':''}><input type="number" placeholder="R" class="r-in"></div><span class="last-val">-</span>`); autosave(); }
+        function editPastLog(idx) { editingLogIndex = idx; const log = db.logs[idx]; startWorkoutLogic("Edit: " + log.date, log.exercises.map(e=>({id:e.exId, sets:e.sets, note:e.note, img:e.img})), log.date.split('.').reverse().join('-')); }
+        
+        function renderPlanChoice() { document.getElementById('selL').innerHTML = db.plans.map(p => `<button class="main-btn" onclick="initNewWorkout('${p.id}')">${p.name}</button>`).join(''); }
+        function checkTemp() { const t = localStorage.getItem('activeSession_temp'); document.getElementById('resume-banner').style.display = t ? 'block' : 'none'; }
+        function discardTemp() { localStorage.removeItem('activeSession_temp'); checkTemp(); }
+        function resumeWorkout() { const t = JSON.parse(localStorage.getItem('activeSession_temp')); if(t) startWorkoutLogic(t.title, t.exercises, t.date); }
+        function addEx() { const n = document.getElementById('exN').value; if(n) db.ex.push({id:Date.now().toString(), name:n, type:document.getElementById('exType').value}); save(); renderExLib(); }
+        function renderExLib() { document.getElementById('exL').innerHTML = db.ex.map(e => `<div class="card flex-between" style="display:flex; justify-content:space-between; align-items:center;"><span>${e.name}</span><button class="danger-btn" onclick="db.ex=db.ex.filter(x=>x.id!='${e.id}');save();renderExLib()">X</button></div>`).join(''); }
         function renderPlanMgmt() {
             document.getElementById('plPick').innerHTML = db.ex.map(e => `<div><input type="checkbox" value="${e.id}" class="p-ck" onchange="syncSort()" ${tempSelectedExIds.includes(e.id)?'checked':''}> ${e.name}</div>`).join('');
             renderSortList();
-            document.getElementById('plL').innerHTML = db.plans.map(p => `<div class="card flex-between"><span>${p.name}</span><button onclick="editPl('${p.id}')">Edit</button></div>`).join('');
+            document.getElementById('plL').innerHTML = db.plans.map(p => `<div class="card flex-between" style="display:flex; justify-content:space-between; align-items:center;"><span>${p.name}</span><button class="edit-btn" onclick="editPl('${p.id}')">Edit</button></div>`).join('');
         }
         function syncSort() {
             const checked = Array.from(document.querySelectorAll('.p-ck:checked')).map(c => c.value);
@@ -207,16 +384,6 @@
         function moveItem(i, d) { const n = i+d; if(n>=0 && n<tempSelectedExIds.length) { [tempSelectedExIds[i], tempSelectedExIds[n]] = [tempSelectedExIds[n], tempSelectedExIds[i]]; renderSortList(); } }
         function savePl() { const n = document.getElementById('plN').value; if(!n) return; const p = { id: editingPlanId || Date.now().toString(), name: n, exIds: [...tempSelectedExIds] }; if(editingPlanId) db.plans[db.plans.findIndex(x=>x.id==editingPlanId)] = p; else db.plans.push(p); save(); tempSelectedExIds=[]; document.getElementById('plN').value=''; editingPlanId=null; renderPlanMgmt(); }
         function editPl(id) { editingPlanId=id; const p=db.plans.find(x=>x.id==id); document.getElementById('plN').value=p.name; tempSelectedExIds=[...p.exIds]; renderPlanMgmt(); }
-        function addEx() { const n = document.getElementById('exN').value; if(n) db.ex.push({id:Date.now().toString(), name:n, type:document.getElementById('exType').value}); save(); renderExLib(); }
-        function renderExLib() { document.getElementById('exL').innerHTML = db.ex.map(e => `<div class="card">${e.name} <button onclick="db.ex=db.ex.filter(x=>x.id!='${e.id}');save();renderExLib()">X</button></div>`).join(''); }
-        function renderPlanChoice() { document.getElementById('selL').innerHTML = db.plans.map(p => `<button class="main-btn" onclick="initNewWorkout('${p.id}')">${p.name}</button>`).join(''); }
-        function initNewWorkout(id) { const p = db.plans.find(x=>x.id==id); startWorkoutLogic(p.name, p.exIds.map(id=>({id, sets:db.ex.find(e=>e.id==id).type==='kraft'?[{w:'',r:'12'},{w:'',r:'10'},{w:'',r:'8'}]:[{r:'12'},{r:'12'},{r:'12'}], note:''}))); }
-        function initFreeWorkout() { startWorkoutLogic("Freies Training", []); }
-        function addSpontEx() { const id = document.getElementById('spontSelect').value; if(id) renderExCard({id, sets:[{w:'',r:'10'}], note:''}); }
-        function addSetUI(btn, type) { btn.parentElement.querySelector('.s-wrap').insertAdjacentHTML('beforeend', `<div class="set-row"><span>S+</span><input type="number" placeholder="kg" class="w-in" ${type==='bw'?'style="display:none"':''}><input type="number" placeholder="R" class="r-in"><button class="danger-btn" onclick="this.parentElement.remove()">X</button></div><span class="last-val">-</span>`); }
-        function checkTemp() { const t = localStorage.getItem('activeSession_temp'); document.getElementById('resume-banner').style.display = t ? 'block' : 'none'; }
-        function discardTemp() { localStorage.removeItem('activeSession_temp'); checkTemp(); }
-        function resumeWorkout() { const t = JSON.parse(localStorage.getItem('activeSession_temp')); if(t) startWorkoutLogic(t.title, t.exercises); }
 
         window.onload = () => { applyTheme(); nav('home'); };
     </script>
