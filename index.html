@@ -138,6 +138,24 @@
 
     downloadJSON(data, `TrackyFit_EXERCISES_${today()}.json`);
 }
+        function today() {
+    const d = new Date();
+    return d.toISOString().split('T')[0];
+}
+
+function downloadJSON(data, filename) {
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+        type: 'application/json'
+    });
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+
+    URL.revokeObjectURL(url);
+}
         function importData() { const file = document.getElementById('importFile').files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(e) { try { db = JSON.parse(e.target.result); save(); applyTheme(); alert("Import erfolgreich!"); nav('home'); } catch(err) { alert("Fehler!"); } }; reader.readAsText(file); }
 
         function nav(id) {
