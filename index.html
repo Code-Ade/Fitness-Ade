@@ -233,13 +233,17 @@
         ${exBase.img ? `<img src="${exBase.img}" class="img-pre">` : '<div class="img-pre"></div>'}
         <strong>${exBase.name}</strong>
     </div>
+
     <button class="danger-btn" onclick="removeExercise(this)">X</button>
 </div>
+
 ${sHtml}
-</div>
+
 <button class="sec-btn" onclick="addSetUI(this, '${exBase.type}')">+ Satz</button>
+
 <textarea class="n-in" placeholder="Notiz..." oninput="autosave()">${exObj.note || ''}</textarea>
 `;
+            document.getElementById('activeContent').appendChild(div);
         }
         function addSetUI(btn, type) {
             const wrap = btn.parentElement.querySelector('.s-wrap'); const num = wrap.querySelectorAll('.set-row, .cardio-row').length + 1;
