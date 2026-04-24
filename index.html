@@ -59,7 +59,15 @@
         <h3 style="margin-top: 30px;">Verlauf</h3>
         <div id="historyLogs"></div>
     </div>
-
+    
+<div class="card">
+    <label>📊 Anzeige:</label>
+    <select id="chartMode" onchange="renderAnalysis()">
+        <option value="max">Max Gewicht</option>
+        <option value="volume">Trainingsvolumen</option>
+    </select>
+</div>
+    
     <div id="page-settings" class="page">
         <h1>Einstellungen</h1>
         <div class="card"><h3>🎨 Theme Designer</h3><label>Primärfarbe</label><input type="color" id="colPrimary" onchange="updateTheme()"><label>Akzentfarbe</label><input type="color" id="colAccent" onchange="updateTheme()"><label>Hintergrundfarbe</label><input type="color" id="colBg" onchange="updateTheme()"></div>
@@ -244,11 +252,30 @@
             if(db.weight.length > 1) { const wData = db.weight.map(w => ({ x: w.date, y: parseFloat(w.val) })).sort((a,b) => new Date(a.x) - new Date(b.x)); createStockChart(dashboard, "Körpergewicht", wData, db.settings.accent); }
             db.logs.sort((a,b) => new Date(b.date.split('.').reverse().join('-')) - new Date(a.date.split('.').reverse().join('-')));
             document.getElementById('historyLogs').innerHTML = db.logs.map((log, i) => `<div class="card flex-between"><div><strong>${log.date}</strong><br><small>${log.exercises.length} Übungen</small></div><div><button class="edit-btn" onclick="editPastLog(${i})">Edit</button> <button class="danger-btn" onclick="deleteLog(${i})">X</button></div></div>`).join('');
+        // 🔹 Übungs-Charts
+db.ex.forEach(ex => {
+    if (ex.type !== 'kraft') return;
+
+    const data = getExerciseChartData(ex.id);
+
+    if (data.length > 1) {
+        createStockChart(
+            dashboard,
+            ex.name,
+            data,
+            "#FF9F0A" // 🟠 Orange
+        );
+    }
+});
+        
         }
+
+
+        
         function createStockChart(container, title, dataPoints, color) {
             const wrap = document.createElement('div'); wrap.className = 'card'; wrap.innerHTML = `<h4 style="margin:0">${title}</h4><div class="chart-wrap"><canvas></canvas></div>`; container.appendChild(wrap);
             const ctx = wrap.querySelector('canvas').getContext('2d');
-            new Chart(ctx, { type: 'line', data: { labels: dataPoints.map(d => d.x), datasets: [{ data: dataPoints.map(d => d.y), borderColor: color, fill: false, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+            new Chart(ctx, { type: 'line', data: { labels: dataPoints.map(d => d.x), datasets: [{ data: dataPoints.map(d => d.y), borderColor: color + "33", fill: true, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
         }
         async function addEx() {
             const n = document.getElementById('exN').value; const g = document.getElementById('exG').value; const t = document.getElementById('exType').value; const f = document.getElementById('exF').files[0];
@@ -327,6 +354,45 @@ function editWeight(index) {
         renderWeight();
     }
 }
+
+        function getExerciseChartData(exId) {
+    const mode = document.getElementById('chartMode')?.value || 'max';
+    const data = [];
+
+    db.logs.forEach(log => {
+        const ex = log.exercises.find(e => e.exId == exId);
+        if (!ex) return;
+
+        let value = 0;
+
+        if (mode === 'max') {
+            ex.sets.forEach(s => {
+                const w = parseFloat(s.w || 0);
+                if (w > value) value = w;
+            });
+        } 
+        else if (mode === 'volume') {
+            ex.sets.forEach(s => {
+                const w = parseFloat(s.w || 0);
+                const r = parseFloat(s.r || 0);
+                value += w * r;
+            });
+        }
+
+        if (value > 0) {
+            data.push({
+                x: log.date,
+                y: value
+            });
+        }
+    });
+
+    return data.sort((a,b) => 
+        new Date(a.x.split('.').reverse().join('-')) - 
+        new Date(b.x.split('.').reverse().join('-'))
+    );
+}
+        
         window.onload = initApp;
     </script>
 </body>
