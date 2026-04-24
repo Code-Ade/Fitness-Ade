@@ -227,7 +227,8 @@
                 else if(exBase.type === 'bw') sHtml += `<div class="set-row"><span>S${i+1}</span><input type="number" value="${s.r||''}" placeholder="Reps" class="r-in" style="grid-column: span 2" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">${lStr}</span>`;
                 else sHtml += `<div class="set-row"><span>S${i+1}</span><input type="number" value="${s.w||''}" placeholder="kg" class="w-in" oninput="autosave()"><input type="number" value="${s.r||''}" placeholder="R" class="r-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">${lStr}</span>`;
             });
-            div.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            div.innerHTML = `
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
     <div style="display:flex; gap:10px; align-items:center;">
         ${exBase.img ? `<img src="${exBase.img}" class="img-pre">` : '<div class="img-pre"></div>'}
         <strong>${exBase.name}</strong>
@@ -238,8 +239,7 @@ ${sHtml}
 </div>
 <button class="sec-btn" onclick="addSetUI(this, '${exBase.type}')">+ Satz</button>
 <textarea class="n-in" placeholder="Notiz..." oninput="autosave()">${exObj.note || ''}</textarea>
-`;">${exBase.img ? `<img src="${exBase.img}" class="img-pre">` : '<div class="img-pre"></div>'}<strong>${exBase.name}</strong></div>${sHtml}</div><button class="sec-btn" onclick="addSetUI(this, '${exBase.type}')">+ Satz</button><textarea class="n-in" placeholder="Notiz..." oninput="autosave()">${exObj.note || ''}</textarea>`;
-            document.getElementById('activeContent').appendChild(div);
+`;
         }
         function addSetUI(btn, type) {
             const wrap = btn.parentElement.querySelector('.s-wrap'); const num = wrap.querySelectorAll('.set-row, .cardio-row').length + 1;
