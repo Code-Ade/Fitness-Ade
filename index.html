@@ -187,7 +187,7 @@
             startWorkoutLogic(plan.name, exData);
         }
         function startWorkoutLogic(title, exercises) {
-            document.getElementById('activeTitle').innerText = title; const cont = document.getElementById('activeContent'); cont.innerHTML = '';
+            document.getElementById('activeTitle').innerHTML = `     ${title}     <input type="date" id="workoutDate" style="margin-top:10px;"> `; document.getElementById('workoutDate').value = new Date().toISOString().split('T')[0]; const cont = document.getElementById('activeContent'); cont.innerHTML = '';
             document.getElementById('spontSelect').innerHTML = '<option value="">Übung hinzufügen...</option>' + db.ex.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
             exercises.forEach(exObj => renderExCard(exObj)); nav('workout-active');
         }
@@ -269,7 +269,10 @@
                 const sets = []; card.querySelectorAll('.set-row, .cardio-row').forEach(row => { sets.push({ w: row.querySelector('.w-in')?.value||'', r: row.querySelector('.r-in')?.value||'', min: row.querySelector('.min-in')?.value||'', hr: row.querySelector('.hr-in')?.value||'', int: row.querySelector('.int-in')?.value||'' }); });
                 if(sets.length > 0) logs.push({ exId: card.dataset.id, sets, note: card.querySelector('.n-in').value });
             });
-            if(logs.length === 0) return; const finalData = { date: editingLogIndex !== null ? db.logs[editingLogIndex].date : new Date().toLocaleDateString('de-DE'), exercises: logs };
+            if(logs.length === 0) return; const finalData = {
+    date: document.getElementById('workoutDate')?.value
+        ? document.getElementById('workoutDate').value.split('-').reverse().join('.')
+        : new Date().toLocaleDateString('de-DE'), exercises: logs };
             if(editingLogIndex !== null) db.logs[editingLogIndex] = finalData; else db.logs.push(finalData); save(); discardTemp(); nav('home');
         }
         function editPastLog(index) { editingLogIndex = index; const log = db.logs[index]; const newDate = prompt("Datum ändern (TT.MM.JJJJ)", log.date); if(newDate) log.date = newDate; const ex = log.exercises.map(e => ({ id: e.exId, sets: e.sets, note: e.note })); startWorkoutLogic("Edit: " + log.date, ex); }
