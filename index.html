@@ -127,12 +127,17 @@
         let tempSelectedExIds = [];
 
         function initApp() {
+            if (!db.trash) {
+    db.trash = { logs: [] };
+}
             if(!db || !db.ex) {
                 db = { 
                     settings: { primary: '#30D158', accent: '#0A84FF', bg: '#000000', backupInt: 7, lastBackup: Date.now() },
                     ex: [{ id: '1', name: 'Bankdrücken', group: 'Brust', type: 'kraft' }, { id: '2', name: 'Kreuzheben', group: 'Rücken', type: 'kraft' }, { id: '3', name: 'Kniebeugen', group: 'Beine', type: 'kraft' }, { id: '4', name: 'Schulterdrücken', group: 'Schultern', type: 'kraft' }, { id: '5', name: 'Klimmzüge', group: 'Rücken', type: 'bw' }, { id: '6', name: 'Liegestütze', group: 'Brust', type: 'bw' }, { id: '7', name: 'Planks', group: 'Bauch', type: 'bw' }, { id: '8', name: 'Laufband', group: 'Cardio', type: 'cardio' }],
                     plans: [{ id: '101', name: 'Ganzkörper Basis', exIds: ['3','1','2','4','7'] }, { id: '102', name: 'Push', exIds: ['1','4','6'] }, { id: '103', name: 'Pull', exIds: ['2','5'] }, { id: '104', name: 'Beine', exIds: ['3','7'] }],
-                    logs: [],  trash: {     logs: [] }, weight: []
+                    logs: [],
+                    trash: {     logs: [] },
+                    weight: []
                 };
                 save();
             }
@@ -370,12 +375,22 @@ db.ex.forEach(ex => {
         function deleteLog(i) {
     if(confirm("In Papierkorb verschieben?")) {
 
+        console.log("Delete ausgelöst für Index:", i);
+
         const removed = db.logs.splice(i, 1)[0];
+
+        console.log("Entferntes Training:", removed);
+
+        if (!db.trash) {
+            db.trash = { logs: [] };
+        }
 
         db.trash.logs.push({
             ...removed,
             deletedAt: new Date().toISOString()
         });
+
+        console.log("Papierkorb jetzt:", db.trash.logs);
 
         save();
         renderAnalysis();
