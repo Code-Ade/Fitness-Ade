@@ -175,7 +175,52 @@ function downloadJSON(data, filename) {
 
     URL.revokeObjectURL(url);
 }
-        function importData() { const file = document.getElementById('importFile').files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(e) { try { db = JSON.parse(e.target.result); save(); applyTheme(); alert("Import erfolgreich!"); nav('home'); } catch(err) { alert("Fehler!"); } }; reader.readAsText(file); }
+        function importData() {
+    const file = document.getElementById('importFile').files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+        try {
+            const imported = JSON.parse(e.target.result);
+
+            // 🧠 BASIC CHECK
+            if (!imported || typeof imported !== 'object') {
+                throw new Error("Kein gültiges JSON");
+            }
+
+            // 🧠 FALLBACK STRUKTUR
+            imported.ex = imported.ex || [];
+            imported.plans = imported.plans || [];
+            imported.logs = imported.logs || [];
+            imported.weight = imported.weight || [];
+
+            // 🧠 WICHTIG: Logs kompatibel machen
+            imported.logs = imported.logs.map(log => ({
+                id: log.id || Date.now().toString() + Math.random(),
+                parentId: log.parentId || log.id || Date.now().toString(),
+                version: log.version || 1,
+                date: log.date || new Date().toLocaleDateString('de-DE'),
+                exercises: log.exercises || []
+            }));
+
+            db = imported;
+
+            save();
+            applyTheme();
+
+            alert("✅ Import erfolgreich!");
+            nav('home');
+
+        } catch (err) {
+            console.error(err);
+            alert("❌ Fehler beim Import: ungültige Datei");
+        }
+    };
+
+    reader.readAsText(file);
+}
 
         function nav(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById('page-' + id).classList.add('active');
