@@ -596,66 +596,115 @@ function editWeight(index) {
         try {
             let data;
 
-try {
-    data = JSON.parse(e.target.result);
-} catch {
-    throw new Error("JSON kaputt");
-}
-
-if (!data || typeof data !== "object") {
-    throw new Error("Kein gültiges Format");
-}
-
-            let importedSomething = false;
-
-            // 💪 Übungen
-            if (document.getElementById('impEx').checked && data.ex) {
-                mergeExercises(data.ex);
-                importedSomething = true;
+            // 📦 JSON PARSE
+            try {
+                data = JSON.parse(e.target.result);
+            } catch {
+                throw new Error("JSON ist ungültig oder beschädigt");
             }
 
-            // 📋 Pläne
-            if (document.getElementById('impPlans').checked && data.plans) {
-                mergePlans(data.plans);
-                importedSomething = true;
+            // 🔥 FORMAT AUTO-DETECTION
+            if (Array.isArray(data)) {
+                data = { ex: data }; // reine Übungsdatei
             }
 
-            // 📈 Logs
-            if (document.getElementById('impLogs').checked && data.logs) {
-                mergeLogs(data.logs);
-                importedSomething = true;
+            if (!data || typeof data !== "object") {
+                throw new Error("Ungültiges Datenformat");
             }
 
-            // ⚖️ Gewicht
-            if (document.getElementById('impWeight').checked && data.weight) {
-                mergeWeight(data.weight);
-                importedSomething = true;
+            // 🧠 SAFETY NORMALIZATION
+            data.ex = Array.isArray(data.ex) ? data.ex : [];
+            data.plans = Array.isArray(data.plans) ? data.plans : [];
+            data.logs = Array.isArray(data.logs) ? data.logs : [];
+            data.weight = Array.isArray(data.weight) ? data.weight : [];
+
+            let report = {
+                ex: 0,
+                plans: 0,
+                logs: 0,
+                weight: 0
+            };
+
+            // 💪 EXERCISES
+            if (document.getElementById('impEx').checked && data.ex.length) {
+                const existing = new Set(db.ex.map(e => e.id));
+
+                data.ex.forEach(e => {
+                    if (!existing.has(e.id)) {
+                        db.ex.push(e);
+                        report.ex++;
+                    }
+                });
             }
 
-            if (!importedSomething) {
-                return alert("Bitte mindestens eine Option auswählen!");
+            // 📋 PLANS
+            if (document.getElementById('impPlans').checked && data.plans.length) {
+                const existing = new Set(db.plans.map(p => p.id));
+
+                data.plans.forEach(p => {
+                    if (!existing.has(p.id)) {
+                        db.plans.push(p);
+                        report.plans++;
+                    }
+                });
             }
 
+            // 📈 LOGS (robust + normalisiert)
+            if (document.getElementById('impLogs').checked && data.logs.length) {
+
+                data.logs.forEach(log => {
+
+                    if (!log.exercises) return;
+
+                    const fixedLog = {
+                        id: log.id || Date.now().toString() + Math.random(),
+                        parentId: log.parentId || log.id || Date.now().toString(),
+                        version: log.version || 1,
+                        date: log.date || new Date().toLocaleDateString('de-DE'),
+                        exercises: log.exercises.map(e => ({
+                            exId: e.exId,
+                            sets: Array.isArray(e.sets) ? e.sets : [],
+                            note: e.note || ""
+                        }))
+                    };
+
+                    db.logs.push(fixedLog);
+                    report.logs++;
+                });
+            }
+
+            // ⚖️ WEIGHT
+            if (document.getElementById('impWeight').checked && data.weight.length) {
+                db.weight.push(...data.weight);
+                report.weight = data.weight.length;
+            }
+
+            // ❌ NICHTS ausgewählt?
+            if (report.ex + report.plans + report.logs + report.weight === 0) {
+                return alert("Bitte mindestens eine Option auswählen oder gültige Daten importieren!");
+            }
+
+            // 💾 SAVE
             save();
-            alert("Import erfolgreich!");
+
+            // 📊 REPORT
+            alert(
+                "✅ Import erfolgreich!\n\n" +
+                `💪 Übungen: ${report.ex}\n` +
+                `📋 Pläne: ${report.plans}\n` +
+                `📈 Logs: ${report.logs}\n` +
+                `⚖️ Gewicht: ${report.weight}`
+            );
+
             nav('home');
 
         } catch (err) {
-            alert("Fehler beim Import: ungültige Datei");
+            console.error(err);
+            alert("❌ Import Fehler: " + err.message);
         }
     };
 
     reader.readAsText(file);
-}
-
-        function mergeExercises(newItems) {
-    const existing = new Set(db.ex.map(e => e.id));
-
-    newItems.forEach(e => {
-        if (!existing.has(e.id)) {
-            db.ex.push(e);
-        }
-    });
 }
 
 function mergePlans(newItems) {
