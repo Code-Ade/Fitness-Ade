@@ -361,16 +361,64 @@ db.ex.forEach(ex => {
         function addSpontEx() { const id = document.getElementById('spontSelect').value; if(!id) return; const exBase = db.ex.find(e => e.id == id); let defSets = (exBase.type === 'cardio') ? [{min:'', hr:'', int:''}] : (exBase.type === 'bw') ? [{r:'12'},{r:'12'},{r:'12'}] : [{w:'', r:'12'},{w:'', r:'10'},{w:'', r:'8'}]; renderExCard({ id, sets: defSets, note:'' }); autosave(); }
         function showQuickAddEx() { const n = prompt("Name:"); if(!n) return; const t = prompt("Typ (kraft, bw, cardio):", "kraft"); const newEx = { id: Date.now().toString(), name: n, group: "Neu", type: t, img: null }; db.ex.push(newEx); save(); addSpontEx(); }
         function finishWorkout() {
-            const logs = []; document.querySelectorAll('.workout-card').forEach(card => {
-                const sets = []; card.querySelectorAll('.set-row, .cardio-row').forEach(row => { sets.push({ w: row.querySelector('.w-in')?.value||'', r: row.querySelector('.r-in')?.value||'', min: row.querySelector('.min-in')?.value||'', hr: row.querySelector('.hr-in')?.value||'', int: row.querySelector('.int-in')?.value||'' }); });
-                if(sets.length > 0) logs.push({ exId: card.dataset.id, sets, note: card.querySelector('.n-in').value });
+    const logs = [];
+
+    document.querySelectorAll('.workout-card').forEach(card => {
+        const sets = [];
+
+        card.querySelectorAll('.set-row, .cardio-row').forEach(row => {
+            sets.push({
+                w: row.querySelector('.w-in')?.value || '',
+                r: row.querySelector('.r-in')?.value || '',
+                min: row.querySelector('.min-in')?.value || '',
+                hr: row.querySelector('.hr-in')?.value || '',
+                int: row.querySelector('.int-in')?.value || ''
             });
-            if(logs.length === 0) return alert("Keine Übungen im Training!"); const finalData = {
-    date: document.getElementById('workoutDate')?.value
-        ? document.getElementById('workoutDate').value.split('-').reverse().join('.')
-        : new Date().toLocaleDateString('de-DE'), exercises: logs };
-            if(editingLogIndex !== null) db.logs[editingLogIndex] = finalData; else db.logs.push(finalData); save(); discardTemp(); nav('home');
+        });
+
+        if (sets.length > 0) {
+            logs.push({
+                exId: card.dataset.id,
+                sets,
+                note: card.querySelector('.n-in').value
+            });
         }
+    });
+
+    if (logs.length === 0) return alert("Keine Übungen!");
+
+    const date = document.getElementById('workoutDate')?.value
+        ? document.getElementById('workoutDate').value.split('-').reverse().join('.')
+        : new Date().toLocaleDateString('de-DE');
+
+    // 🧠 Versionierung
+    let parentId = Date.now().toString();
+    let version = 1;
+
+    if (editingLogIndex !== null) {
+        const old = db.logs[editingLogIndex];
+
+        parentId = old.parentId || old.id;
+        version = (old.version || 1) + 1;
+    }
+
+    const finalData = {
+        id: Date.now().toString(),
+        parentId: parentId,
+        version: version,
+        date: date,
+        exercises: logs
+    };
+
+    // ❗ IMMER PUSH – NIE überschreiben
+    db.logs.push(finalData);
+
+    editingLogIndex = null;
+
+    save();
+    discardTemp();
+    nav('home');
+}
         function editPastLog(index) { editingLogIndex = index; const log = db.logs[index];  const ex = log.exercises.map(e => ({ id: e.exId, sets: e.sets, note: e.note })); startWorkoutLogic("Edit: " + log.date, ex); }
         function deleteLog(i) {
     if(confirm("In Papierkorb verschieben?")) {
