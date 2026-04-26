@@ -594,7 +594,17 @@ function editWeight(index) {
 
     reader.onload = function(e) {
         try {
-            const data = JSON.parse(e.target.result);
+            let data;
+
+try {
+    data = JSON.parse(e.target.result);
+} catch {
+    throw new Error("JSON kaputt");
+}
+
+if (!data || typeof data !== "object") {
+    throw new Error("Kein gültiges Format");
+}
 
             let importedSomething = false;
 
@@ -659,7 +669,19 @@ function mergePlans(newItems) {
 }
 
 function mergeLogs(newItems) {
-    db.logs.push(...newItems);
+
+    newItems.forEach(log => {
+
+        const fixedLog = {
+            id: log.id || Date.now().toString() + Math.random(),
+            parentId: log.parentId || log.id || Date.now().toString(),
+            version: log.version || 1,
+            date: log.date || new Date().toLocaleDateString('de-DE'),
+            exercises: log.exercises || []
+        };
+
+        db.logs.push(fixedLog);
+    });
 }
 
 function mergeWeight(newItems) {
