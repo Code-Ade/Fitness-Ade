@@ -73,7 +73,9 @@
     <div id="page-settings" class="page">
         <h1>Einstellungen</h1>
         <div class="card"><h3>🎨 Theme Designer</h3><label>Primärfarbe</label><input type="color" id="colPrimary" onchange="updateTheme()"><label>Akzentfarbe</label><input type="color" id="colAccent" onchange="updateTheme()"><label>Hintergrundfarbe</label><input type="color" id="colBg" onchange="updateTheme()"></div>
-        <div class="card"><h3>💾 Daten & Backup</h3><label>Erinnerung alle X Tage:</label><input type="number" id="backupInt" onchange="updateBackupInterval()"><button class="main-btn" onclick="exportData()">📤 Backup speichern (JSON)</button><button class="sec-btn" onclick="exportExercises()">💪 Übungen exportieren</button><hr style="border:0; border-top:1px solid #333; margin: 15px 0;"><label>Backup wiederherstellen:</label><input type="file" id="importFile" accept=".json">
+        <div class="card"><h3>💾 Daten & Backup</h3><hr style="border:0; border-top:1px solid #333; margin: 15px 0;">
+<h3>🗑 Papierkorb</h3>
+<div id="trashLogs"></div><label>Erinnerung alle X Tage:</label><input type="number" id="backupInt" onchange="updateBackupInterval()"><button class="main-btn" onclick="exportData()">📤 Backup speichern (JSON)</button><button class="sec-btn" onclick="exportExercises()">💪 Übungen exportieren</button><hr style="border:0; border-top:1px solid #333; margin: 15px 0;"><label>Backup wiederherstellen:</label><input type="file" id="importFile" accept=".json">
 
 <div class="card">
     <h3>📥 Import Wizard</h3>
@@ -130,7 +132,7 @@
                     settings: { primary: '#30D158', accent: '#0A84FF', bg: '#000000', backupInt: 7, lastBackup: Date.now() },
                     ex: [{ id: '1', name: 'Bankdrücken', group: 'Brust', type: 'kraft' }, { id: '2', name: 'Kreuzheben', group: 'Rücken', type: 'kraft' }, { id: '3', name: 'Kniebeugen', group: 'Beine', type: 'kraft' }, { id: '4', name: 'Schulterdrücken', group: 'Schultern', type: 'kraft' }, { id: '5', name: 'Klimmzüge', group: 'Rücken', type: 'bw' }, { id: '6', name: 'Liegestütze', group: 'Brust', type: 'bw' }, { id: '7', name: 'Planks', group: 'Bauch', type: 'bw' }, { id: '8', name: 'Laufband', group: 'Cardio', type: 'cardio' }],
                     plans: [{ id: '101', name: 'Ganzkörper Basis', exIds: ['3','1','2','4','7'] }, { id: '102', name: 'Push', exIds: ['1','4','6'] }, { id: '103', name: 'Pull', exIds: ['2','5'] }, { id: '104', name: 'Beine', exIds: ['3','7'] }],
-                    logs: [], weight: []
+                    logs: [],  trash: {     logs: [] }, weight: []
                 };
                 save();
             }
@@ -172,7 +174,13 @@ function downloadJSON(data, filename) {
 
         function nav(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById('page-' + id).classList.add('active');
-            if(id === 'home') checkTemp(); if(id === 'weight') renderWeight(); if(id === 'analysis') renderAnalysis(); if(id === 'ex-lib') renderExLib(); if(id === 'plan-mgmt') renderPlanMgmt(); if(id === 'workout-select') renderPlanChoice();
+            if(id === 'home') checkTemp(); 
+            if(id === 'weight') renderWeight(); 
+            if(id === 'analysis') renderAnalysis(); 
+            if(id === 'ex-lib') renderExLib(); 
+            if(id === 'plan-mgmt') renderPlanMgmt(); 
+            if(id === 'workout-select') renderPlanChoice();
+            if(id === 'settings') renderTrash();
         }
 
         // --- PLAN MANAGEMENT MIT SORTIERUNG ---
@@ -359,7 +367,20 @@ db.ex.forEach(ex => {
             if(editingLogIndex !== null) db.logs[editingLogIndex] = finalData; else db.logs.push(finalData); save(); discardTemp(); nav('home');
         }
         function editPastLog(index) { editingLogIndex = index; const log = db.logs[index];  const ex = log.exercises.map(e => ({ id: e.exId, sets: e.sets, note: e.note })); startWorkoutLogic("Edit: " + log.date, ex); }
-        function deleteLog(i) { if(confirm("Löschen?")) { db.logs.splice(i,1); save(); renderAnalysis(); } }
+        function deleteLog(i) {
+    if(confirm("In Papierkorb verschieben?")) {
+
+        const removed = db.logs.splice(i, 1)[0];
+
+        db.trash.logs.push({
+            ...removed,
+            deletedAt: new Date().toISOString()
+        });
+
+        save();
+        renderAnalysis();
+    }
+}
         function autosave() {
             const data = { title: document.getElementById('activeTitle').innerText, exercises: [] };
             document.querySelectorAll('.workout-card').forEach(card => {
@@ -535,6 +556,45 @@ function mergeLogs(newItems) {
 
 function mergeWeight(newItems) {
     db.weight.push(...newItems);
+}
+
+
+        function renderTrash() {
+    const container = document.getElementById('trashLogs');
+
+    if (!db.trash || !db.trash.logs.length) {
+        container.innerHTML = "<p style='color:#666'>Papierkorb ist leer</p>";
+        return;
+    }
+
+    container.innerHTML = db.trash.logs.map((log, i) => `
+        <div class="card flex-between">
+            <div>
+                <strong>${log.date}</strong><br>
+                <small>${log.exercises.length} Übungen</small>
+            </div>
+            <div>
+                <button class="edit-btn" onclick="restoreLog(${i})">↩️</button>
+                <button class="danger-btn" onclick="deleteForever(${i})">X</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+        function restoreLog(i) {
+    const log = db.trash.logs.splice(i, 1)[0];
+    db.logs.push(log);
+    save();
+    renderTrash();
+    renderAnalysis();
+}
+
+function deleteForever(i) {
+    if(confirm("Endgültig löschen?")) {
+        db.trash.logs.splice(i, 1);
+        save();
+        renderTrash();
+    }
 }
         
         window.onload = initApp;
