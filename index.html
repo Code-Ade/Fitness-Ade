@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TrackyFit 9.3 by Ade</title>
+    <title>TrackyFit 9.4 by Ade</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://via.placeholder.com/180/30D158/000000?text=TF">
@@ -32,30 +33,58 @@
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
         .ai-box { background: rgba(10, 132, 255, 0.1); border: 1px solid var(--accent); padding: 15px; border-radius: 12px; margin-top: 15px; font-size: 14px; line-height: 1.5; display: none; }
         .sort-item { display: flex; align-items: center; justify-content: space-between; background: #2C2C2E; padding: 8px 12px; border-radius: 8px; margin-bottom: 5px; font-size: 14px; }
-    </style>
+
+```
+    /* ── Import Wizard Modal ── */
+    #importModal {
+        display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+        z-index: 9999; align-items: center; justify-content: center;
+    }
+    #importModal.open { display: flex; }
+    #importModalBox {
+        background: #1C1C1E; border: 1px solid #3A3A3C; border-radius: 20px;
+        padding: 24px; width: 90%; max-width: 420px; max-height: 80vh; overflow-y: auto;
+    }
+    #importModalBox h3 { margin: 0 0 16px 0; color: var(--primary); }
+    .imp-section { margin-bottom: 14px; }
+    .imp-section label { display: flex; align-items: center; gap: 10px; font-size: 15px; padding: 10px 12px; background: #2C2C2E; border-radius: 10px; cursor: pointer; }
+    .imp-section input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--primary); margin: 0; }
+    .imp-divider { border: 0; border-top: 1px solid #3A3A3C; margin: 16px 0; }
+
+    /* ── Import Feedback Box ── */
+    #importFeedback {
+        display: none; background: rgba(48,209,88,0.08); border: 1px solid var(--primary);
+        border-radius: 12px; padding: 14px; margin-top: 12px; font-size: 13px; line-height: 1.8;
+    }
+    .fb-row { display: flex; justify-content: space-between; }
+    .fb-row span:last-child { color: var(--primary); font-weight: bold; }
+    .fb-warn { color: var(--warning); font-size: 12px; margin-top: 6px; }
+</style>
+```
+
 </head>
 <body>
 
-    <div id="page-home" class="page active">
-        <h1 style="color: var(--primary)">TrackyFit <small style="color: var(--secondary); font-size: 14px;">9.3 by Ade</small></h1>
-        <div id="backup-reminder" class="card" style="display:none; border-color: var(--warning);"><p style="margin:0 0 10px 0; color: var(--warning);">⚠️ Zeit für ein Backup!</p><button class="sec-btn" onclick="nav('settings')">Zu den Einstellungen</button></div>
-        <div id="resume-banner" class="card" style="display:none; border-color: var(--accent);"><p style="margin:0 0 10px 0">⚠️ Offenes Training gefunden!</p><button class="main-btn" style="background: var(--accent)" onclick="resumeWorkout()">Fortsetzen</button><button class="sec-btn" onclick="discardTemp()">Verwerfen</button></div>
-        <button class="main-btn" onclick="nav('workout-select')">▶️ Training starten</button>
-        <div class="card"><h3>Verwaltung</h3><button class="sec-btn" onclick="nav('ex-lib')">💪 Übungen & Fotos</button><button class="sec-btn" onclick="nav('plan-mgmt')">📋 Trainingspläne</button><button class="sec-btn" onclick="nav('weight')">⚖️ Körpergewicht</button></div>
-    </div>
+```
+<div id="page-home" class="page active">
+    <h1 style="color: var(--primary)">TrackyFit <small style="color: var(--secondary); font-size: 14px;">9.4 by Ade</small></h1>
+    <div id="backup-reminder" class="card" style="display:none; border-color: var(--warning);"><p style="margin:0 0 10px 0; color: var(--warning);">⚠️ Zeit für ein Backup!</p><button class="sec-btn" onclick="nav('settings')">Zu den Einstellungen</button></div>
+    <div id="resume-banner" class="card" style="display:none; border-color: var(--accent);"><p style="margin:0 0 10px 0">⚠️ Offenes Training gefunden!</p><button class="main-btn" style="background: var(--accent)" onclick="resumeWorkout()">Fortsetzen</button><button class="sec-btn" onclick="discardTemp()">Verwerfen</button></div>
+    <button class="main-btn" onclick="nav('workout-select')">▶️ Training starten</button>
+    <div class="card"><h3>Verwaltung</h3><button class="sec-btn" onclick="nav('ex-lib')">💪 Übungen & Fotos</button><button class="sec-btn" onclick="nav('plan-mgmt')">📋 Trainingspläne</button><button class="sec-btn" onclick="nav('weight')">⚖️ Körpergewicht</button></div>
+</div>
 
-    <div id="page-workout-active" class="page">
-        <h2 id="activeTitle">Workout</h2>
-        <div id="activeContent"></div>
-        <div class="card" style="border-style: dashed; border-color: var(--secondary);"><select id="spontSelect"></select><button class="sec-btn" onclick="addSpontEx()">+ Hinzufügen</button><hr style="border:0; border-top:1px solid #333; margin: 15px 0;"><button class="sec-btn" style="color: var(--warning)" onclick="showQuickAddEx()">+ Neue Übung erstellen</button></div>
-        <button class="main-btn" onclick="finishWorkout()" style="margin-top: 20px;">✅ Training beenden</button>
-    </div>
+<div id="page-workout-active" class="page">
+    <h2 id="activeTitle">Workout</h2>
+    <div id="activeContent"></div>
+    <div class="card" style="border-style: dashed; border-color: var(--secondary);"><select id="spontSelect"></select><button class="sec-btn" onclick="addSpontEx()">+ Hinzufügen</button><hr style="border:0; border-top:1px solid #333; margin: 15px 0;"><button class="sec-btn" style="color: var(--warning)" onclick="showQuickAddEx()">+ Neue Übung erstellen</button></div>
+    <button class="main-btn" onclick="finishWorkout()" style="margin-top: 20px;">✅ Training beenden</button>
+</div>
 
-    <div id="page-analysis" class="page">
-        <h1>Analyse</h1>
-        <button class="main-btn" style="background: var(--accent); color: #fff;" onclick="runAICoach()">🤖 KI Coach fragen</button>
-        <div id="aiFeedbackBox" class="ai-box"></div>
-         <!-- ✅ HIER EINFÜGEN -->
+<div id="page-analysis" class="page">
+    <h1>Analyse</h1>
+    <button class="main-btn" style="background: var(--accent); color: #fff;" onclick="runAICoach()">🤖 KI Coach fragen</button>
+    <div id="aiFeedbackBox" class="ai-box"></div>
     <div class="card">
         <label>📊 Anzeige:</label>
         <select id="chartMode" onchange="renderAnalysis()">
@@ -63,720 +92,749 @@
             <option value="volume">Trainingsvolumen</option>
         </select>
     </div>
-        <div id="analyticsDashboard" style="margin-top: 20px;"></div>
-        <h3 style="margin-top: 30px;">Verlauf</h3>
-        <div id="historyLogs"></div>
-    </div>
-    
-
-    
-    <div id="page-settings" class="page">
-        <h1>Einstellungen</h1>
-        <div class="card"><h3>🎨 Theme Designer</h3><label>Primärfarbe</label><input type="color" id="colPrimary" onchange="updateTheme()"><label>Akzentfarbe</label><input type="color" id="colAccent" onchange="updateTheme()"><label>Hintergrundfarbe</label><input type="color" id="colBg" onchange="updateTheme()"></div>
-        <div class="card"><h3>💾 Daten & Backup</h3><hr style="border:0; border-top:1px solid #333; margin: 15px 0;">
-<h3>🗑 Papierkorb</h3>
-<div id="trashLogs"></div><label>Erinnerung alle X Tage:</label><input type="number" id="backupInt" onchange="updateBackupInterval()"><button class="main-btn" onclick="exportData()">📤 Backup speichern (JSON)</button><button class="sec-btn" onclick="exportExercises()">💪 Übungen exportieren</button><hr style="border:0; border-top:1px solid #333; margin: 15px 0;"><label>Backup wiederherstellen:</label><input type="file" id="importFile" accept=".json">
-
-<div class="card">
-    <h3>📥 Import Wizard</h3>
-
-    <label><input type="checkbox" id="impEx"> 💪 Übungen importieren</label><br>
-    <label><input type="checkbox" id="impPlans"> 📋 Pläne importieren</label><br>
-    <label><input type="checkbox" id="impLogs"> 📈 Trainingsverlauf importieren</label><br>
-    <label><input type="checkbox" id="impWeight"> ⚖️ Gewicht importieren</label><br>
-
-    <button class="main-btn" onclick="importWizard()">Import starten</button>
+    <div id="analyticsDashboard" style="margin-top: 20px;"></div>
+    <h3 style="margin-top: 30px;">Verlauf</h3>
+    <div id="historyLogs"></div>
 </div>
+
+<div id="page-settings" class="page">
+    <h1>Einstellungen</h1>
+    <div class="card"><h3>🎨 Theme Designer</h3><label>Primärfarbe</label><input type="color" id="colPrimary" onchange="updateTheme()"><label>Akzentfarbe</label><input type="color" id="colAccent" onchange="updateTheme()"><label>Hintergrundfarbe</label><input type="color" id="colBg" onchange="updateTheme()"></div>
+
+    <div class="card">
+        <h3>💾 Daten & Backup</h3>
+
+        <!-- Export Buttons -->
+        <button class="main-btn" onclick="exportData()">📤 Vollständiges Backup (JSON)</button>
+        <button class="sec-btn" onclick="exportExercises()">💪 Nur Übungen exportieren</button>
+        <button class="sec-btn" onclick="exportPlans()">📋 Nur Pläne exportieren</button>
+        <button class="sec-btn" onclick="exportLogs()">📈 Nur Trainingsverlauf exportieren</button>
+
+        <hr style="border:0; border-top:1px solid #333; margin: 15px 0;">
+        <label style="font-size:13px; color: var(--secondary);">Backup-Erinnerung alle X Tage:</label>
+        <input type="number" id="backupInt" onchange="updateBackupInterval()">
+
+        <hr style="border:0; border-top:1px solid #333; margin: 15px 0;">
+
+        <!-- Import Wizard -->
+        <h3>📥 Import</h3>
+        <p style="font-size:13px; color:var(--secondary); margin-top:0;">Backup-Datei auswählen und dann Inhalte wählen:</p>
+        <input type="file" id="importFile" accept=".json" onchange="previewImportFile()">
+
+        <!-- Datei-Vorschau -->
+        <div id="importFileInfo" style="display:none; background:#111; border-radius:10px; padding:12px; margin-top:8px; font-size:13px; color:var(--secondary);">
+            📄 <span id="importFileName"></span> — <span id="importFileSize"></span>
+        </div>
+
+        <button class="main-btn" style="margin-top:12px;" onclick="openImportModal()">⚙️ Import Wizard öffnen</button>
+
+        <!-- Feedback nach Import -->
+        <div id="importFeedback">
+            <strong style="color:var(--primary);">✅ Import abgeschlossen</strong><br><br>
+            <div id="importFeedbackContent"></div>
+        </div>
+
+        <hr style="border:0; border-top:1px solid #333; margin: 15px 0;">
+        <h3>🗑 Papierkorb</h3>
+        <div id="trashLogs"></div>
+    </div>
+</div>
+
+<div id="page-ex-lib" class="page">
+    <button class="sec-btn" onclick="nav('home')">← Zurück</button>
+    <h2 id="exFormTitle">Neue Übung</h2>
+    <div class="card"><input id="exN" placeholder="Name"><select id="exG"><option>Brust</option><option>Rücken</option><option>Beine</option><option>Schultern</option><option>Bizeps</option><option>Trizeps</option><option>Bauch</option><option>Cardio</option></select><select id="exType"><option value="kraft">Typ: Kraft (Gewicht + Reps)</option><option value="bw">Typ: Bodyweight (Nur Reps)</option><option value="cardio">Typ: Cardio (Zeit, Puls)</option></select><input type="file" id="exF" accept="image/*"><button class="main-btn" id="exSaveBtn" onclick="addEx()">Speichern</button><button class="sec-btn" id="exCancelBtn" style="display:none" onclick="resetExForm()">Abbrechen</button></div>
+    <div id="exL"></div>
+</div>
+
+<div id="page-plan-mgmt" class="page">
+    <button class="sec-btn" onclick="nav('home')">← Zurück</button>
+    <h2 id="plFormTitle">Neuer Plan</h2>
+    <div class="card">
+        <input id="plN" placeholder="Plan Name">
+        <p style="font-size: 12px; color: var(--secondary);">1. Übungen auswählen:</p>
+        <div id="plPick" style="max-height: 150px; overflow-y: auto; background: #111; padding: 10px; border-radius: 8px; margin-bottom: 10px;"></div>
+        <p style="font-size: 12px; color: var(--secondary);">2. Reihenfolge anpassen:</p>
+        <div id="plSortArea"></div>
+        <button class="main-btn" id="plSaveBtn" onclick="savePl()">Speichern</button>
+        <button class="sec-btn" id="plCancelBtn" style="display:none" onclick="resetPlForm()">Abbrechen</button>
+    </div>
+    <div id="plL"></div>
+</div>
+
+<div id="page-workout-select" class="page"><button class="sec-btn" onclick="nav('home')">← Zurück</button><h2>Wähle Plan</h2><button class="main-btn" style="background: var(--warning); color: #000;" onclick="initFreeWorkout()">⚡ Freies Training</button><div id="selL" style="margin-top:15px"></div></div>
+<div id="page-weight" class="page"><button class="sec-btn" onclick="nav('home')">← Zurück</button><h2>Gewicht</h2><div class="card"><input type="date" id="wD"><input type="number" id="wV" step="0.1" placeholder="kg"><button class="main-btn" onclick="saveWeight()">Speichern</button></div><div id="wList"></div></div>
+
+<nav class="nav">
+    <button class="nav-item" onclick="nav('home')">🏠<br>Home</button>
+    <button class="nav-item" onclick="nav('analysis')">📈<br>Analyse</button>
+    <button class="nav-item" onclick="nav('settings')">⚙️<br>Settings</button>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     IMPORT WIZARD MODAL
+══════════════════════════════════════════ -->
+<div id="importModal">
+    <div id="importModalBox">
+        <h3>📥 Import Wizard</h3>
+        <p style="font-size:13px; color:var(--secondary); margin-top:-8px; margin-bottom:16px;">
+            Wähle was importiert werden soll. Duplikate werden erkannt und du wirst gefragt.
+        </p>
+
+        <div class="imp-section">
+            <label><input type="checkbox" id="impEx" checked> 💪 Übungen importieren</label>
+        </div>
+        <div class="imp-section">
+            <label><input type="checkbox" id="impPlans" checked> 📋 Pläne importieren</label>
+        </div>
+        <div class="imp-section">
+            <label><input type="checkbox" id="impLogs" checked> 📈 Trainingsverlauf importieren</label>
+        </div>
+        <div class="imp-section">
+            <label><input type="checkbox" id="impWeight" checked> ⚖️ Gewicht importieren</label>
+        </div>
+
+        <hr class="imp-divider">
+
+        <div style="display:flex; gap:10px; margin-top:4px;">
+            <button class="main-btn" onclick="runImportWizard()" style="margin-bottom:0;">✅ Import starten</button>
+            <button class="sec-btn" onclick="closeImportModal()" style="margin-top:0; width:auto; padding: 16px 20px;">Abbrechen</button>
         </div>
     </div>
+</div>
 
-    <div id="page-ex-lib" class="page">
-        <button class="sec-btn" onclick="nav('home')">← Zurück</button>
-        <h2 id="exFormTitle">Neue Übung</h2>
-        <div class="card"><input id="exN" placeholder="Name"><select id="exG"><option>Brust</option><option>Rücken</option><option>Beine</option><option>Schultern</option><option>Bizeps</option><option>Trizeps</option><option>Bauch</option><option>Cardio</option></select><select id="exType"><option value="kraft">Typ: Kraft (Gewicht + Reps)</option><option value="bw">Typ: Bodyweight (Nur Reps)</option><option value="cardio">Typ: Cardio (Zeit, Puls)</option></select><input type="file" id="exF" accept="image/*"><button class="main-btn" id="exSaveBtn" onclick="addEx()">Speichern</button><button class="sec-btn" id="exCancelBtn" style="display:none" onclick="resetExForm()">Abbrechen</button></div>
-        <div id="exL"></div>
-    </div>
+<script>
+    let db = null;
+    let editingLogIndex = null;
+    let editingExId = null;
+    let editingPlanId = null;
+    let tempSelectedExIds = [];
+    let importedFileData = null; // hält geparste Import-Datei
 
-    <div id="page-plan-mgmt" class="page">
-        <button class="sec-btn" onclick="nav('home')">← Zurück</button>
-        <h2 id="plFormTitle">Neuer Plan</h2>
-        <div class="card">
-            <input id="plN" placeholder="Plan Name">
-            <p style="font-size: 12px; color: var(--secondary);">1. Übungen auswählen:</p>
-            <div id="plPick" style="max-height: 150px; overflow-y: auto; background: #111; padding: 10px; border-radius: 8px; margin-bottom: 10px;"></div>
-            <p style="font-size: 12px; color: var(--secondary);">2. Reihenfolge anpassen:</p>
-            <div id="plSortArea"></div>
-            <button class="main-btn" id="plSaveBtn" onclick="savePl()">Speichern</button>
-            <button class="sec-btn" id="plCancelBtn" style="display:none" onclick="resetPlForm()">Abbrechen</button>
-        </div>
-        <div id="plL"></div>
-    </div>
+    // ══════════════════════════════════════════
+    // INIT & CORE
+    // ══════════════════════════════════════════
+    function initApp() {
+        const raw = localStorage.getItem('trackyfit_db');
+        db = raw ? JSON.parse(raw) : null;
 
-    <div id="page-workout-select" class="page"><button class="sec-btn" onclick="nav('home')">← Zurück</button><h2>Wähle Plan</h2><button class="main-btn" style="background: var(--warning); color: #000;" onclick="initFreeWorkout()">⚡ Freies Training</button><div id="selL" style="margin-top:15px"></div></div>
-    <div id="page-weight" class="page"><button class="sec-btn" onclick="nav('home')">← Zurück</button><h2>Gewicht</h2><div class="card"><input type="date" id="wD"><input type="number" id="wV" step="0.1" placeholder="kg"><button class="main-btn" onclick="saveWeight()">Speichern</button></div><div id="wList"></div></div>
+        if (!db || !db.ex) {
+            db = {
+                settings: { primary: '#30D158', accent: '#0A84FF', bg: '#000000', backupInt: 7, lastBackup: Date.now() },
+                ex: [
+                    { id: '1', name: 'Bankdrücken', group: 'Brust', type: 'kraft' },
+                    { id: '2', name: 'Kreuzheben', group: 'Rücken', type: 'kraft' },
+                    { id: '3', name: 'Kniebeugen', group: 'Beine', type: 'kraft' },
+                    { id: '4', name: 'Schulterdrücken', group: 'Schultern', type: 'kraft' },
+                    { id: '5', name: 'Klimmzüge', group: 'Rücken', type: 'bw' },
+                    { id: '6', name: 'Liegestütze', group: 'Brust', type: 'bw' },
+                    { id: '7', name: 'Planks', group: 'Bauch', type: 'bw' },
+                    { id: '8', name: 'Laufband', group: 'Cardio', type: 'cardio' }
+                ],
+                plans: [
+                    { id: '101', name: 'Ganzkörper Basis', exIds: ['3','1','2','4','7'] },
+                    { id: '102', name: 'Push', exIds: ['1','4','6'] },
+                    { id: '103', name: 'Pull', exIds: ['2','5'] },
+                    { id: '104', name: 'Beine', exIds: ['3','7'] }
+                ],
+                logs: [],
+                trash: { logs: [] },
+                weight: []
+            };
+        }
 
-    <nav class="nav">
-        <button class="nav-item" onclick="nav('home')">🏠<br>Home</button>
-        <button class="nav-item" onclick="nav('analysis')">📈<br>Analyse</button>
-        <button class="nav-item" onclick="nav('settings')">⚙️<br>Settings</button>
-    </nav>
+        // Sicherstellen dass alle Pflichtfelder existieren (Kompatibilität mit alten Saves)
+        if (!db.settings) db.settings = { primary: '#30D158', accent: '#0A84FF', bg: '#000000', backupInt: 7, lastBackup: Date.now() };
+        if (!db.trash)    db.trash    = { logs: [] };
+        if (!db.weight)   db.weight   = [];
+        if (!db.logs)     db.logs     = [];
+        if (!db.ex)       db.ex       = [];
+        if (!db.plans)    db.plans    = [];
 
-    <script>
-        let db = JSON.parse(localStorage.getItem('trackyfit_db')) || null;
-        let editingLogIndex = null; let editingExId = null; let editingPlanId = null;
-        let tempSelectedExIds = [];
+        save();
+        applyTheme();
+        checkBackupReminder();
+        nav('home');
+    }
 
-        function initApp() {
-            if (!db.trash) {
-    db.trash = { logs: [] };
-}
-            if(!db || !db.ex) {
-                db = { 
-                    settings: { primary: '#30D158', accent: '#0A84FF', bg: '#000000', backupInt: 7, lastBackup: Date.now() },
-                    ex: [{ id: '1', name: 'Bankdrücken', group: 'Brust', type: 'kraft' }, { id: '2', name: 'Kreuzheben', group: 'Rücken', type: 'kraft' }, { id: '3', name: 'Kniebeugen', group: 'Beine', type: 'kraft' }, { id: '4', name: 'Schulterdrücken', group: 'Schultern', type: 'kraft' }, { id: '5', name: 'Klimmzüge', group: 'Rücken', type: 'bw' }, { id: '6', name: 'Liegestütze', group: 'Brust', type: 'bw' }, { id: '7', name: 'Planks', group: 'Bauch', type: 'bw' }, { id: '8', name: 'Laufband', group: 'Cardio', type: 'cardio' }],
-                    plans: [{ id: '101', name: 'Ganzkörper Basis', exIds: ['3','1','2','4','7'] }, { id: '102', name: 'Push', exIds: ['1','4','6'] }, { id: '103', name: 'Pull', exIds: ['2','5'] }, { id: '104', name: 'Beine', exIds: ['3','7'] }],
-                    logs: [],
-                    trash: {     logs: [] },
-                    weight: []
-                };
-                save();
+    function save() { localStorage.setItem('trackyfit_db', JSON.stringify(db)); }
+
+    function applyTheme() {
+        document.documentElement.style.setProperty('--primary', db.settings.primary);
+        document.documentElement.style.setProperty('--accent',  db.settings.accent);
+        document.documentElement.style.setProperty('--bg',      db.settings.bg);
+        document.getElementById('colPrimary').value  = db.settings.primary;
+        document.getElementById('colAccent').value   = db.settings.accent;
+        document.getElementById('colBg').value       = db.settings.bg;
+        document.getElementById('backupInt').value   = db.settings.backupInt;
+    }
+    function updateTheme() {
+        db.settings.primary = document.getElementById('colPrimary').value;
+        db.settings.accent  = document.getElementById('colAccent').value;
+        db.settings.bg      = document.getElementById('colBg').value;
+        applyTheme(); save();
+    }
+    function updateBackupInterval() { db.settings.backupInt = parseInt(document.getElementById('backupInt').value); save(); }
+    function checkBackupReminder() {
+        const diffDays = (Date.now() - db.settings.lastBackup) / (1000 * 60 * 60 * 24);
+        document.getElementById('backup-reminder').style.display = (diffDays > db.settings.backupInt) ? 'block' : 'none';
+    }
+
+    function nav(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page-' + id).classList.add('active');
+        if (id === 'home')         checkTemp();
+        if (id === 'weight')       renderWeight();
+        if (id === 'analysis')     renderAnalysis();
+        if (id === 'ex-lib')       renderExLib();
+        if (id === 'plan-mgmt')    renderPlanMgmt();
+        if (id === 'workout-select') renderPlanChoice();
+        if (id === 'settings')     renderTrash();
+    }
+
+    // ══════════════════════════════════════════
+    // EXPORT FUNKTIONEN
+    // ══════════════════════════════════════════
+    function today() {
+        return new Date().toISOString().split('T')[0];
+    }
+
+    function downloadJSON(data, filename) {
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href     = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function exportData() {
+        db.settings.lastBackup = Date.now();
+        save();
+        checkBackupReminder();
+        downloadJSON(db, `TrackyFit_FullBackup_${today()}.json`);
+    }
+
+    function exportExercises() {
+        downloadJSON({ ex: db.ex }, `TrackyFit_Uebungen_${today()}.json`);
+    }
+
+    function exportPlans() {
+        downloadJSON({ plans: db.plans }, `TrackyFit_Plaene_${today()}.json`);
+    }
+
+    function exportLogs() {
+        downloadJSON({ logs: db.logs }, `TrackyFit_Verlauf_${today()}.json`);
+    }
+
+    // ══════════════════════════════════════════
+    // IMPORT — DATEI VORSCHAU
+    // ══════════════════════════════════════════
+    function previewImportFile() {
+        const file = document.getElementById('importFile').files[0];
+        if (!file) return;
+
+        const infoBox  = document.getElementById('importFileInfo');
+        const nameSpan = document.getElementById('importFileName');
+        const sizeSpan = document.getElementById('importFileSize');
+
+        nameSpan.textContent = file.name;
+        sizeSpan.textContent = (file.size / 1024).toFixed(1) + ' KB';
+        infoBox.style.display = 'block';
+
+        // Datei vorab parsen und cachen
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                importedFileData = JSON.parse(e.target.result);
+                // Sicherstellen dass alle Felder vorhanden sind
+                importedFileData.ex     = importedFileData.ex     || [];
+                importedFileData.plans  = importedFileData.plans  || [];
+                importedFileData.logs   = importedFileData.logs   || [];
+                importedFileData.weight = importedFileData.weight || [];
+            } catch {
+                importedFileData = null;
+                infoBox.innerHTML = '❌ Ungültige JSON-Datei!';
+                infoBox.style.color = 'var(--danger)';
             }
-            applyTheme(); checkBackupReminder(); nav('home');
+        };
+        reader.readAsText(file);
+
+        // Feedback zurücksetzen
+        document.getElementById('importFeedback').style.display = 'none';
+    }
+
+    function openImportModal() {
+        if (!importedFileData) {
+            alert('⚠️ Bitte zuerst eine Backup-Datei auswählen!');
+            return;
+        }
+        document.getElementById('importModal').classList.add('open');
+    }
+
+    function closeImportModal() {
+        document.getElementById('importModal').classList.remove('open');
+    }
+
+    // ══════════════════════════════════════════
+    // IMPORT WIZARD — HAUPTLOGIK
+    // ══════════════════════════════════════════
+    async function runImportWizard() {
+        if (!importedFileData) { alert('Keine Datei geladen!'); return; }
+
+        const doEx     = document.getElementById('impEx').checked;
+        const doPlans  = document.getElementById('impPlans').checked;
+        const doLogs   = document.getElementById('impLogs').checked;
+        const doWeight = document.getElementById('impWeight').checked;
+
+        if (!doEx && !doPlans && !doLogs && !doWeight) {
+            alert('⚠️ Bitte mindestens eine Option auswählen!');
+            return;
         }
 
-        function save() { localStorage.setItem('trackyfit_db', JSON.stringify(db)); }
-        function applyTheme() { document.documentElement.style.setProperty('--primary', db.settings.primary); document.documentElement.style.setProperty('--accent', db.settings.accent); document.documentElement.style.setProperty('--bg', db.settings.bg); document.getElementById('colPrimary').value = db.settings.primary; document.getElementById('colAccent').value = db.settings.accent; document.getElementById('colBg').value = db.settings.bg; document.getElementById('backupInt').value = db.settings.backupInt; }
-        function updateTheme() { db.settings.primary = document.getElementById('colPrimary').value; db.settings.accent = document.getElementById('colAccent').value; db.settings.bg = document.getElementById('colBg').value; applyTheme(); save(); }
-        function updateBackupInterval() { db.settings.backupInt = parseInt(document.getElementById('backupInt').value); save(); }
-        function checkBackupReminder() { const diffDays = (Date.now() - db.settings.lastBackup) / (1000 * 60 * 60 * 24); document.getElementById('backup-reminder').style.display = (diffDays > db.settings.backupInt) ? 'block' : 'none'; }
-        function exportData() { db.settings.lastBackup = Date.now(); save(); checkBackupReminder(); const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `TrackyFit_Backup_${new Date().toLocaleDateString('de-DE')}.json`; a.click(); }
-        function exportExercises() {
-    const data = {
-        ex: db.ex
-    };
+        closeImportModal();
 
-    downloadJSON(data, `TrackyFit_EXERCISES_${today()}.json`);
-}
-        function today() {
-    const d = new Date();
-    return d.toISOString().split('T')[0];
-}
+        // Ergebnis-Statistik
+        const stats = {
+            ex:     { neu: 0, übersprungen: 0, überschrieben: 0 },
+            plans:  { neu: 0, übersprungen: 0, überschrieben: 0 },
+            logs:   { neu: 0, übersprungen: 0, überschrieben: 0 },
+            weight: { neu: 0, übersprungen: 0 }
+        };
 
-function downloadJSON(data, filename) {
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
-        type: 'application/json'
-    });
-
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-
-    URL.revokeObjectURL(url);
-}
-        function importData() {
-    const file = document.getElementById('importFile').files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = function(e) {
-        try {
-            const imported = JSON.parse(e.target.result);
-
-            // 🧠 BASIC CHECK
-            if (!imported || typeof imported !== 'object') {
-                throw new Error("Kein gültiges JSON");
-            }
-
-            // 🧠 FALLBACK STRUKTUR
-            imported.ex = imported.ex || [];
-            imported.plans = imported.plans || [];
-            imported.logs = imported.logs || [];
-            imported.weight = imported.weight || [];
-
-            // 🧠 WICHTIG: Logs kompatibel machen
-            imported.logs = imported.logs.map(log => ({
-                id: log.id || Date.now().toString() + Math.random(),
-                parentId: log.parentId || log.id || Date.now().toString(),
-                version: log.version || 1,
-                date: log.date || new Date().toLocaleDateString('de-DE'),
-                exercises: log.exercises || []
-            }));
-
-            db = imported;
-
-            save();
-            applyTheme();
-
-            alert("✅ Import erfolgreich!");
-            nav('home');
-
-        } catch (err) {
-            console.error(err);
-            alert("❌ Fehler beim Import: ungültige Datei");
-        }
-    };
-
-    reader.readAsText(file);
-}
-
-        function nav(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById('page-' + id).classList.add('active');
-            if(id === 'home') checkTemp(); 
-            if(id === 'weight') renderWeight(); 
-            if(id === 'analysis') renderAnalysis(); 
-            if(id === 'ex-lib') renderExLib(); 
-            if(id === 'plan-mgmt') renderPlanMgmt(); 
-            if(id === 'workout-select') renderPlanChoice();
-            if(id === 'settings') renderTrash();
-        }
-
-        // --- PLAN MANAGEMENT MIT SORTIERUNG ---
-        function renderPlanMgmt() {
-            document.getElementById('plPick').innerHTML = db.ex.map(e => `<div style="padding: 5px 0"><input type="checkbox" value="${e.id}" class="p-ck" onchange="syncSortList()" ${tempSelectedExIds.includes(e.id) ? 'checked' : ''}> ${e.name}</div>`).join('');
-            renderSortList();
-            document.getElementById('plL').innerHTML = db.plans.map(p => `<div class="card flex-between"><div><strong>${p.name}</strong><br><small>${p.exIds.length} Übungen</small></div><div><button class="edit-btn" onclick="editPl('${p.id}')">Edit</button> <button class="danger-btn" onclick="deletePl('${p.id}')">X</button></div></div>`).join('');
-        }
-        function syncSortList() {
-            const checkedIds = Array.from(document.querySelectorAll('.p-ck:checked')).map(c => c.value);
-            // Neue hinzufügen
-            checkedIds.forEach(id => { if(!tempSelectedExIds.includes(id)) tempSelectedExIds.push(id); });
-            // Gelöschte entfernen
-            tempSelectedExIds = tempSelectedExIds.filter(id => checkedIds.includes(id));
-            renderSortList();
-        }
-        function renderSortList() {
-            const area = document.getElementById('plSortArea');
-            if(tempSelectedExIds.length === 0) { area.innerHTML = '<p style="color:#666; font-size:12px;">Noch keine Übungen gewählt.</p>'; return; }
-            area.innerHTML = tempSelectedExIds.map((id, i) => {
-                const ex = db.ex.find(e => e.id == id);
-                return `<div class="sort-item"><span>${i+1}. ${ex ? ex.name : 'Unbekannt'}</span><div>
-                    <button class="edit-btn" style="padding:4px 8px" onclick="moveItem(${i}, -1)">↑</button>
-                    <button class="edit-btn" style="padding:4px 8px" onclick="moveItem(${i}, 1)">↓</button>
-                </div></div>`;
-            }).join('');
-        }
-        function moveItem(index, direction) {
-            const newIndex = index + direction;
-            if (newIndex < 0 || newIndex >= tempSelectedExIds.length) return;
-            const element = tempSelectedExIds.splice(index, 1)[0];
-            tempSelectedExIds.splice(newIndex, 0, element);
-            renderSortList();
-        }
-        function savePl() {
-            const name = document.getElementById('plN').value;
-            if(!name || tempSelectedExIds.length === 0) return alert("Name und Übungen fehlen!");
-            if(editingPlanId) { const idx = db.plans.findIndex(p => p.id == editingPlanId); db.plans[idx] = { ...db.plans[idx], name, exIds: [...tempSelectedExIds] }; }
-            else { db.plans.push({ id: Date.now().toString(), name, exIds: [...tempSelectedExIds] }); }
-            save(); resetPlForm(); renderPlanMgmt();
-        }
-        function editPl(id) {
-            editingPlanId = id; const pl = db.plans.find(p => p.id == id);
-            document.getElementById('plN').value = pl.name; tempSelectedExIds = [...pl.exIds];
-            document.getElementById('plFormTitle').innerText = "Plan bearbeiten"; document.getElementById('plSaveBtn').innerText = "Update"; document.getElementById('plCancelBtn').style.display = "block";
-            renderPlanMgmt(); window.scrollTo(0,0);
-        }
-        function resetPlForm() { editingPlanId = null; tempSelectedExIds = []; document.getElementById('plN').value = ''; document.getElementById('plFormTitle').innerText = "Neuer Plan"; document.getElementById('plSaveBtn').innerText = "Speichern"; document.getElementById('plCancelBtn').style.display = "none"; renderPlanMgmt(); }
-        function deletePl(id) { if(confirm("Löschen?")) { db.plans = db.plans.filter(p => p.id != id); save(); renderPlanMgmt(); } }
-
-        // --- TRAINING LOGIK ---
-        function initNewWorkout(planId) {
-            editingLogIndex = null; const plan = db.plans.find(p => p.id == planId);
-            const exData = plan.exIds.map(id => {
-                const exBase = db.ex.find(e => e.id == id);
-                let defSets = (exBase && exBase.type === 'cardio') ? [{min:'', hr:'', int:''}] : (exBase && exBase.type === 'bw') ? [{r:'12'},{r:'12'},{r:'12'}] : [{w:'', r:'12'},{w:'', r:'10'},{w:'', r:'8'}];
-                return { id: id, sets: defSets, note: '' };
-            });
-            startWorkoutLogic(plan.name, exData);
-        }
-        function startWorkoutLogic(title, exercises) {
-            document.getElementById('activeTitle').innerHTML = `     ${title}     <input type="date" id="workoutDate" style="margin-top:10px;"> `; document.getElementById('workoutDate').value = new Date().toISOString().split('T')[0]; const cont = document.getElementById('activeContent'); cont.innerHTML = '';
-            document.getElementById('spontSelect').innerHTML = '<option value="">Übung hinzufügen...</option>' + [...db.ex]
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .map(e => `<option value="${e.id}">${e.name}</option>`).join('');
-            exercises.forEach(exObj => renderExCard(exObj)); nav('workout-active');
-        }
-        function getLastSession(exId) {const entries = db.logs
-        .filter(l => l.exercises.some(e => e.exId == exId))
-        .sort((a, b) =>
-            new Date(b.date.split('.').reverse().join('-')) -
-            new Date(a.date.split('.').reverse().join('-'))
-        );
-
-    return entries.length > 0
-        ? entries[0].exercises.find(e => e.exId == exId).sets
-        : null;
-}
-        function renderExCard(exObj) {
-            const exBase = db.ex.find(e => e.id == exObj.id); if(!exBase) return;
-            const lastSets = getLastSession(exObj.id); const div = document.createElement('div'); div.className = 'card workout-card'; div.dataset.id = exObj.id;
-            let sHtml = `<div class="s-wrap">`;
-            exObj.sets.forEach((s, i) => {
-                const lastData = (lastSets && lastSets[i]) ? lastSets[i] : null; let lStr = '-';
-                if (lastData) {
-                    if (exBase.type === 'cardio') lStr = `Letztes: ${lastData.min||'-'} Min, ${lastData.hr||'-'} BPM`;
-                    else if (exBase.type === 'bw') lStr = `Letztes: ${lastData.r||lastData.reps||'-'} Reps`;
-                    else lStr = `Letztes: ${lastData.w||lastData.weight||'-'}kg x ${lastData.r||lastData.reps||'-'}`;
+        // ── Übungen ──
+        if (doEx && importedFileData.ex.length > 0) {
+            for (const item of importedFileData.ex) {
+                const existing = db.ex.find(e => e.id === item.id);
+                if (existing) {
+                    if (existing.name === item.name && existing.group === item.group && existing.type === item.type) {
+                        // Echter Duplikat (identisch) → überspringen ohne Frage
+                        stats.ex.übersprungen++;
+                    } else {
+                        // Gleiche ID, andere Daten → Frage
+                        const overwrite = confirm(
+                            `💪 Übung Duplikat gefunden!\n\n` +
+                            `Vorhanden: "${existing.name}" (${existing.group})\n` +
+                            `Import:    "${item.name}" (${item.group})\n\n` +
+                            `Überschreiben?`
+                        );
+                        if (overwrite) {
+                            const idx = db.ex.findIndex(e => e.id === item.id);
+                            db.ex[idx] = item;
+                            stats.ex.überschrieben++;
+                        } else {
+                            stats.ex.übersprungen++;
+                        }
+                    }
+                } else {
+                    db.ex.push(item);
+                    stats.ex.neu++;
                 }
-                if(exBase.type === 'cardio') sHtml += `<div class="cardio-row"><input type="number" value="${s.min||''}" placeholder="Min" class="min-in" oninput="autosave()"><input type="number" value="${s.hr||''}" placeholder="BPM" class="hr-in" oninput="autosave()"><input type="text" value="${s.int||''}" placeholder="Int" class="int-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">${lStr}</span>`;
-                else if(exBase.type === 'bw') sHtml += `<div class="set-row"><span>S${i+1}</span><input type="number" value="${s.r||''}" placeholder="Reps" class="r-in" style="grid-column: span 2" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">${lStr}</span>`;
-                else sHtml += `<div class="set-row"><span>S${i+1}</span><input type="number" value="${s.w||''}" placeholder="kg" class="w-in" oninput="autosave()"><input type="number" value="${s.r||''}" placeholder="R" class="r-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">${lStr}</span>`;
-            });
-            div.innerHTML = `
+            }
+        }
+
+        // ── Pläne ──
+        if (doPlans && importedFileData.plans.length > 0) {
+            for (const item of importedFileData.plans) {
+                const existing = db.plans.find(p => p.id === item.id);
+                if (existing) {
+                    if (existing.name === item.name) {
+                        stats.plans.übersprungen++;
+                    } else {
+                        const overwrite = confirm(
+                            `📋 Plan Duplikat gefunden!\n\n` +
+                            `Vorhanden: "${existing.name}"\n` +
+                            `Import:    "${item.name}"\n\n` +
+                            `Überschreiben?`
+                        );
+                        if (overwrite) {
+                            const idx = db.plans.findIndex(p => p.id === item.id);
+                            db.plans[idx] = item;
+                            stats.plans.überschrieben++;
+                        } else {
+                            stats.plans.übersprungen++;
+                        }
+                    }
+                } else {
+                    db.plans.push(item);
+                    stats.plans.neu++;
+                }
+            }
+        }
+
+        // ── Logs ──
+        if (doLogs && importedFileData.logs.length > 0) {
+            const existingLogIds = new Set(db.logs.map(l => l.id));
+            for (const rawLog of importedFileData.logs) {
+                const fixedLog = {
+                    id:        rawLog.id        || (Date.now().toString() + Math.random()),
+                    parentId:  rawLog.parentId  || rawLog.id || Date.now().toString(),
+                    version:   rawLog.version   || 1,
+                    date:      rawLog.date       || new Date().toLocaleDateString('de-DE'),
+                    exercises: rawLog.exercises  || []
+                };
+
+                if (existingLogIds.has(fixedLog.id)) {
+                    const existing = db.logs.find(l => l.id === fixedLog.id);
+                    const overwrite = confirm(
+                        `📈 Training-Duplikat gefunden!\n\n` +
+                        `Datum: ${existing.date}  (Version ${existing.version || 1})\n` +
+                        `Import-Version: ${fixedLog.version}\n\n` +
+                        `Überschreiben?`
+                    );
+                    if (overwrite) {
+                        const idx = db.logs.findIndex(l => l.id === fixedLog.id);
+                        db.logs[idx] = fixedLog;
+                        stats.logs.überschrieben++;
+                    } else {
+                        stats.logs.übersprungen++;
+                    }
+                } else {
+                    db.logs.push(fixedLog);
+                    existingLogIds.add(fixedLog.id);
+                    stats.logs.neu++;
+                }
+            }
+        }
+
+        // ── Gewicht ──
+        if (doWeight && importedFileData.weight.length > 0) {
+            for (const item of importedFileData.weight) {
+                // Duplikat = gleicher Tag + gleicher Wert
+                const isDupe = db.weight.some(w => w.date === item.date && String(w.val) === String(item.val));
+                if (isDupe) {
+                    stats.weight.übersprungen++;
+                } else {
+                    db.weight.push(item);
+                    stats.weight.neu++;
+                }
+            }
+        }
+
+        save();
+        showImportFeedback(stats, doEx, doPlans, doLogs, doWeight);
+    }
+
+    // ══════════════════════════════════════════
+    // IMPORT FEEDBACK ANZEIGEN
+    // ══════════════════════════════════════════
+    function showImportFeedback(stats, doEx, doPlans, doLogs, doWeight) {
+        const box     = document.getElementById('importFeedback');
+        const content = document.getElementById('importFeedbackContent');
+
+        let html = '';
+
+        const row = (icon, label, s) =>
+            `<div class="fb-row"><span>${icon} ${label}</span><span>+${s.neu} neu${s.überschrieben ? ', ' + s.überschrieben + ' überschr.' : ''}${s.übersprungen ? ', ' + s.übersprungen + ' übersprungen' : ''}</span></div>`;
+
+        if (doEx)     html += row('💪', 'Übungen',          stats.ex);
+        if (doPlans)  html += row('📋', 'Pläne',            stats.plans);
+        if (doLogs)   html += row('📈', 'Trainings-Logs',   stats.logs);
+        if (doWeight) html += row('⚖️', 'Gewichtseinträge', stats.weight);
+
+        const totalNeu = (doEx ? stats.ex.neu : 0) + (doPlans ? stats.plans.neu : 0) +
+                         (doLogs ? stats.logs.neu : 0) + (doWeight ? stats.weight.neu : 0);
+
+        if (totalNeu === 0) {
+            html += `<p class="fb-warn">ℹ️ Keine neuen Daten hinzugefügt – alles war bereits vorhanden oder wurde übersprungen.</p>`;
+        }
+
+        content.innerHTML = html;
+        box.style.display = 'block';
+        box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // ══════════════════════════════════════════
+    // PLAN MANAGEMENT
+    // ══════════════════════════════════════════
+    function renderPlanMgmt() {
+        document.getElementById('plPick').innerHTML = db.ex.map(e =>
+            `<div style="padding: 5px 0"><input type="checkbox" value="${e.id}" class="p-ck" onchange="syncSortList()" ${tempSelectedExIds.includes(e.id) ? 'checked' : ''}> ${e.name}</div>`
+        ).join('');
+        renderSortList();
+        document.getElementById('plL').innerHTML = db.plans.map(p =>
+            `<div class="card flex-between"><div><strong>${p.name}</strong><br><small>${p.exIds.length} Übungen</small></div><div><button class="edit-btn" onclick="editPl('${p.id}')">Edit</button> <button class="danger-btn" onclick="deletePl('${p.id}')">X</button></div></div>`
+        ).join('');
+    }
+    function syncSortList() {
+        const checkedIds = Array.from(document.querySelectorAll('.p-ck:checked')).map(c => c.value);
+        checkedIds.forEach(id => { if (!tempSelectedExIds.includes(id)) tempSelectedExIds.push(id); });
+        tempSelectedExIds = tempSelectedExIds.filter(id => checkedIds.includes(id));
+        renderSortList();
+    }
+    function renderSortList() {
+        const area = document.getElementById('plSortArea');
+        if (tempSelectedExIds.length === 0) { area.innerHTML = '<p style="color:#666; font-size:12px;">Noch keine Übungen gewählt.</p>'; return; }
+        area.innerHTML = tempSelectedExIds.map((id, i) => {
+            const ex = db.ex.find(e => e.id == id);
+            return `<div class="sort-item"><span>${i+1}. ${ex ? ex.name : 'Unbekannt'}</span><div>
+                <button class="edit-btn" style="padding:4px 8px" onclick="moveItem(${i}, -1)">↑</button>
+                <button class="edit-btn" style="padding:4px 8px" onclick="moveItem(${i}, 1)">↓</button>
+            </div></div>`;
+        }).join('');
+    }
+    function moveItem(index, direction) {
+        const newIndex = index + direction;
+        if (newIndex < 0 || newIndex >= tempSelectedExIds.length) return;
+        const element = tempSelectedExIds.splice(index, 1)[0];
+        tempSelectedExIds.splice(newIndex, 0, element);
+        renderSortList();
+    }
+    function savePl() {
+        const name = document.getElementById('plN').value;
+        if (!name || tempSelectedExIds.length === 0) return alert("Name und Übungen fehlen!");
+        if (editingPlanId) { const idx = db.plans.findIndex(p => p.id == editingPlanId); db.plans[idx] = { ...db.plans[idx], name, exIds: [...tempSelectedExIds] }; }
+        else { db.plans.push({ id: Date.now().toString(), name, exIds: [...tempSelectedExIds] }); }
+        save(); resetPlForm(); renderPlanMgmt();
+    }
+    function editPl(id) {
+        editingPlanId = id; const pl = db.plans.find(p => p.id == id);
+        document.getElementById('plN').value = pl.name; tempSelectedExIds = [...pl.exIds];
+        document.getElementById('plFormTitle').innerText = "Plan bearbeiten";
+        document.getElementById('plSaveBtn').innerText = "Update";
+        document.getElementById('plCancelBtn').style.display = "block";
+        renderPlanMgmt(); window.scrollTo(0,0);
+    }
+    function resetPlForm() { editingPlanId = null; tempSelectedExIds = []; document.getElementById('plN').value = ''; document.getElementById('plFormTitle').innerText = "Neuer Plan"; document.getElementById('plSaveBtn').innerText = "Speichern"; document.getElementById('plCancelBtn').style.display = "none"; renderPlanMgmt(); }
+    function deletePl(id) { if (confirm("Löschen?")) { db.plans = db.plans.filter(p => p.id != id); save(); renderPlanMgmt(); } }
+
+    // ══════════════════════════════════════════
+    // TRAINING LOGIK
+    // ══════════════════════════════════════════
+    function initNewWorkout(planId) {
+        editingLogIndex = null; const plan = db.plans.find(p => p.id == planId);
+        const exData = plan.exIds.map(id => {
+            const exBase = db.ex.find(e => e.id == id);
+            let defSets = (exBase && exBase.type === 'cardio') ? [{min:'', hr:'', int:''}]
+                : (exBase && exBase.type === 'bw') ? [{r:'12'},{r:'12'},{r:'12'}]
+                : [{w:'', r:'12'},{w:'', r:'10'},{w:'', r:'8'}];
+            return { id: id, sets: defSets, note: '' };
+        });
+        startWorkoutLogic(plan.name, exData);
+    }
+    function startWorkoutLogic(title, exercises) {
+        document.getElementById('activeTitle').innerHTML = `${title}<input type="date" id="workoutDate" style="margin-top:10px;">`;
+        document.getElementById('workoutDate').value = new Date().toISOString().split('T')[0];
+        const cont = document.getElementById('activeContent'); cont.innerHTML = '';
+        document.getElementById('spontSelect').innerHTML = '<option value="">Übung hinzufügen...</option>' +
+            [...db.ex].sort((a,b) => a.name.localeCompare(b.name)).map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+        exercises.forEach(exObj => renderExCard(exObj));
+        nav('workout-active');
+    }
+    function getLastSession(exId) {
+        const entries = db.logs
+            .filter(l => l.exercises.some(e => e.exId == exId))
+            .sort((a,b) => new Date(b.date.split('.').reverse().join('-')) - new Date(a.date.split('.').reverse().join('-')));
+        return entries.length > 0 ? entries[0].exercises.find(e => e.exId == exId).sets : null;
+    }
+    function renderExCard(exObj) {
+        const exBase = db.ex.find(e => e.id == exObj.id); if (!exBase) return;
+        const lastSets = getLastSession(exObj.id);
+        const div = document.createElement('div'); div.className = 'card workout-card'; div.dataset.id = exObj.id;
+        let sHtml = `<div class="s-wrap">`;
+        exObj.sets.forEach((s, i) => {
+            const lastData = (lastSets && lastSets[i]) ? lastSets[i] : null; let lStr = '-';
+            if (lastData) {
+                if (exBase.type === 'cardio') lStr = `Letztes: ${lastData.min||'-'} Min, ${lastData.hr||'-'} BPM`;
+                else if (exBase.type === 'bw') lStr = `Letztes: ${lastData.r||lastData.reps||'-'} Reps`;
+                else lStr = `Letztes: ${lastData.w||lastData.weight||'-'}kg x ${lastData.r||lastData.reps||'-'}`;
+            }
+            if (exBase.type === 'cardio') sHtml += `<div class="cardio-row"><input type="number" value="${s.min||''}" placeholder="Min" class="min-in" oninput="autosave()"><input type="number" value="${s.hr||''}" placeholder="BPM" class="hr-in" oninput="autosave()"><input type="text" value="${s.int||''}" placeholder="Int" class="int-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">${lStr}</span>`;
+            else if (exBase.type === 'bw') sHtml += `<div class="set-row"><span>S${i+1}</span><input type="number" value="${s.r||''}" placeholder="Reps" class="r-in" style="grid-column: span 2" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">${lStr}</span>`;
+            else sHtml += `<div class="set-row"><span>S${i+1}</span><input type="number" value="${s.w||''}" placeholder="kg" class="w-in" oninput="autosave()"><input type="number" value="${s.r||''}" placeholder="R" class="r-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">${lStr}</span>`;
+        });
+        sHtml += '</div>';
+        div.innerHTML = `
+```
+
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
     <div style="display:flex; gap:10px; align-items:center;">
         ${exBase.img ? `<img src="${exBase.img}" class="img-pre">` : '<div class="img-pre"></div>'}
         <strong>${exBase.name}</strong>
     </div>
-
     <button class="danger-btn" onclick="removeExercise(this)">X</button>
 </div>
-
 ${sHtml}
-
 <button class="sec-btn" onclick="addSetUI(this, '${exBase.type}')">+ Satz</button>
-
-<textarea class="n-in" placeholder="Notiz..." oninput="autosave()">${exObj.note || ''}</textarea>
-`;
+<textarea class="n-in" placeholder="Notiz..." oninput="autosave()">${exObj.note || ''}</textarea>`;
             document.getElementById('activeContent').appendChild(div);
         }
         function addSetUI(btn, type) {
-            const wrap = btn.parentElement.querySelector('.s-wrap'); const num = wrap.querySelectorAll('.set-row, .cardio-row').length + 1;
-            if(type === 'cardio') wrap.insertAdjacentHTML('beforeend', `<div class="cardio-row"><input type="number" placeholder="Min" class="min-in" oninput="autosave()"><input type="number" placeholder="BPM" class="hr-in" oninput="autosave()"><input type="text" placeholder="Int" class="int-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">-</span>`);
-            else if(type === 'bw') wrap.insertAdjacentHTML('beforeend', `<div class="set-row"><span>S${num}</span><input type="number" placeholder="Reps" class="r-in" style="grid-column: span 2" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">-</span>`);
+            const wrap = btn.parentElement.querySelector('.s-wrap');
+            const num  = wrap.querySelectorAll('.set-row, .cardio-row').length + 1;
+            if (type === 'cardio') wrap.insertAdjacentHTML('beforeend', `<div class="cardio-row"><input type="number" placeholder="Min" class="min-in" oninput="autosave()"><input type="number" placeholder="BPM" class="hr-in" oninput="autosave()"><input type="text" placeholder="Int" class="int-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">-</span>`);
+            else if (type === 'bw') wrap.insertAdjacentHTML('beforeend', `<div class="set-row"><span>S${num}</span><input type="number" placeholder="Reps" class="r-in" style="grid-column: span 2" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">-</span>`);
             else wrap.insertAdjacentHTML('beforeend', `<div class="set-row"><span>S${num}</span><input type="number" class="w-in" placeholder="kg" oninput="autosave()"><input type="number" placeholder="R" class="r-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove(); this.parentElement.remove(); autosave();">X</button></div><span class="last-val">-</span>`);
             autosave();
         }
-
-        // Restliche Funktionen (Analyse, KI, Weight, etc.) bleiben exakt wie in 9.1
-        function runAICoach() {
-            const box = document.getElementById('aiFeedbackBox'); box.style.display = 'block';
-            if(db.logs.length < 3) { box.innerHTML = "🤖 <b>Coach:</b> Trainiere noch ein paar Mal für eine Analyse."; return; }
-            let feedback = "🤖 <b>Feedback:</b><br>";
-            const last7Logs = db.logs.slice(-7); let groups = {};
-            last7Logs.forEach(l => l.exercises.forEach(e => { const exDef = db.ex.find(x => x.id == e.exId); if(exDef) groups[exDef.group] = (groups[exDef.group] || 0) + 1; }));
-            const missing = ['Brust', 'Rücken', 'Beine'].filter(g => !groups[g]);
-            feedback += missing.length > 0 ? `⚠️ Fokus fehlt auf: ${missing.join(', ')}<br>` : `✅ Gute Balance!<br>`;
-            box.innerHTML = feedback;
+        function removeExercise(btn) {
+            const card = btn.closest('.workout-card');
+            if (confirm("Übung wirklich entfernen?")) { card.remove(); autosave(); }
         }
-        function renderAnalysis() {
-            const dashboard = document.getElementById('analyticsDashboard'); dashboard.innerHTML = '';
-            if(db.weight.length > 1) { const wData = db.weight.map(w => ({ x: w.date, y: parseFloat(w.val) })).sort((a,b) => new Date(a.x) - new Date(b.x)); createStockChart(dashboard, "Körpergewicht", wData, db.settings.accent); }
-            db.logs.sort((a,b) => new Date(b.date.split('.').reverse().join('-')) - new Date(a.date.split('.').reverse().join('-')));
-            document.getElementById('historyLogs').innerHTML = db.logs.map((log, i) => `<div class="card flex-between"><div><strong>${log.date}</strong><br><small>${log.exercises.length} Übungen</small></div><div><button class="edit-btn" onclick="editPastLog(${i})">Edit</button> <button class="danger-btn" onclick="deleteLog(${i})">X</button></div></div>`).join('');
-        // 🔹 Übungs-Charts
-db.ex.forEach(ex => {
-    if (ex.type !== 'kraft') return;
-
-    const data = getExerciseChartData(ex.id);
-
-    if (data.length > 1) {
-        createStockChart(
-            dashboard,
-            ex.name,
-            data,
-            "#FF9F0A" // 🟠 Orange
-        );
-    }
-});
-        
-        }
-
-
-        
-        function createStockChart(container, title, dataPoints, color) {
-            const wrap = document.createElement('div'); wrap.className = 'card'; wrap.innerHTML = `<h4 style="margin:0">${title}</h4><div class="chart-wrap"><canvas></canvas></div>`; container.appendChild(wrap);
-            const ctx = wrap.querySelector('canvas').getContext('2d');
-            new Chart(ctx, { type: 'line', data: { labels: dataPoints.map(d => d.x), datasets: [{ data: dataPoints.map(d => d.y), borderColor: color, backgroundColor: color + "33", fill: true, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
-        }
-        async function addEx() {
-            const n = document.getElementById('exN').value; const g = document.getElementById('exG').value; const t = document.getElementById('exType').value; const f = document.getElementById('exF').files[0];
-            if(!n) return; let img = editingExId ? db.ex.find(e => e.id == editingExId).img : null; if(f) img = await compress(f);
-            if(editingExId) { const idx = db.ex.findIndex(e => e.id == editingExId); db.ex[idx] = { ...db.ex[idx], name:n, group:g, type:t, img }; } else { db.ex.push({ id: Date.now().toString(), name:n, group:g, type:t, img }); }
-            save(); resetExForm(); renderExLib();
-        }
-        function renderExLib() { document.getElementById('exL').innerHTML = db.ex.map(e => `<div class="card flex-between"><div style="display:flex; gap:10px; align-items:center">${e.img ? `<img src="${e.img}" class="img-pre">` : '<div class="img-pre"></div>'}<div><strong>${e.name}</strong><br><small>${e.group}</small></div></div><div><button class="edit-btn" onclick="editEx('${e.id}')">Edit</button> <button class="danger-btn" onclick="deleteEx('${e.id}')">X</button></div></div>`).join(''); }
-        function editEx(id) { editingExId = id; const ex = db.ex.find(e => e.id == id); document.getElementById('exN').value = ex.name; document.getElementById('exG').value = ex.group; document.getElementById('exType').value = ex.type; document.getElementById('exFormTitle').innerText = "Edit"; document.getElementById('exSaveBtn').innerText = "Update"; document.getElementById('exCancelBtn').style.display = "block"; }
-        function resetExForm() { editingExId = null; document.getElementById('exN').value = ''; document.getElementById('exFormTitle').innerText = "Neu"; document.getElementById('exSaveBtn').innerText = "Save"; document.getElementById('exCancelBtn').style.display = "none"; }
-        function deleteEx(id) { if(confirm("Löschen?")) { db.ex = db.ex.filter(e => e.id != id); save(); renderExLib(); } }
-        function renderPlanChoice() { document.getElementById('selL').innerHTML = db.plans.map(p => `<button class="main-btn" onclick="initNewWorkout('${p.id}')">${p.name}</button>`).join(''); }
-        function initFreeWorkout() { editingLogIndex = null; startWorkoutLogic("Freies Training", []); }
-        function addSpontEx() { const id = document.getElementById('spontSelect').value; if(!id) return; const exBase = db.ex.find(e => e.id == id); let defSets = (exBase.type === 'cardio') ? [{min:'', hr:'', int:''}] : (exBase.type === 'bw') ? [{r:'12'},{r:'12'},{r:'12'}] : [{w:'', r:'12'},{w:'', r:'10'},{w:'', r:'8'}]; renderExCard({ id, sets: defSets, note:'' }); autosave(); }
-        function showQuickAddEx() { const n = prompt("Name:"); if(!n) return; const t = prompt("Typ (kraft, bw, cardio):", "kraft"); const newEx = { id: Date.now().toString(), name: n, group: "Neu", type: t, img: null }; db.ex.push(newEx); save(); addSpontEx(); }
         function finishWorkout() {
-    const logs = [];
-
-    document.querySelectorAll('.workout-card').forEach(card => {
-        const sets = [];
-
-        card.querySelectorAll('.set-row, .cardio-row').forEach(row => {
-            sets.push({
-                w: row.querySelector('.w-in')?.value || '',
-                r: row.querySelector('.r-in')?.value || '',
-                min: row.querySelector('.min-in')?.value || '',
-                hr: row.querySelector('.hr-in')?.value || '',
-                int: row.querySelector('.int-in')?.value || ''
+            const logs = [];
+            document.querySelectorAll('.workout-card').forEach(card => {
+                const sets = [];
+                card.querySelectorAll('.set-row, .cardio-row').forEach(row => {
+                    sets.push({ w: row.querySelector('.w-in')?.value||'', r: row.querySelector('.r-in')?.value||'', min: row.querySelector('.min-in')?.value||'', hr: row.querySelector('.hr-in')?.value||'', int: row.querySelector('.int-in')?.value||'' });
+                });
+                if (sets.length > 0) logs.push({ exId: card.dataset.id, sets, note: card.querySelector('.n-in').value });
             });
-        });
-
-        if (sets.length > 0) {
-            logs.push({
-                exId: card.dataset.id,
-                sets,
-                note: card.querySelector('.n-in').value
-            });
+            if (logs.length === 0) return alert("Keine Übungen!");
+            const date = document.getElementById('workoutDate')?.value
+                ? document.getElementById('workoutDate').value.split('-').reverse().join('.')
+                : new Date().toLocaleDateString('de-DE');
+            let parentId = Date.now().toString(); let version = 1;
+            if (editingLogIndex !== null) { const old = db.logs[editingLogIndex]; parentId = old.parentId || old.id; version = (old.version || 1) + 1; }
+            db.logs.push({ id: Date.now().toString(), parentId, version, date, exercises: logs });
+            editingLogIndex = null;
+            save(); discardTemp(); nav('home');
         }
-    });
-
-    if (logs.length === 0) return alert("Keine Übungen!");
-
-    const date = document.getElementById('workoutDate')?.value
-        ? document.getElementById('workoutDate').value.split('-').reverse().join('.')
-        : new Date().toLocaleDateString('de-DE');
-
-    // 🧠 Versionierung
-    let parentId = Date.now().toString();
-    let version = 1;
-
-    if (editingLogIndex !== null) {
-        const old = db.logs[editingLogIndex];
-
-        parentId = old.parentId || old.id;
-        version = (old.version || 1) + 1;
-    }
-
-    const finalData = {
-        id: Date.now().toString(),
-        parentId: parentId,
-        version: version,
-        date: date,
-        exercises: logs
-    };
-
-    // ❗ IMMER PUSH – NIE überschreiben
-    db.logs.push(finalData);
-
-    editingLogIndex = null;
-
-    save();
-    discardTemp();
-    nav('home');
-}
-        function editPastLog(index) { editingLogIndex = index; const log = db.logs[index];  const ex = log.exercises.map(e => ({ id: e.exId, sets: e.sets, note: e.note })); startWorkoutLogic("Edit: " + log.date, ex); }
+        function editPastLog(index) { editingLogIndex = index; const log = db.logs[index]; const ex = log.exercises.map(e => ({ id: e.exId, sets: e.sets, note: e.note })); startWorkoutLogic("Edit: " + log.date, ex); }
         function deleteLog(i) {
-    if(confirm("In Papierkorb verschieben?")) {
-
-        console.log("Delete ausgelöst für Index:", i);
-
-        const removed = db.logs.splice(i, 1)[0];
-
-        console.log("Entferntes Training:", removed);
-
-        if (!db.trash) {
-            db.trash = { logs: [] };
+            if (confirm("In Papierkorb verschieben?")) {
+                const removed = db.logs.splice(i, 1)[0];
+                if (!db.trash) db.trash = { logs: [] };
+                db.trash.logs.push({ ...removed, deletedAt: new Date().toISOString() });
+                save(); renderAnalysis();
+            }
         }
-
-        db.trash.logs.push({
-            ...removed,
-            deletedAt: new Date().toISOString()
-        });
-
-        console.log("Papierkorb jetzt:", db.trash.logs);
-
-        save();
-        renderAnalysis();
-    }
-}
         function autosave() {
             const data = { title: document.getElementById('activeTitle').innerText, exercises: [] };
             document.querySelectorAll('.workout-card').forEach(card => {
-                const sets = []; card.querySelectorAll('.set-row, .cardio-row').forEach(row => { sets.push({ w: row.querySelector('.w-in')?.value||'', r: row.querySelector('.r-in')?.value||'', min: row.querySelector('.min-in')?.value||'', hr: row.querySelector('.hr-in')?.value||'', int: row.querySelector('.int-in')?.value||'' }); });
+                const sets = [];
+                card.querySelectorAll('.set-row, .cardio-row').forEach(row => { sets.push({ w: row.querySelector('.w-in')?.value||'', r: row.querySelector('.r-in')?.value||'', min: row.querySelector('.min-in')?.value||'', hr: row.querySelector('.hr-in')?.value||'', int: row.querySelector('.int-in')?.value||'' }); });
                 data.exercises.push({ id: card.dataset.id, sets, note: card.querySelector('.n-in').value });
             });
             localStorage.setItem('activeSession_temp', JSON.stringify(data));
         }
         function checkTemp() { const temp = localStorage.getItem('activeSession_temp'); document.getElementById('resume-banner').style.display = temp ? 'block' : 'none'; }
-        function resumeWorkout() { const temp = JSON.parse(localStorage.getItem('activeSession_temp')); if(temp) startWorkoutLogic(temp.title, temp.exercises); }
+        function resumeWorkout() { const temp = JSON.parse(localStorage.getItem('activeSession_temp')); if (temp) startWorkoutLogic(temp.title, temp.exercises); }
         function discardTemp() { localStorage.removeItem('activeSession_temp'); checkTemp(); }
-        function compress(f) { return new Promise(r => { const reader = new FileReader(); reader.onload = (e) => { const img = new Image(); img.onload = () => { const cv = document.createElement('canvas'); cv.width = 300; cv.height = 300; cv.getContext('2d').drawImage(img,0,0,300,300); r(cv.toDataURL('image/jpeg',0.7)); }; img.src = e.target.result; }; reader.readAsDataURL(f); }); }
-        function renderWeight() { db.weight.sort((a,b)=>new Date(b.date)-new Date(a.date)); document.getElementById('wList').innerHTML = db.weight.map((w, i) => 
-    `<div class="card flex-between">
-        <div>
-            <span>${w.date}</span><br>
-            <strong>${w.val} kg</strong>
-        </div>
-        <div>
-            <button class="edit-btn" onclick="editWeight(${i})">Edit</button>
-            <button class="danger-btn" onclick="deleteWeight(${i})">X</button>
-        </div>
-    </div>`
-).join('');
-     } 
-        function saveWeight() { db.weight.push({ date: document.getElementById('wD').value, val: document.getElementById('wV').value }); save(); renderWeight(); }
-function editWeight(index) {
-    const entry = db.weight[index];
 
-    const newDate = prompt("Datum ändern:", entry.date);
-    if (!newDate) return;
-
-    const newVal = prompt("Gewicht (kg) ändern:", entry.val);
-    if (!newVal) return;
-
-    db.weight[index] = {
-        date: newDate,
-        val: newVal
-    };
-
-    save();
-    renderWeight();
-}
-                                 function deleteWeight(index) {
-    if (confirm("Eintrag löschen?")) {
-        db.weight.splice(index, 1);
-        save();
-        renderWeight();
+```
+    // ══════════════════════════════════════════
+    // ANALYSE
+    // ══════════════════════════════════════════
+    function runAICoach() {
+        const box = document.getElementById('aiFeedbackBox'); box.style.display = 'block';
+        if (db.logs.length < 3) { box.innerHTML = "🤖 <b>Coach:</b> Trainiere noch ein paar Mal für eine Analyse."; return; }
+        let feedback = "🤖 <b>Feedback:</b><br>";
+        const last7Logs = db.logs.slice(-7); let groups = {};
+        last7Logs.forEach(l => l.exercises.forEach(e => { const exDef = db.ex.find(x => x.id == e.exId); if (exDef) groups[exDef.group] = (groups[exDef.group] || 0) + 1; }));
+        const missing = ['Brust', 'Rücken', 'Beine'].filter(g => !groups[g]);
+        feedback += missing.length > 0 ? `⚠️ Fokus fehlt auf: ${missing.join(', ')}<br>` : `✅ Gute Balance!<br>`;
+        box.innerHTML = feedback;
     }
-}
-
-            function removeExercise(btn) {
-    const card = btn.closest('.workout-card');
-    if (confirm("Übung wirklich entfernen?")) {
-        card.remove();
-        autosave();
+    function renderAnalysis() {
+        const dashboard = document.getElementById('analyticsDashboard'); dashboard.innerHTML = '';
+        if (db.weight.length > 1) {
+            const wData = db.weight.map(w => ({ x: w.date, y: parseFloat(w.val) })).sort((a,b) => new Date(a.x) - new Date(b.x));
+            createStockChart(dashboard, "Körpergewicht", wData, db.settings.accent);
+        }
+        db.logs.sort((a,b) => new Date(b.date.split('.').reverse().join('-')) - new Date(a.date.split('.').reverse().join('-')));
+        document.getElementById('historyLogs').innerHTML = db.logs.map((log, i) =>
+            `<div class="card flex-between"><div><strong>${log.date}</strong><br><small>${log.exercises.length} Übungen</small></div><div><button class="edit-btn" onclick="editPastLog(${i})">Edit</button> <button class="danger-btn" onclick="deleteLog(${i})">X</button></div></div>`
+        ).join('');
+        db.ex.forEach(ex => {
+            if (ex.type !== 'kraft') return;
+            const data = getExerciseChartData(ex.id);
+            if (data.length > 1) createStockChart(dashboard, ex.name, data, "#FF9F0A");
+        });
     }
-}
-        
-        function getExerciseChartData(exId) {
-    const mode = document.getElementById('chartMode')?.value || 'max';
-    const data = [];
-
-    db.logs.forEach(log => {
-        const ex = log.exercises.find(e => e.exId == exId);
-        if (!ex) return;
-
-        let value = 0;
-
-        if (mode === 'max') {
-            ex.sets.forEach(s => {
-                const w = parseFloat(s.w || 0);
-                if (w > value) value = w;
-            });
-        } 
-        else if (mode === 'volume') {
-            ex.sets.forEach(s => {
-                const w = parseFloat(s.w || 0);
-                const r = parseFloat(s.r || 0);
-                value += w * r;
-            });
-        }
-
-        if (value > 0) {
-            data.push({
-                x: log.date,
-                y: value
-            });
-        }
-    });
-
-    return data.sort((a,b) => 
-        new Date(a.x.split('.').reverse().join('-')) - 
-        new Date(b.x.split('.').reverse().join('-'))
-    );
-}
-
-        function importWizard() {
-    const file = document.getElementById('importFile').files[0];
-    if (!file) return alert("Keine Datei ausgewählt!");
-
-    const reader = new FileReader();
-
-    reader.onload = function(e) {
-        try {
-            let data;
-
-            // 📦 JSON PARSE
-            try {
-                data = JSON.parse(e.target.result);
-            } catch {
-                throw new Error("JSON ist ungültig oder beschädigt");
-            }
-
-            // 🔥 FORMAT AUTO-DETECTION
-            if (Array.isArray(data)) {
-                data = { ex: data }; // reine Übungsdatei
-            }
-
-            if (!data || typeof data !== "object") {
-                throw new Error("Ungültiges Datenformat");
-            }
-
-            // 🧠 SAFETY NORMALIZATION
-            data.ex = Array.isArray(data.ex) ? data.ex : [];
-            data.plans = Array.isArray(data.plans) ? data.plans : [];
-            data.logs = Array.isArray(data.logs) ? data.logs : [];
-            data.weight = Array.isArray(data.weight) ? data.weight : [];
-
-            let report = {
-                ex: 0,
-                plans: 0,
-                logs: 0,
-                weight: 0
-            };
-
-            // 💪 EXERCISES
-            if (document.getElementById('impEx').checked && data.ex.length) {
-                const existing = new Set(db.ex.map(e => e.id));
-
-                data.ex.forEach(e => {
-                    if (!existing.has(e.id)) {
-                        db.ex.push(e);
-                        report.ex++;
-                    }
-                });
-            }
-
-            // 📋 PLANS
-            if (document.getElementById('impPlans').checked && data.plans.length) {
-                const existing = new Set(db.plans.map(p => p.id));
-
-                data.plans.forEach(p => {
-                    if (!existing.has(p.id)) {
-                        db.plans.push(p);
-                        report.plans++;
-                    }
-                });
-            }
-
-            // 📈 LOGS (robust + normalisiert)
-            if (document.getElementById('impLogs').checked && data.logs.length) {
-
-                data.logs.forEach(log => {
-
-                    if (!log.exercises) return;
-
-                    const fixedLog = {
-                        id: log.id || Date.now().toString() + Math.random(),
-                        parentId: log.parentId || log.id || Date.now().toString(),
-                        version: log.version || 1,
-                        date: log.date || new Date().toLocaleDateString('de-DE'),
-                        exercises: log.exercises.map(e => ({
-                            exId: e.exId,
-                            sets: Array.isArray(e.sets) ? e.sets : [],
-                            note: e.note || ""
-                        }))
-                    };
-
-                    db.logs.push(fixedLog);
-                    report.logs++;
-                });
-            }
-
-            // ⚖️ WEIGHT
-            if (document.getElementById('impWeight').checked && data.weight.length) {
-                db.weight.push(...data.weight);
-                report.weight = data.weight.length;
-            }
-
-            // ❌ NICHTS ausgewählt?
-            if (report.ex + report.plans + report.logs + report.weight === 0) {
-                return alert("Bitte mindestens eine Option auswählen oder gültige Daten importieren!");
-            }
-
-            // 💾 SAVE
-            save();
-
-            // 📊 REPORT
-            alert(
-                "✅ Import erfolgreich!\n\n" +
-                `💪 Übungen: ${report.ex}\n` +
-                `📋 Pläne: ${report.plans}\n` +
-                `📈 Logs: ${report.logs}\n` +
-                `⚖️ Gewicht: ${report.weight}`
-            );
-
-            nav('home');
-
-        } catch (err) {
-            console.error(err);
-            alert("❌ Import Fehler: " + err.message);
-        }
-    };
-
-    reader.readAsText(file);
-}
-
-function mergePlans(newItems) {
-    const existing = new Set(db.plans.map(p => p.id));
-
-    newItems.forEach(p => {
-        if (!existing.has(p.id)) {
-            db.plans.push(p);
-        }
-    });
-}
-
-function mergeLogs(newItems) {
-
-    newItems.forEach(log => {
-
-        const fixedLog = {
-            id: log.id || Date.now().toString() + Math.random(),
-            parentId: log.parentId || log.id || Date.now().toString(),
-            version: log.version || 1,
-            date: log.date || new Date().toLocaleDateString('de-DE'),
-            exercises: log.exercises || []
-        };
-
-        db.logs.push(fixedLog);
-    });
-}
-
-function mergeWeight(newItems) {
-    db.weight.push(...newItems);
-}
-
-
-        function renderTrash() {
-    const container = document.getElementById('trashLogs');
-
-    if (!db.trash || !db.trash.logs.length) {
-        container.innerHTML = "<p style='color:#666'>Papierkorb ist leer</p>";
-        return;
+    function getExerciseChartData(exId) {
+        const mode = document.getElementById('chartMode')?.value || 'max';
+        const data = [];
+        db.logs.forEach(log => {
+            const ex = log.exercises.find(e => e.exId == exId); if (!ex) return;
+            let value = 0;
+            if (mode === 'max') { ex.sets.forEach(s => { const w = parseFloat(s.w || 0); if (w > value) value = w; }); }
+            else if (mode === 'volume') { ex.sets.forEach(s => { value += parseFloat(s.w||0) * parseFloat(s.r||0); }); }
+            if (value > 0) data.push({ x: log.date, y: value });
+        });
+        return data.sort((a,b) => new Date(a.x.split('.').reverse().join('-')) - new Date(b.x.split('.').reverse().join('-')));
+    }
+    function createStockChart(container, title, dataPoints, color) {
+        const wrap = document.createElement('div'); wrap.className = 'card';
+        wrap.innerHTML = `<h4 style="margin:0">${title}</h4><div class="chart-wrap"><canvas></canvas></div>`;
+        container.appendChild(wrap);
+        const ctx = wrap.querySelector('canvas').getContext('2d');
+        new Chart(ctx, { type: 'line', data: { labels: dataPoints.map(d => d.x), datasets: [{ data: dataPoints.map(d => d.y), borderColor: color, backgroundColor: color + "33", fill: true, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
     }
 
-    container.innerHTML = db.trash.logs.map((log, i) => `
-        <div class="card flex-between">
-            <div>
-                <strong>${log.date}</strong><br>
-                <small>${log.exercises.length} Übungen</small>
-            </div>
-            <div>
-                <button class="edit-btn" onclick="restoreLog(${i})">↩️</button>
-                <button class="danger-btn" onclick="deleteForever(${i})">X</button>
-            </div>
-        </div>
-    `).join('');
-}
-
-        function restoreLog(i) {
-    const log = db.trash.logs.splice(i, 1)[0];
-    db.logs.push(log);
-    save();
-    renderTrash();
-    renderAnalysis();
-}
-
-function deleteForever(i) {
-    if(confirm("Endgültig löschen?")) {
-        db.trash.logs.splice(i, 1);
-        save();
-        renderTrash();
+    // ══════════════════════════════════════════
+    // ÜBUNGEN
+    // ══════════════════════════════════════════
+    async function addEx() {
+        const n = document.getElementById('exN').value; const g = document.getElementById('exG').value; const t = document.getElementById('exType').value; const f = document.getElementById('exF').files[0];
+        if (!n) return; let img = editingExId ? db.ex.find(e => e.id == editingExId).img : null; if (f) img = await compress(f);
+        if (editingExId) { const idx = db.ex.findIndex(e => e.id == editingExId); db.ex[idx] = { ...db.ex[idx], name:n, group:g, type:t, img }; }
+        else { db.ex.push({ id: Date.now().toString(), name:n, group:g, type:t, img }); }
+        save(); resetExForm(); renderExLib();
     }
-}
-        
-        window.onload = initApp;
-    </script>
+    function renderExLib() {
+        document.getElementById('exL').innerHTML = db.ex.map(e =>
+            `<div class="card flex-between"><div style="display:flex; gap:10px; align-items:center">${e.img ? `<img src="${e.img}" class="img-pre">` : '<div class="img-pre"></div>'}<div><strong>${e.name}</strong><br><small>${e.group}</small></div></div><div><button class="edit-btn" onclick="editEx('${e.id}')">Edit</button> <button class="danger-btn" onclick="deleteEx('${e.id}')">X</button></div></div>`
+        ).join('');
+    }
+    function editEx(id) { editingExId = id; const ex = db.ex.find(e => e.id == id); document.getElementById('exN').value = ex.name; document.getElementById('exG').value = ex.group; document.getElementById('exType').value = ex.type; document.getElementById('exFormTitle').innerText = "Edit"; document.getElementById('exSaveBtn').innerText = "Update"; document.getElementById('exCancelBtn').style.display = "block"; }
+    function resetExForm() { editingExId = null; document.getElementById('exN').value = ''; document.getElementById('exFormTitle').innerText = "Neu"; document.getElementById('exSaveBtn').innerText = "Save"; document.getElementById('exCancelBtn').style.display = "none"; }
+    function deleteEx(id) { if (confirm("Löschen?")) { db.ex = db.ex.filter(e => e.id != id); save(); renderExLib(); } }
+
+    // ══════════════════════════════════════════
+    // WORKOUT SELECT
+    // ══════════════════════════════════════════
+    function renderPlanChoice() { document.getElementById('selL').innerHTML = db.plans.map(p => `<button class="main-btn" onclick="initNewWorkout('${p.id}')">${p.name}</button>`).join(''); }
+    function initFreeWorkout() { editingLogIndex = null; startWorkoutLogic("Freies Training", []); }
+    function addSpontEx() { const id = document.getElementById('spontSelect').value; if (!id) return; const exBase = db.ex.find(e => e.id == id); let defSets = (exBase.type === 'cardio') ? [{min:'', hr:'', int:''}] : (exBase.type === 'bw') ? [{r:'12'},{r:'12'},{r:'12'}] : [{w:'', r:'12'},{w:'', r:'10'},{w:'', r:'8'}]; renderExCard({ id, sets: defSets, note:'' }); autosave(); }
+    function showQuickAddEx() { const n = prompt("Name:"); if (!n) return; const t = prompt("Typ (kraft, bw, cardio):", "kraft"); const newEx = { id: Date.now().toString(), name: n, group: "Neu", type: t, img: null }; db.ex.push(newEx); save(); addSpontEx(); }
+
+    // ══════════════════════════════════════════
+    // GEWICHT
+    // ══════════════════════════════════════════
+    function renderWeight() {
+        db.weight.sort((a,b) => new Date(b.date) - new Date(a.date));
+        document.getElementById('wList').innerHTML = db.weight.map((w, i) =>
+            `<div class="card flex-between"><div><span>${w.date}</span><br><strong>${w.val} kg</strong></div><div><button class="edit-btn" onclick="editWeight(${i})">Edit</button> <button class="danger-btn" onclick="deleteWeight(${i})">X</button></div></div>`
+        ).join('');
+    }
+    function saveWeight() { db.weight.push({ date: document.getElementById('wD').value, val: document.getElementById('wV').value }); save(); renderWeight(); }
+    function editWeight(index) {
+        const entry = db.weight[index];
+        const newDate = prompt("Datum ändern:", entry.date); if (!newDate) return;
+        const newVal  = prompt("Gewicht (kg) ändern:", entry.val); if (!newVal) return;
+        db.weight[index] = { date: newDate, val: newVal }; save(); renderWeight();
+    }
+    function deleteWeight(index) { if (confirm("Eintrag löschen?")) { db.weight.splice(index, 1); save(); renderWeight(); } }
+
+    // ══════════════════════════════════════════
+    // PAPIERKORB
+    // ══════════════════════════════════════════
+    function renderTrash() {
+        const container = document.getElementById('trashLogs');
+        if (!db.trash || !db.trash.logs.length) { container.innerHTML = "<p style='color:#666'>Papierkorb ist leer</p>"; return; }
+        container.innerHTML = db.trash.logs.map((log, i) =>
+            `<div class="card flex-between"><div><strong>${log.date}</strong><br><small>${log.exercises.length} Übungen</small></div><div><button class="edit-btn" onclick="restoreLog(${i})">↩️</button> <button class="danger-btn" onclick="deleteForever(${i})">X</button></div></div>`
+        ).join('');
+    }
+    function restoreLog(i) { const log = db.trash.logs.splice(i, 1)[0]; db.logs.push(log); save(); renderTrash(); renderAnalysis(); }
+    function deleteForever(i) { if (confirm("Endgültig löschen?")) { db.trash.logs.splice(i, 1); save(); renderTrash(); } }
+
+    // ══════════════════════════════════════════
+    // UTILS
+    // ══════════════════════════════════════════
+    function compress(f) {
+        return new Promise(r => {
+            const reader = new FileReader();
+            reader.onload = (e) => { const img = new Image(); img.onload = () => { const cv = document.createElement('canvas'); cv.width = 300; cv.height = 300; cv.getContext('2d').drawImage(img,0,0,300,300); r(cv.toDataURL('image/jpeg',0.7)); }; img.src = e.target.result; };
+            reader.readAsDataURL(f);
+        });
+    }
+
+    window.onload = initApp;
+</script>
+```
+
 </body>
 </html>
