@@ -34,7 +34,6 @@
         .ai-box { background: rgba(10, 132, 255, 0.1); border: 1px solid var(--accent); padding: 15px; border-radius: 12px; margin-top: 15px; font-size: 14px; line-height: 1.5; display: none; }
         .sort-item { display: flex; align-items: center; justify-content: space-between; background: #2C2C2E; padding: 8px 12px; border-radius: 8px; margin-bottom: 5px; font-size: 14px; }
 
-```
     /* ── Import Wizard Modal ── */
     #importModal {
         display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
@@ -60,12 +59,10 @@
     .fb-row span:last-child { color: var(--primary); font-weight: bold; }
     .fb-warn { color: var(--warning); font-size: 12px; margin-top: 6px; }
 </style>
-```
 
 </head>
 <body>
 
-```
 <div id="page-home" class="page active">
     <h1 style="color: var(--primary)">TrackyFit <small style="color: var(--secondary); font-size: 14px;">9.4 by Ade</small></h1>
     <div id="backup-reminder" class="card" style="display:none; border-color: var(--warning);"><p style="margin:0 0 10px 0; color: var(--warning);">⚠️ Zeit für ein Backup!</p><button class="sec-btn" onclick="nav('settings')">Zu den Einstellungen</button></div>
@@ -646,7 +643,6 @@
         });
         sHtml += '</div>';
         div.innerHTML = `
-```
 
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
     <div style="display:flex; gap:10px; align-items:center;">
@@ -713,7 +709,6 @@ ${sHtml}
         function resumeWorkout() { const temp = JSON.parse(localStorage.getItem('activeSession_temp')); if (temp) startWorkoutLogic(temp.title, temp.exercises); }
         function discardTemp() { localStorage.removeItem('activeSession_temp'); checkTemp(); }
 
-```
     // ══════════════════════════════════════════
     // ANALYSE
     // ══════════════════════════════════════════
@@ -834,7 +829,6 @@ ${sHtml}
 
     window.onload = initApp;
 </script>
-```
 
 </body>
 </html>
