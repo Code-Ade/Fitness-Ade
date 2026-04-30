@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TrackyFit 9.6 by Ade</title>
+    <title>TrackyFit 9.7 by Ade</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://via.placeholder.com/180/30D158/000000?text=TF">
@@ -32,71 +33,101 @@
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
         .sort-item { display: flex; align-items: center; justify-content: space-between; background: #2C2C2E; padding: 8px 12px; border-radius: 8px; margin-bottom: 5px; font-size: 14px; }
 
-        /* ── AI Coach Box ── */
-        .ai-box { background: rgba(10,132,255,0.08); border: 1px solid var(--accent); padding: 18px; border-radius: 14px; margin-top: 15px; font-size: 14px; line-height: 1.7; display: none; }
-        .ai-section { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #2C2C2E; }
-        .ai-section:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
-        .ai-section-title { font-weight: 700; font-size: 13px; margin-bottom: 6px; }
-        .ai-good { color: var(--primary); }
-        .ai-warn { color: var(--warning); }
-        .ai-tip  { color: var(--accent); }
+    /* ── AI Coach Box ── */
+    .ai-box { background: rgba(10,132,255,0.08); border: 1px solid var(--accent); padding: 18px; border-radius: 14px; margin-top: 15px; font-size: 14px; line-height: 1.7; display: none; }
+    .ai-section { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #2C2C2E; }
+    .ai-section:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+    .ai-section-title { font-weight: 700; font-size: 13px; margin-bottom: 6px; }
+    .ai-good { color: var(--primary); }
+    .ai-warn { color: var(--warning); }
+    .ai-tip  { color: var(--accent); }
 
-        /* ── Import Modal ── */
-        #importModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center; }
-        #importModal.open { display: flex; }
-        #importModalBox { background: #1C1C1E; border: 1px solid #3A3A3C; border-radius: 20px; padding: 24px; width: 90%; max-width: 420px; max-height: 80vh; overflow-y: auto; }
-        #importModalBox h3 { margin: 0 0 16px 0; color: var(--primary); }
-        .imp-section { margin-bottom: 14px; }
-        .imp-section label { display: flex; align-items: center; gap: 10px; font-size: 15px; padding: 10px 12px; background: #2C2C2E; border-radius: 10px; cursor: pointer; }
-        .imp-section input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--primary); margin: 0; }
-        .imp-divider { border: 0; border-top: 1px solid #3A3A3C; margin: 16px 0; }
+    /* ── Import Modal ── */
+    #importModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center; }
+    #importModal.open { display: flex; }
+    #importModalBox { background: #1C1C1E; border: 1px solid #3A3A3C; border-radius: 20px; padding: 24px; width: 90%; max-width: 420px; max-height: 80vh; overflow-y: auto; }
+    #importModalBox h3 { margin: 0 0 16px 0; color: var(--primary); }
+    .imp-section { margin-bottom: 14px; }
+    .imp-section label { display: flex; align-items: center; gap: 10px; font-size: 15px; padding: 10px 12px; background: #2C2C2E; border-radius: 10px; cursor: pointer; }
+    .imp-section input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--primary); margin: 0; }
+    .imp-divider { border: 0; border-top: 1px solid #3A3A3C; margin: 16px 0; }
 
-        /* ── Import Feedback ── */
-        #importFeedback { display: none; background: rgba(48,209,88,0.08); border: 1px solid var(--primary); border-radius: 12px; padding: 14px; margin-top: 12px; font-size: 13px; line-height: 1.8; }
-        .fb-row { display: flex; justify-content: space-between; }
-        .fb-row span:last-child { color: var(--primary); font-weight: bold; }
-        .fb-warn { color: var(--warning); font-size: 12px; margin-top: 6px; }
+    /* ── Import Feedback ── */
+    #importFeedback { display: none; background: rgba(48,209,88,0.08); border: 1px solid var(--primary); border-radius: 12px; padding: 14px; margin-top: 12px; font-size: 13px; line-height: 1.8; }
+    .fb-row { display: flex; justify-content: space-between; }
+    .fb-row span:last-child { color: var(--primary); font-weight: bold; }
+    .fb-warn { color: var(--warning); font-size: 12px; margin-top: 6px; }
 
-        /* ── Analyse Tabs ── */
-        .ana-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
-        .ana-tab { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #3A3A3C; background: #2C2C2E; color: var(--secondary); font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; }
-        .ana-tab.active { background: var(--primary); color: #000; border-color: var(--primary); }
+    /* ── Analyse Tabs ── */
+    .ana-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+    .ana-tab { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #3A3A3C; background: #2C2C2E; color: var(--secondary); font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; }
+    .ana-tab.active { background: var(--primary); color: #000; border-color: var(--primary); }
 
-        /* ── Übungs-Tabelle ── */
-        .ex-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 8px; border-radius: 10px; }
-        .ex-table { border-collapse: collapse; min-width: 100%; font-size: 12px; }
-        .ex-table th { background: #2C2C2E; color: var(--secondary); padding: 8px 12px; text-align: center; font-weight: 600; white-space: nowrap; }
-        .ex-table th:first-child { text-align: left; position: sticky; left: 0; z-index: 2; background: #2C2C2E; }
-        .ex-table td { padding: 7px 12px; text-align: center; border-top: 1px solid #2C2C2E; white-space: nowrap; color: var(--text); }
-        .ex-table td:first-child { background: #1C1C1E; color: var(--secondary); font-weight: 600; font-size: 11px; text-align: left; position: sticky; left: 0; z-index: 1; }
-        .ex-table tr:hover td { background: #2C2C2E; }
-        .ex-table tr:hover td:first-child { background: #2C2C2E; }
-        .ex-table .val-best { color: var(--primary); font-weight: 700; }
-        .ex-table .val-empty { color: #444; }
-        .ex-table .val-flagged { color: var(--warning); text-decoration: line-through; opacity: 0.6; }
-        .table-section { margin-bottom: 20px; }
-        .table-section h4 { margin: 0 0 8px 0; font-size: 14px; display: flex; align-items: center; gap: 8px; }
-        .table-section h4 small { color: var(--secondary); font-weight: 400; font-size: 11px; }
+    /* ── Übungs-Tabelle ── */
+    .ex-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 8px; border-radius: 10px; }
+    .ex-table { border-collapse: collapse; min-width: 100%; font-size: 12px; }
+    .ex-table th { background: #2C2C2E; color: var(--secondary); padding: 8px 12px; text-align: center; font-weight: 600; white-space: nowrap; }
+    .ex-table th:first-child { text-align: left; position: sticky; left: 0; z-index: 2; background: #2C2C2E; }
+    .ex-table td { padding: 7px 12px; text-align: center; border-top: 1px solid #2C2C2E; white-space: nowrap; color: var(--text); }
+    .ex-table td:first-child { background: #1C1C1E; color: var(--secondary); font-weight: 600; font-size: 11px; text-align: left; position: sticky; left: 0; z-index: 1; }
+    .ex-table tr:hover td { background: #2C2C2E; }
+    .ex-table tr:hover td:first-child { background: #2C2C2E; }
+    .ex-table .val-best { color: var(--primary); font-weight: 700; }
+    .ex-table .val-empty { color: #444; }
+    .ex-table .val-flagged { color: var(--warning); text-decoration: line-through; opacity: 0.6; }
+    .table-section { margin-bottom: 20px; }
+    .table-section h4 { margin: 0 0 8px 0; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+    .table-section h4 small { color: var(--secondary); font-weight: 400; font-size: 11px; }
 
-        /* ── Flag Button ── */
-        .flag-btn { background: none; border: 1px solid #3A3A3C; color: var(--secondary); padding: 6px 10px; border-radius: 8px; font-size: 13px; cursor: pointer; }
-        .flag-btn.flagged { border-color: var(--warning); color: var(--warning); background: rgba(255,159,10,0.1); }
-        .log-flagged { border-color: var(--warning) !important; opacity: 0.75; }
+    /* ── Flag Button ── */
+    .flag-btn { background: none; border: 1px solid #3A3A3C; color: var(--secondary); padding: 6px 10px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+    .flag-btn.flagged { border-color: var(--warning); color: var(--warning); background: rgba(255,159,10,0.1); }
+    .log-flagged { border-color: var(--warning) !important; opacity: 0.75; }
 
-        /* ── Geräte-Profile Modal ── */
-        #deviceModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center; }
-        #deviceModal.open { display: flex; }
-        #deviceModalBox { background: #1C1C1E; border: 1px solid #3A3A3C; border-radius: 20px; padding: 24px; width: 90%; max-width: 440px; max-height: 85vh; overflow-y: auto; }
-        #deviceModalBox h3 { margin: 0 0 6px 0; color: var(--primary); }
-        .device-row { display: flex; gap: 8px; align-items: center; background: #2C2C2E; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; }
-        .device-row span { flex: 1; font-size: 14px; }
-        .device-row .offset-badge { background: #3A3A3C; color: var(--warning); padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; }
-    </style>
+    /* ── Übungs-Nummer Badge ── */
+    .workout-card { position: relative; overflow: visible; }
+    .ex-num-badge {
+        position: absolute; top: -1px; left: -1px;
+        background: var(--primary); color: #000;
+        font-size: 11px; font-weight: 800;
+        padding: 3px 9px 3px 8px;
+        border-radius: 16px 0 10px 0;
+        line-height: 1.5; min-width: 26px; text-align: center;
+        z-index: 2;
+    }
+
+    /* ── Übungs-Flag (pro Übung im Training) ── */
+    .ex-flag-btn {
+        background: none; border: 1px solid #3A3A3C;
+        color: var(--secondary); padding: 4px 8px;
+        border-radius: 8px; font-size: 12px; cursor: pointer;
+    }
+    .ex-flag-btn.flagged {
+        border-color: var(--warning); color: var(--warning);
+        background: rgba(255,159,10,0.12);
+    }
+    .ex-flagged-banner {
+        background: rgba(255,159,10,0.1); border: 1px solid var(--warning);
+        border-radius: 8px; padding: 6px 10px; margin-top: 8px;
+        font-size: 12px; color: var(--warning); display: flex;
+        justify-content: space-between; align-items: center;
+    }
+
+    /* ── Geräte-Profile Modal ── */
+    #deviceModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center; }
+    #deviceModal.open { display: flex; }
+    #deviceModalBox { background: #1C1C1E; border: 1px solid #3A3A3C; border-radius: 20px; padding: 24px; width: 90%; max-width: 440px; max-height: 85vh; overflow-y: auto; }
+    #deviceModalBox h3 { margin: 0 0 6px 0; color: var(--primary); }
+    .device-row { display: flex; gap: 8px; align-items: center; background: #2C2C2E; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; }
+    .device-row span { flex: 1; font-size: 14px; }
+    .device-row .offset-badge { background: #3A3A3C; color: var(--warning); padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; }
+</style>
+
 </head>
 <body>
 
 <div id="page-home" class="page active">
-    <h1 style="color:var(--primary)">TrackyFit <small style="color:var(--secondary);font-size:14px;">9.6 by Ade</small></h1>
+    <h1 style="color:var(--primary)">TrackyFit <small style="color:var(--secondary);font-size:14px;">9.7 by Ade</small></h1>
     <div id="backup-reminder" class="card" style="display:none;border-color:var(--warning);"><p style="margin:0 0 10px 0;color:var(--warning);">⚠️ Zeit für ein Backup!</p><button class="sec-btn" onclick="nav('settings')">Zu den Einstellungen</button></div>
     <div id="resume-banner" class="card" style="display:none;border-color:var(--accent);"><p style="margin:0 0 10px 0">⚠️ Offenes Training gefunden!</p><button class="main-btn" style="background:var(--accent)" onclick="resumeWorkout()">Fortsetzen</button><button class="sec-btn" onclick="discardTemp()">Verwerfen</button></div>
     <button class="main-btn" onclick="nav('workout-select')">▶️ Training starten</button>
@@ -125,28 +156,29 @@
     <button class="main-btn" style="background:var(--accent);color:#fff;" onclick="runAICoach()">🤖 KI Coach analysieren</button>
     <div id="aiFeedbackBox" class="ai-box"></div>
 
-    <div class="ana-tabs" style="margin-top:16px;">
-        <button class="ana-tab active" id="tabCharts" onclick="switchAnaTab('charts')">📈 Charts</button>
-        <button class="ana-tab" id="tabTable" onclick="switchAnaTab('table')">📋 Tabelle</button>
-    </div>
+<div class="ana-tabs" style="margin-top:16px;">
+    <button class="ana-tab active" id="tabCharts" onclick="switchAnaTab('charts')">📈 Charts</button>
+    <button class="ana-tab" id="tabTable" onclick="switchAnaTab('table')">📋 Tabelle</button>
+</div>
 
-    <div id="anaViewCharts">
-        <div class="card">
-            <label>📊 Anzeige:</label>
-            <select id="chartMode" onchange="renderCharts()">
-                <option value="max">Max Gewicht</option>
-                <option value="volume">Trainingsvolumen</option>
-            </select>
-        </div>
-        <div id="analyticsDashboard" style="margin-top:10px;"></div>
+<div id="anaViewCharts">
+    <div class="card">
+        <label>📊 Anzeige:</label>
+        <select id="chartMode" onchange="renderCharts()">
+            <option value="max">Max Gewicht</option>
+            <option value="volume">Trainingsvolumen</option>
+        </select>
     </div>
+    <div id="analyticsDashboard" style="margin-top:10px;"></div>
+</div>
 
-    <div id="anaViewTable" style="display:none;">
-        <div id="analyticsTable"></div>
-    </div>
+<div id="anaViewTable" style="display:none;">
+    <div id="analyticsTable"></div>
+</div>
 
-    <h3 style="margin-top:30px;">Verlauf</h3>
-    <div id="historyLogs"></div>
+<h3 style="margin-top:30px;">Verlauf</h3>
+<div id="historyLogs"></div>
+
 </div>
 
 <div id="page-settings" class="page">
@@ -213,6 +245,7 @@
 </div>
 
 <!-- ── Geräte-Profile Seite ── -->
+
 <div id="page-devices" class="page">
     <button class="sec-btn" onclick="nav('home')">← Zurück</button>
     <h2>🏋️ Geräte-Profile</h2>
@@ -255,6 +288,7 @@
 </nav>
 
 <!-- Import Modal -->
+
 <div id="importModal">
     <div id="importModalBox">
         <h3>📥 Import Wizard</h3>
@@ -272,12 +306,13 @@
 </div>
 
 <!-- Flag Detail Modal -->
+
 <div id="flagModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;">
     <div style="background:#1C1C1E;border:1px solid #3A3A3C;border-radius:20px;padding:24px;width:90%;max-width:400px;">
-        <h3 style="margin:0 0 8px 0;color:var(--warning);">🚩 Training flaggen</h3>
-        <p style="font-size:13px;color:var(--secondary);margin-top:0;">Dieser Eintrag wird in Charts und KI-Analyse als Ausreißer markiert und ignoriert.</p>
+        <h3 style="margin:0 0 8px 0;color:var(--warning);">🚩 Übung flaggen</h3>
+        <p style="font-size:13px;color:var(--secondary);margin-top:0;">Diese Übung wird in Charts und KI-Analyse als Ausreißer markiert und ignoriert. Andere Übungen desselben Trainings bleiben unberührt.</p>
         <label style="font-size:13px;color:var(--secondary);">Grund (optional):</label>
-        <input id="flagReason" placeholder="z.B. Anderes Gerät, schlechter Tag...">
+        <input id="flagReason" placeholder="z.B. Anderes Gerät, Technikfehler...">
         <div style="display:flex;gap:10px;margin-top:12px;">
             <button class="main-btn" style="background:var(--warning);color:#000;margin-bottom:0;" onclick="confirmFlag()">🚩 Flaggen</button>
             <button class="sec-btn" style="margin-top:0;width:auto;padding:16px 20px;" onclick="closeFlagModal()">Abbrechen</button>
@@ -292,7 +327,8 @@
     let editingPlanId = null;
     let tempSelectedExIds = [];
     let importedFileData = null;
-    let flagTargetLogId = null; // welcher Log gerade geflagt wird
+    let flagTargetLogId  = null; // welcher Log
+    let flagTargetExId   = null; // welche Übung innerhalb des Logs
 
     // ══════════════════════════════════════════
     // INIT
@@ -424,36 +460,46 @@
     }
 
     // ══════════════════════════════════════════
-    // FLAG SYSTEM
+    // FLAG SYSTEM — pro einzelne Übung
     // ══════════════════════════════════════════
-    function openFlagModal(logId) {
+    function openFlagModal(logId, exId) {
         flagTargetLogId = logId;
+        flagTargetExId  = exId;
         document.getElementById('flagReason').value = '';
         document.getElementById('flagModal').style.display = 'flex';
     }
     function closeFlagModal() {
         document.getElementById('flagModal').style.display = 'none';
         flagTargetLogId = null;
+        flagTargetExId  = null;
     }
     function confirmFlag() {
         const log = db.logs.find(l => l.id === flagTargetLogId);
         if (!log) return;
-        const reason = document.getElementById('flagReason').value.trim();
-        log.flagged  = true;
-        log.flagReason = reason || 'Kein Grund angegeben';
-        log.flaggedAt  = new Date().toISOString();
+        const ex = log.exercises.find(e => e.exId === flagTargetExId);
+        if (!ex) return;
+        const reason  = document.getElementById('flagReason').value.trim();
+        ex.flagged    = true;
+        ex.flagReason = reason || 'Kein Grund angegeben';
+        ex.flaggedAt  = new Date().toISOString();
         save();
         closeFlagModal();
         renderAnalysis();
     }
-    function unflagLog(logId) {
+    function unflagExercise(logId, exId) {
         const log = db.logs.find(l => l.id === logId);
         if (!log) return;
-        delete log.flagged;
-        delete log.flagReason;
-        delete log.flaggedAt;
+        const ex = log.exercises.find(e => e.exId === exId);
+        if (!ex) return;
+        delete ex.flagged;
+        delete ex.flagReason;
+        delete ex.flaggedAt;
         save();
         renderAnalysis();
+    }
+    // Hat ein Log mindestens eine geflaggte Übung?
+    function logHasFlaggedEx(log) {
+        return log.exercises.some(e => e.flagged);
     }
 
     // ══════════════════════════════════════════
@@ -463,7 +509,7 @@
         const box = document.getElementById('aiFeedbackBox');
         box.style.display = 'block';
 
-        const validLogs = db.logs.filter(l => !l.flagged)
+        const validLogs = db.logs
             .sort((a,b) => new Date(a.date.split('.').reverse().join('-')) - new Date(b.date.split('.').reverse().join('-')));
 
         if (validLogs.length < 3) {
@@ -483,8 +529,9 @@
 
             const maxPerSession = exLogs.map(log => {
                 const exData = log.exercises.find(e => e.exId == ex.id);
+                if (exData.flagged) return null; // geflaggte Übung ignorieren
                 return Math.max(...exData.sets.map(s => parseFloat(s.w || 0)));
-            }).filter(v => v > 0);
+            }).filter(v => v !== null && v > 0);
 
             if (maxPerSession.length < 3) return;
 
@@ -598,9 +645,9 @@
         else if (freqNow < freqPrev && freqPrev > 0) freqMsg = `<span class="ai-warn">⚠️ Trainingsfrequenz sinkt:</span> ${freqPrev}→${freqNow} Einheiten. Konsistenz ist der wichtigste Faktor für Fortschritt.`;
         else freqMsg = `<span class="ai-tip">📊 Trainingsfrequenz:</span> ${freqNow} Einheiten in den letzten 4 Wochen (${(freqNow/4).toFixed(1)}×/Woche).`;
 
-        // Flagged Logs Hinweis
-        const flaggedCount = db.logs.filter(l => l.flagged).length;
-        const flagNote = flaggedCount > 0 ? `<br><span style="color:var(--warning);font-size:12px;">ℹ️ ${flaggedCount} geflaggter Eintrag wird in dieser Analyse ignoriert.</span>` : '';
+        // Flagged Exercises Hinweis
+        const flaggedCount = db.logs.reduce((sum, l) => sum + l.exercises.filter(e => e.flagged).length, 0);
+        const flagNote = flaggedCount > 0 ? `<br><span style="color:var(--warning);font-size:12px;">ℹ️ ${flaggedCount} geflaggte Übung(en) werden in dieser Analyse ignoriert.</span>` : '';
 
         html += `<div class="ai-section"><div class="ai-section-title ai-tip">📅 Trainingskonsistenz</div>${freqMsg}${flagNote}</div>`;
 
@@ -621,17 +668,18 @@
     function renderAnalysis() {
         db.logs.sort((a,b) => new Date(b.date.split('.').reverse().join('-')) - new Date(a.date.split('.').reverse().join('-')));
         document.getElementById('historyLogs').innerHTML = db.logs.map((log, i) => {
-            const isFlagged = !!log.flagged;
-            return `<div class="card flex-between ${isFlagged ? 'log-flagged' : ''}" style="${isFlagged ? 'border-color:var(--warning)' : ''}">
+            const flaggedExs = log.exercises.filter(e => e.flagged);
+            const hasFlagged = flaggedExs.length > 0;
+            const flagNames  = flaggedExs.map(e => {
+                const exDef = db.ex.find(x => x.id === e.exId);
+                return exDef ? exDef.name : '?';
+            }).join(', ');
+            return `<div class="card flex-between" style="${hasFlagged ? 'border-color:rgba(255,159,10,0.4)' : ''}">
                 <div>
-                    <strong>${log.date}</strong>${isFlagged ? ` <span style="color:var(--warning);font-size:12px;">🚩 ${log.flagReason}</span>` : ''}
-                    <br><small>${log.exercises.length} Übungen</small>
+                    <strong>${log.date}</strong>
+                    <br><small>${log.exercises.length} Übungen${hasFlagged ? ` · <span style="color:var(--warning)">🚩 ${flagNames}</span>` : ''}</small>
                 </div>
                 <div style="display:flex;gap:6px;align-items:center;">
-                    ${isFlagged
-                        ? `<button class="flag-btn flagged" onclick="unflagLog('${log.id}')">🚩 Entfernen</button>`
-                        : `<button class="flag-btn" onclick="openFlagModal('${log.id}')">🚩</button>`
-                    }
                     <button class="edit-btn" onclick="editPastLog(${i})">Edit</button>
                     <button class="danger-btn" onclick="deleteLog(${i})">X</button>
                 </div>
@@ -672,8 +720,8 @@
             if (mode === 'max') { ex.sets.forEach(s => { const w = parseFloat(s.w || 0); if (w > value) value = w; }); }
             else { ex.sets.forEach(s => { value += parseFloat(s.w||0) * parseFloat(s.r||0); }); }
             if (value > 0) {
-                data.push({ x: log.date, y: value, flagged: !!log.flagged });
-                if (log.flagged) flaggedDates.push(log.date);
+                data.push({ x: log.date, y: value, flagged: !!ex.flagged });
+                if (ex.flagged) flaggedDates.push(log.date);
             }
         });
 
@@ -775,15 +823,20 @@
                 if (!d) return;
                 let best = 0;
                 d.sets.forEach(s => { const w = parseFloat(s.w || s.r || 0); if (w > best) best = w; });
-                maxPerDate[log.date] = best;
+                maxPerDate[log.date + '_' + log.id] = best;
             });
             const globalMax = Math.max(...Object.values(maxPerDate));
 
             let thead = '<tr><th>Satz</th>';
             logsForEx.forEach(log => {
-                const isBest    = maxPerDate[log.date] === globalMax && globalMax > 0;
-                const isFlagged = !!log.flagged;
-                thead += `<th style="${isBest && !isFlagged ? 'color:var(--primary)' : isFlagged ? 'color:var(--warning);opacity:0.6' : ''}">${log.date}${isFlagged ? ' 🚩' : ''}</th>`;
+                const exData    = log.exercises.find(e => e.exId == ex.id);
+                const isFlagged = !!exData?.flagged;
+                const key       = log.date + '_' + log.id;
+                const isBest    = maxPerDate[key] === globalMax && globalMax > 0 && !isFlagged;
+                const flagBtn   = isFlagged
+                    ? `<br><button onclick="unflagExercise('${log.id}','${ex.id}')" style="background:none;border:none;color:var(--warning);font-size:11px;cursor:pointer;padding:2px 0;">🚩 Entfernen</button>`
+                    : `<br><button onclick="openFlagModal('${log.id}','${ex.id}')" style="background:none;border:none;color:#555;font-size:11px;cursor:pointer;padding:2px 0;">🚩</button>`;
+                thead += `<th style="${isBest ? 'color:var(--primary)' : isFlagged ? 'color:var(--warning);opacity:0.6' : ''}">${log.date}${isFlagged ? ' 🚩' : ''}${flagBtn}</th>`;
             });
             thead += '</tr>';
 
@@ -791,17 +844,18 @@
             for (let i = 0; i < maxSets; i++) {
                 tbody += `<tr><td>S${i+1}</td>`;
                 logsForEx.forEach(log => {
-                    const d   = log.exercises.find(e => e.exId == ex.id);
-                    const set = d?.sets[i];
-                    const isFlagged = !!log.flagged;
-                    let cell = '<span class="val-empty">—</span>';
+                    const d         = log.exercises.find(e => e.exId == ex.id);
+                    const set       = d?.sets[i];
+                    const isFlagged = !!d?.flagged;
+                    const key       = log.date + '_' + log.id;
+                    let cell        = '<span class="val-empty">—</span>';
                     if (set) {
                         if (ex.type === 'kraft') {
                             const w = set.w || '?', r = set.r || '?';
                             const isBest = parseFloat(set.w) === globalMax && globalMax > 0 && !isFlagged;
                             cell = `<span class="${isFlagged ? 'val-flagged' : isBest ? 'val-best' : ''}">${w}×${r}</span>`;
                         } else {
-                            cell = `${set.r || set.reps || '?'}`;
+                            cell = `<span class="${isFlagged ? 'val-flagged' : ''}">${set.r || set.reps || '?'}</span>`;
                         }
                     }
                     tbody += `<td>${cell}</td>`;
@@ -897,233 +951,364 @@
         nav('workout-active');
     }
     function getLastSession(exId) {
-        const entries = db.logs.filter(l => !l.flagged && l.exercises.some(e => e.exId == exId))
-            .sort((a,b)=>new Date(b.date.split('.').reverse().join('-'))-new Date(a.date.split('.').reverse().join('-')));
-        return entries.length ? entries[0].exercises.find(e => e.exId == exId).sets : null;
+        const entries = db.logs
+            .filter(l => l.exercises.some(e => e.exId == exId && !e.flagged))
+            .sort((a,b) => new Date(b.date.split('.').reverse().join('-')) - new Date(a.date.split('.').reverse().join('-')));
+        if (!entries.length) return null;
+        return { sets: entries[0].exercises.find(e => e.exId == exId).sets, date: entries[0].date };
     }
+
+    // Gibt "Mo 12.04" aus einem deutschen Datum-String zurück
+    function formatLastDate(dateStr) {
+        if (!dateStr) return '';
+        const days = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+        const parts = dateStr.split('.');
+        if (parts.length < 3) return dateStr;
+        const d = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+        if (isNaN(d)) return dateStr;
+        return `${days[d.getDay()]} ${parts[0]}.${parts[1]}`;
+    }
+
+    // Zählt Kraft+BW Übungen bis zu diesem Punkt im activeContent (für Badge)
+    function getExerciseNumber(exId, type) {
+        if (type === 'cardio') return null; // Cardio nicht zählen
+        const cards = Array.from(document.getElementById('activeContent').querySelectorAll('.workout-card'));
+        let count = 0;
+        for (const card of cards) {
+            const cardExBase = db.ex.find(e => e.id == card.dataset.id);
+            if (cardExBase && cardExBase.type !== 'cardio') count++;
+        }
+        return count + 1; // +1 weil diese Karte noch nicht im DOM ist
+    }
+
+    // Aktualisiert alle Badge-Nummern im activeContent
+    function refreshExNumbers() {
+        let count = 0;
+        document.getElementById('activeContent').querySelectorAll('.workout-card').forEach(card => {
+            const exBase = db.ex.find(e => e.id == card.dataset.id);
+            const badge  = card.querySelector('.ex-num-badge');
+            if (!badge) return;
+            if (exBase && exBase.type !== 'cardio') {
+                count++;
+                badge.textContent = count;
+                badge.style.display = '';
+            } else {
+                badge.style.display = 'none';
+            }
+        });
+    }
+
     function renderExCard(exObj) {
         const exBase = db.ex.find(e => e.id == exObj.id); if (!exBase) return;
-        const lastSets = getLastSession(exObj.id);
-        const div = document.createElement('div'); div.className = 'card workout-card'; div.dataset.id = exObj.id;
+        const lastSession = getLastSession(exObj.id);
+        const lastSets    = lastSession?.sets || null;
+        const lastDate    = lastSession?.date ? formatLastDate(lastSession.date) : null;
+
+        const div = document.createElement('div');
+        div.className   = 'card workout-card';
+        div.dataset.id  = exObj.id;
+
+        // Für Flag-Status beim Edit eines alten Logs:
+        const exFlagData = exObj.flagged ? { flagged: true, flagReason: exObj.flagReason } : null;
+
         let sHtml = '<div class="s-wrap">';
         exObj.sets.forEach((s, i) => {
             const ld = lastSets?.[i] || null;
             let lStr = '-';
             if (ld) {
-                if (exBase.type==='cardio') lStr=`Letztes: ${ld.min||'-'} Min, ${ld.hr||'-'} BPM`;
-                else if (exBase.type==='bw') lStr=`Letztes: ${ld.r||ld.reps||'-'} Reps`;
-                else lStr=`Letztes: ${ld.w||ld.weight||'-'}kg × ${ld.r||ld.reps||'-'}`;
+                if (exBase.type === 'cardio')     lStr = `Letztes: ${ld.min||'-'} Min, ${ld.hr||'-'} BPM`;
+                else if (exBase.type === 'bw')    lStr = `Letztes: ${ld.r||ld.reps||'-'} Reps`;
+                else                              lStr = `Letztes: ${ld.w||ld.weight||'-'} kg × ${ld.r||ld.reps||'-'}`;
+                if (lastDate && i === 0) lStr += ` <span style="color:#666;">(${lastDate})</span>`;
             }
-            if (exBase.type==='cardio') sHtml += `<div class="cardio-row"><input type="number" value="${s.min||''}" placeholder="Min" class="min-in" oninput="autosave()"><input type="number" value="${s.hr||''}" placeholder="BPM" class="hr-in" oninput="autosave()"><input type="text" value="${s.int||''}" placeholder="Int" class="int-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();autosave();">X</button></div><span class="last-val">${lStr}</span>`;
-            else if (exBase.type==='bw') sHtml += `<div class="set-row"><span>S${i+1}</span><input type="number" value="${s.r||''}" placeholder="Reps" class="r-in" style="grid-column:span 2" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();autosave();">X</button></div><span class="last-val">${lStr}</span>`;
-            else sHtml += `<div class="set-row"><span>S${i+1}</span><input type="number" value="${s.w||''}" placeholder="kg" class="w-in" oninput="autosave()"><input type="number" value="${s.r||''}" placeholder="R" class="r-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();autosave();">X</button></div><span class="last-val">${lStr}</span>`;
+            if (exBase.type === 'cardio')
+                sHtml += `<div class="cardio-row"><input type="number" value="${s.min||''}" placeholder="Min" class="min-in" oninput="autosave()"><input type="number" value="${s.hr||''}" placeholder="BPM" class="hr-in" oninput="autosave()"><input type="text" value="${s.int||''}" placeholder="Int" class="int-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();autosave();">X</button></div><span class="last-val">${lStr}</span>`;
+            else if (exBase.type === 'bw')
+                sHtml += `<div class="set-row"><span>S${i+1}</span><input type="number" value="${s.r||''}" placeholder="Reps" class="r-in" style="grid-column:span 2" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();autosave();">X</button></div><span class="last-val">${lStr}</span>`;
+            else
+                sHtml += `<div class="set-row"><span>S${i+1}</span><input type="number" value="${s.w||''}" placeholder="kg" class="w-in" oninput="autosave()"><input type="number" value="${s.r||''}" placeholder="R" class="r-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();autosave();">X</button></div><span class="last-val">${lStr}</span>`;
         });
         sHtml += '</div>';
+
+        // Flag-Banner wenn bereits geflaggt (beim Bearbeiten alter Logs)
+        const flagBanner = exFlagData
+            ? `<div class="ex-flagged-banner">🚩 ${exFlagData.flagReason} <button class="ex-flag-btn flagged" onclick="removeFlagFromCard(this)">Entfernen</button></div>`
+            : '';
+
         div.innerHTML = `
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
-    <div style="display:flex;gap:10px;align-items:center;">
-        ${exBase.img?`<img src="${exBase.img}" class="img-pre">`:'<div class="img-pre"></div>'}
+<span class="ex-num-badge"></span>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-top:4px;">
+    <div style="display:flex;gap:10px;align-items:center;padding-left:${exBase.type !== 'cardio' ? '28px' : '0'};">
+        ${exBase.img ? `<img src="${exBase.img}" class="img-pre">` : '<div class="img-pre"></div>'}
         <strong>${exBase.name}</strong>
     </div>
-    <button class="danger-btn" onclick="removeExercise(this)">X</button>
+    <div style="display:flex;gap:6px;align-items:center;">
+        <button class="ex-flag-btn${exFlagData ? ' flagged' : ''}" onclick="toggleExFlagInCard(this, '${exBase.id}')" title="Übung als Ausreißer markieren">🚩</button>
+        <button class="danger-btn" onclick="removeExercise(this)">X</button>
+    </div>
 </div>
+${flagBanner}
 ${sHtml}
 <button class="sec-btn" onclick="addSetUI(this,'${exBase.type}')">+ Satz</button>
 <textarea class="n-in" placeholder="Notiz..." oninput="autosave()">${exObj.note||''}</textarea>`;
-        document.getElementById('activeContent').appendChild(div);
+
+    document.getElementById('activeContent').appendChild(div);
+    refreshExNumbers(); // Badge-Nummern neu berechnen
+}
+
+// Flag-Button innerhalb einer Workout-Karte (live während Training)
+function toggleExFlagInCard(btn, exId) {
+    const card = btn.closest('.workout-card');
+    const isFlagged = btn.classList.contains('flagged');
+    if (isFlagged) {
+        btn.classList.remove('flagged');
+        const banner = card.querySelector('.ex-flagged-banner');
+        if (banner) banner.remove();
+        card.dataset.flagged = '';
+        card.dataset.flagReason = '';
+    } else {
+        const reason = prompt('Grund für Flagge (optional):') || 'Kein Grund';
+        btn.classList.add('flagged');
+        card.dataset.flagged    = 'true';
+        card.dataset.flagReason = reason;
+        // Banner anzeigen
+        let banner = card.querySelector('.ex-flagged-banner');
+        if (!banner) {
+            banner = document.createElement('div');
+            banner.className = 'ex-flagged-banner';
+            const sWrap = card.querySelector('.s-wrap');
+            card.insertBefore(banner, sWrap);
+        }
+        banner.innerHTML = `🚩 ${reason} <button class="ex-flag-btn flagged" onclick="removeFlagFromCard(this)">Entfernen</button>`;
     }
-    function addSetUI(btn, type) {
-        const wrap = btn.parentElement.querySelector('.s-wrap');
-        const num  = wrap.querySelectorAll('.set-row,.cardio-row').length + 1;
-        if (type==='cardio') wrap.insertAdjacentHTML('beforeend',`<div class="cardio-row"><input type="number" placeholder="Min" class="min-in" oninput="autosave()"><input type="number" placeholder="BPM" class="hr-in" oninput="autosave()"><input type="text" placeholder="Int" class="int-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();autosave();">X</button></div><span class="last-val">-</span>`);
-        else if (type==='bw') wrap.insertAdjacentHTML('beforeend',`<div class="set-row"><span>S${num}</span><input type="number" placeholder="Reps" class="r-in" style="grid-column:span 2" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();autosave();">X</button></div><span class="last-val">-</span>`);
-        else wrap.insertAdjacentHTML('beforeend',`<div class="set-row"><span>S${num}</span><input type="number" class="w-in" placeholder="kg" oninput="autosave()"><input type="number" placeholder="R" class="r-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();autosave();">X</button></div><span class="last-val">-</span>`);
-        autosave();
-    }
-    function removeExercise(btn) { const c=btn.closest('.workout-card'); if(confirm('Übung entfernen?')){c.remove();autosave();} }
-    function finishWorkout() {
-        const logs = [];
-        document.querySelectorAll('.workout-card').forEach(card => {
-            const sets = [];
-            card.querySelectorAll('.set-row,.cardio-row').forEach(row => {
-                sets.push({w:row.querySelector('.w-in')?.value||'',r:row.querySelector('.r-in')?.value||'',min:row.querySelector('.min-in')?.value||'',hr:row.querySelector('.hr-in')?.value||'',int:row.querySelector('.int-in')?.value||''});
-            });
-            if (sets.length) logs.push({exId:card.dataset.id,sets,note:card.querySelector('.n-in').value});
+    autosave();
+}
+function removeFlagFromCard(btn) {
+    const card = btn.closest('.workout-card');
+    card.dataset.flagged    = '';
+    card.dataset.flagReason = '';
+    const flagBtn = card.querySelector('.ex-flag-btn');
+    if (flagBtn) flagBtn.classList.remove('flagged');
+    btn.closest('.ex-flagged-banner').remove();
+    autosave();
+}
+function addSetUI(btn, type) {
+    const wrap = btn.parentElement.querySelector('.s-wrap');
+    const num  = wrap.querySelectorAll('.set-row,.cardio-row').length + 1;
+    if (type==='cardio') wrap.insertAdjacentHTML('beforeend',`<div class="cardio-row"><input type="number" placeholder="Min" class="min-in" oninput="autosave()"><input type="number" placeholder="BPM" class="hr-in" oninput="autosave()"><input type="text" placeholder="Int" class="int-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();autosave();">X</button></div><span class="last-val">-</span>`);
+    else if (type==='bw') wrap.insertAdjacentHTML('beforeend',`<div class="set-row"><span>S${num}</span><input type="number" placeholder="Reps" class="r-in" style="grid-column:span 2" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();autosave();">X</button></div><span class="last-val">-</span>`);
+    else wrap.insertAdjacentHTML('beforeend',`<div class="set-row"><span>S${num}</span><input type="number" class="w-in" placeholder="kg" oninput="autosave()"><input type="number" placeholder="R" class="r-in" oninput="autosave()"><button class="danger-btn" onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();autosave();">X</button></div><span class="last-val">-</span>`);
+    autosave();
+}
+function removeExercise(btn) {
+    const c = btn.closest('.workout-card');
+    if (confirm('Übung entfernen?')) { c.remove(); refreshExNumbers(); autosave(); }
+}
+function finishWorkout() {
+    const logs = [];
+    document.querySelectorAll('.workout-card').forEach(card => {
+        const sets = [];
+        card.querySelectorAll('.set-row,.cardio-row').forEach(row => {
+            sets.push({w:row.querySelector('.w-in')?.value||'',r:row.querySelector('.r-in')?.value||'',min:row.querySelector('.min-in')?.value||'',hr:row.querySelector('.hr-in')?.value||'',int:row.querySelector('.int-in')?.value||''});
         });
-        if (!logs.length) return alert('Keine Übungen!');
-        const date = document.getElementById('workoutDate')?.value
-            ? document.getElementById('workoutDate').value.split('-').reverse().join('.')
-            : new Date().toLocaleDateString('de-DE');
-        let parentId = Date.now().toString(), version = 1;
-        if (editingLogIndex !== null) { const old = db.logs[editingLogIndex]; parentId = old.parentId||old.id; version = (old.version||1)+1; }
-        db.logs.push({ id: Date.now().toString(), parentId, version, date, exercises: logs });
-        editingLogIndex = null;
-        save(); discardTemp(); nav('home');
-    }
-    function editPastLog(i) { editingLogIndex=i; const log=db.logs[i]; startWorkoutLogic('Edit: '+log.date, log.exercises.map(e=>({id:e.exId,sets:e.sets,note:e.note}))); }
-    function deleteLog(i) {
-        if (confirm('In Papierkorb?')) {
-            const r = db.logs.splice(i,1)[0];
-            db.trash.logs.push({...r, deletedAt: new Date().toISOString()});
-            save(); renderAnalysis();
-        }
-    }
-    function autosave() {
-        const data = {title:document.getElementById('activeTitle').innerText,exercises:[]};
-        document.querySelectorAll('.workout-card').forEach(card=>{
-            const sets=[];
-            card.querySelectorAll('.set-row,.cardio-row').forEach(row=>{sets.push({w:row.querySelector('.w-in')?.value||'',r:row.querySelector('.r-in')?.value||'',min:row.querySelector('.min-in')?.value||'',hr:row.querySelector('.hr-in')?.value||'',int:row.querySelector('.int-in')?.value||''});});
-            data.exercises.push({id:card.dataset.id,sets,note:card.querySelector('.n-in').value});
-        });
-        localStorage.setItem('activeSession_temp',JSON.stringify(data));
-    }
-    function checkTemp() { document.getElementById('resume-banner').style.display = localStorage.getItem('activeSession_temp')?'block':'none'; }
-    function resumeWorkout() { const t=JSON.parse(localStorage.getItem('activeSession_temp')); if(t) startWorkoutLogic(t.title,t.exercises); }
-    function discardTemp() { localStorage.removeItem('activeSession_temp'); checkTemp(); }
-
-    // ══════════════════════════════════════════
-    // ÜBUNGEN
-    // ══════════════════════════════════════════
-    async function addEx() {
-        const n=document.getElementById('exN').value, g=document.getElementById('exG').value, t=document.getElementById('exType').value, f=document.getElementById('exF').files[0];
-        if (!n) return;
-        let img = editingExId ? db.ex.find(e=>e.id==editingExId).img : null;
-        if (f) img = await compress(f);
-        if (editingExId) { const i=db.ex.findIndex(e=>e.id==editingExId); db.ex[i]={...db.ex[i],name:n,group:g,type:t,img}; }
-        else db.ex.push({id:Date.now().toString(),name:n,group:g,type:t,img});
-        save(); resetExForm(); renderExLib();
-    }
-    function renderExLib() {
-        document.getElementById('exL').innerHTML = db.ex.map(e =>
-            `<div class="card flex-between"><div style="display:flex;gap:10px;align-items:center">${e.img?`<img src="${e.img}" class="img-pre">`:'<div class="img-pre"></div>'}<div><strong>${e.name}</strong><br><small>${e.group}</small></div></div><div><button class="edit-btn" onclick="editEx('${e.id}')">Edit</button> <button class="danger-btn" onclick="deleteEx('${e.id}')">X</button></div></div>`
-        ).join('');
-    }
-    function editEx(id) { editingExId=id; const e=db.ex.find(x=>x.id==id); document.getElementById('exN').value=e.name; document.getElementById('exG').value=e.group; document.getElementById('exType').value=e.type; document.getElementById('exFormTitle').innerText='Edit'; document.getElementById('exSaveBtn').innerText='Update'; document.getElementById('exCancelBtn').style.display='block'; }
-    function resetExForm() { editingExId=null; document.getElementById('exN').value=''; document.getElementById('exFormTitle').innerText='Neu'; document.getElementById('exSaveBtn').innerText='Save'; document.getElementById('exCancelBtn').style.display='none'; }
-    function deleteEx(id) { if(confirm('Löschen?')){db.ex=db.ex.filter(e=>e.id!=id);save();renderExLib();} }
-
-    function renderPlanChoice() { document.getElementById('selL').innerHTML=db.plans.map(p=>`<button class="main-btn" onclick="initNewWorkout('${p.id}')">${p.name}</button>`).join(''); }
-    function initFreeWorkout() { editingLogIndex=null; startWorkoutLogic('Freies Training',[]); }
-    function addSpontEx() { const id=document.getElementById('spontSelect').value; if(!id)return; const b=db.ex.find(e=>e.id==id); const s=b.type==='cardio'?[{min:'',hr:'',int:''}]:b.type==='bw'?[{r:'12'},{r:'12'},{r:'12'}]:[{w:'',r:'12'},{w:'',r:'10'},{w:'',r:'8'}]; renderExCard({id,sets:s,note:''}); autosave(); }
-    function showQuickAddEx() { const n=prompt('Name:'); if(!n)return; const t=prompt('Typ (kraft, bw, cardio):','kraft'); db.ex.push({id:Date.now().toString(),name:n,group:'Neu',type:t,img:null}); save(); addSpontEx(); }
-
-    // ══════════════════════════════════════════
-    // GEWICHT
-    // ══════════════════════════════════════════
-    function renderWeight() {
-        db.weight.sort((a,b)=>new Date(b.date)-new Date(a.date));
-        document.getElementById('wList').innerHTML = db.weight.map((w,i) =>
-            `<div class="card flex-between"><div><span>${w.date}</span><br><strong>${w.val} kg</strong></div><div><button class="edit-btn" onclick="editWeight(${i})">Edit</button> <button class="danger-btn" onclick="deleteWeight(${i})">X</button></div></div>`
-        ).join('');
-    }
-    function saveWeight() { db.weight.push({date:document.getElementById('wD').value,val:document.getElementById('wV').value}); save(); renderWeight(); }
-    function editWeight(i) { const e=db.weight[i]; const d=prompt('Datum:',e.date); if(!d)return; const v=prompt('Gewicht:',e.val); if(!v)return; db.weight[i]={date:d,val:v}; save(); renderWeight(); }
-    function deleteWeight(i) { if(confirm('Löschen?')){db.weight.splice(i,1);save();renderWeight();} }
-
-    // ══════════════════════════════════════════
-    // PAPIERKORB
-    // ══════════════════════════════════════════
-    function renderTrash() {
-        const c = document.getElementById('trashLogs');
-        if (!db.trash?.logs?.length) { c.innerHTML="<p style='color:#666'>Papierkorb ist leer</p>"; return; }
-        c.innerHTML = db.trash.logs.map((log,i) =>
-            `<div class="card flex-between"><div><strong>${log.date}</strong><br><small>${log.exercises.length} Übungen</small></div><div><button class="edit-btn" onclick="restoreLog(${i})">↩️</button> <button class="danger-btn" onclick="deleteForever(${i})">X</button></div></div>`
-        ).join('');
-    }
-    function restoreLog(i) { db.logs.push(db.trash.logs.splice(i,1)[0]); save(); renderTrash(); renderAnalysis(); }
-    function deleteForever(i) { if(confirm('Endgültig löschen?')){db.trash.logs.splice(i,1);save();renderTrash();} }
-
-    // ══════════════════════════════════════════
-    // EXPORT
-    // ══════════════════════════════════════════
-    function today() { return new Date().toISOString().split('T')[0]; }
-    function downloadJSON(data, filename) {
-        const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-        const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url);
-    }
-    function exportData() { db.settings.lastBackup=Date.now(); save(); checkBackupReminder(); downloadJSON(db,`TrackyFit_FullBackup_${today()}.json`); }
-    function exportExercises() { downloadJSON({ex:db.ex},`TrackyFit_Uebungen_${today()}.json`); }
-    function exportPlans()     { downloadJSON({plans:db.plans},`TrackyFit_Plaene_${today()}.json`); }
-    function exportLogs()      { downloadJSON({logs:db.logs},`TrackyFit_Verlauf_${today()}.json`); }
-
-    // ══════════════════════════════════════════
-    // IMPORT
-    // ══════════════════════════════════════════
-    function previewImportFile() {
-        const file=document.getElementById('importFile').files[0]; if(!file)return;
-        document.getElementById('importFileName').textContent=file.name;
-        document.getElementById('importFileSize').textContent=(file.size/1024).toFixed(1)+' KB';
-        document.getElementById('importFileInfo').style.display='block';
-        const reader=new FileReader();
-        reader.onload=e=>{
-            try {
-                importedFileData=JSON.parse(e.target.result);
-                importedFileData.ex=importedFileData.ex||[];
-                importedFileData.plans=importedFileData.plans||[];
-                importedFileData.logs=importedFileData.logs||[];
-                importedFileData.weight=importedFileData.weight||[];
-            } catch { importedFileData=null; alert('❌ Ungültige Datei!'); }
-        };
-        reader.readAsText(file);
-        document.getElementById('importFeedback').style.display='none';
-    }
-    function openImportModal() { if(!importedFileData){alert('⚠️ Bitte Datei auswählen!');return;} document.getElementById('importModal').classList.add('open'); }
-    function closeImportModal() { document.getElementById('importModal').classList.remove('open'); }
-
-    async function runImportWizard() {
-        if(!importedFileData){alert('Keine Datei!');return;}
-        const doEx=document.getElementById('impEx').checked, doPlans=document.getElementById('impPlans').checked, doLogs=document.getElementById('impLogs').checked, doWeight=document.getElementById('impWeight').checked;
-        if(!doEx&&!doPlans&&!doLogs&&!doWeight){alert('Bitte auswählen!');return;}
-        closeImportModal();
-        const stats={ex:{neu:0,übersprungen:0,überschrieben:0},plans:{neu:0,übersprungen:0,überschrieben:0},logs:{neu:0,übersprungen:0,überschrieben:0},weight:{neu:0,übersprungen:0}};
-
-        if(doEx) for(const item of importedFileData.ex){
-            const ex=db.ex.find(e=>e.id===item.id);
-            if(ex){ if(ex.name===item.name&&ex.group===item.group&&ex.type===item.type){stats.ex.übersprungen++;}else if(confirm(`💪 Duplikat:\n"${ex.name}" → "${item.name}"\nÜberschreiben?`)){db.ex[db.ex.findIndex(e=>e.id===item.id)]=item;stats.ex.überschrieben++;}else stats.ex.übersprungen++; }
-            else{db.ex.push(item);stats.ex.neu++;}
-        }
-        if(doPlans) for(const item of importedFileData.plans){
-            const pl=db.plans.find(p=>p.id===item.id);
-            if(pl){ if(pl.name===item.name){stats.plans.übersprungen++;}else if(confirm(`📋 Duplikat:\n"${pl.name}" → "${item.name}"\nÜberschreiben?`)){db.plans[db.plans.findIndex(p=>p.id===item.id)]=item;stats.plans.überschrieben++;}else stats.plans.übersprungen++; }
-            else{db.plans.push(item);stats.plans.neu++;}
-        }
-        if(doLogs){
-            const ids=new Set(db.logs.map(l=>l.id));
-            for(const raw of importedFileData.logs){
-                const fl={id:raw.id||(Date.now()+Math.random()).toString(),parentId:raw.parentId||raw.id,version:raw.version||1,date:raw.date||new Date().toLocaleDateString('de-DE'),exercises:raw.exercises||[]};
-                if(ids.has(fl.id)){const ex=db.logs.find(l=>l.id===fl.id);if(confirm(`📈 Duplikat:\n${ex.date} v${ex.version||1} → v${fl.version}\nÜberschreiben?`)){db.logs[db.logs.findIndex(l=>l.id===fl.id)]=fl;stats.logs.überschrieben++;}else stats.logs.übersprungen++;}
-                else{db.logs.push(fl);ids.add(fl.id);stats.logs.neu++;}
+        if (sets.length) {
+            const entry = { exId: card.dataset.id, sets, note: card.querySelector('.n-in').value };
+            // Flag-Status aus data-Attribut übernehmen
+            if (card.dataset.flagged === 'true') {
+                entry.flagged    = true;
+                entry.flagReason = card.dataset.flagReason || 'Kein Grund';
+                entry.flaggedAt  = new Date().toISOString();
             }
+            logs.push(entry);
         }
-        if(doWeight) for(const item of importedFileData.weight){
-            if(db.weight.some(w=>w.date===item.date&&String(w.val)===String(item.val)))stats.weight.übersprungen++;
-            else{db.weight.push(item);stats.weight.neu++;}
+    });
+    if (!logs.length) return alert('Keine Übungen!');
+    const date = document.getElementById('workoutDate')?.value
+        ? document.getElementById('workoutDate').value.split('-').reverse().join('.')
+        : new Date().toLocaleDateString('de-DE');
+    let parentId = Date.now().toString(), version = 1;
+    if (editingLogIndex !== null) { const old = db.logs[editingLogIndex]; parentId = old.parentId||old.id; version = (old.version||1)+1; }
+    db.logs.push({ id: Date.now().toString(), parentId, version, date, exercises: logs });
+    editingLogIndex = null;
+    save(); discardTemp(); nav('home');
+}
+function editPastLog(i) {
+    editingLogIndex = i;
+    const log = db.logs[i];
+    const exObjs = log.exercises.map(e => ({
+        id:         e.exId,
+        sets:       e.sets,
+        note:       e.note,
+        flagged:    e.flagged    || false,
+        flagReason: e.flagReason || ''
+    }));
+    startWorkoutLogic('Edit: ' + log.date, exObjs);
+}
+function deleteLog(i) {
+    if (confirm('In Papierkorb?')) {
+        const r = db.logs.splice(i,1)[0];
+        db.trash.logs.push({...r, deletedAt: new Date().toISOString()});
+        save(); renderAnalysis();
+    }
+}
+function autosave() {
+    const data = {title:document.getElementById('activeTitle').innerText,exercises:[]};
+    document.querySelectorAll('.workout-card').forEach(card=>{
+        const sets=[];
+        card.querySelectorAll('.set-row,.cardio-row').forEach(row=>{sets.push({w:row.querySelector('.w-in')?.value||'',r:row.querySelector('.r-in')?.value||'',min:row.querySelector('.min-in')?.value||'',hr:row.querySelector('.hr-in')?.value||'',int:row.querySelector('.int-in')?.value||''});});
+        data.exercises.push({id:card.dataset.id,sets,note:card.querySelector('.n-in').value});
+    });
+    localStorage.setItem('activeSession_temp',JSON.stringify(data));
+}
+function checkTemp() { document.getElementById('resume-banner').style.display = localStorage.getItem('activeSession_temp')?'block':'none'; }
+function resumeWorkout() { const t=JSON.parse(localStorage.getItem('activeSession_temp')); if(t) startWorkoutLogic(t.title,t.exercises); }
+function discardTemp() { localStorage.removeItem('activeSession_temp'); checkTemp(); }
+
+// ══════════════════════════════════════════
+// ÜBUNGEN
+// ══════════════════════════════════════════
+async function addEx() {
+    const n=document.getElementById('exN').value, g=document.getElementById('exG').value, t=document.getElementById('exType').value, f=document.getElementById('exF').files[0];
+    if (!n) return;
+    let img = editingExId ? db.ex.find(e=>e.id==editingExId).img : null;
+    if (f) img = await compress(f);
+    if (editingExId) { const i=db.ex.findIndex(e=>e.id==editingExId); db.ex[i]={...db.ex[i],name:n,group:g,type:t,img}; }
+    else db.ex.push({id:Date.now().toString(),name:n,group:g,type:t,img});
+    save(); resetExForm(); renderExLib();
+}
+function renderExLib() {
+    document.getElementById('exL').innerHTML = db.ex.map(e =>
+        `<div class="card flex-between"><div style="display:flex;gap:10px;align-items:center">${e.img?`<img src="${e.img}" class="img-pre">`:'<div class="img-pre"></div>'}<div><strong>${e.name}</strong><br><small>${e.group}</small></div></div><div><button class="edit-btn" onclick="editEx('${e.id}')">Edit</button> <button class="danger-btn" onclick="deleteEx('${e.id}')">X</button></div></div>`
+    ).join('');
+}
+function editEx(id) { editingExId=id; const e=db.ex.find(x=>x.id==id); document.getElementById('exN').value=e.name; document.getElementById('exG').value=e.group; document.getElementById('exType').value=e.type; document.getElementById('exFormTitle').innerText='Edit'; document.getElementById('exSaveBtn').innerText='Update'; document.getElementById('exCancelBtn').style.display='block'; }
+function resetExForm() { editingExId=null; document.getElementById('exN').value=''; document.getElementById('exFormTitle').innerText='Neu'; document.getElementById('exSaveBtn').innerText='Save'; document.getElementById('exCancelBtn').style.display='none'; }
+function deleteEx(id) { if(confirm('Löschen?')){db.ex=db.ex.filter(e=>e.id!=id);save();renderExLib();} }
+
+function renderPlanChoice() { document.getElementById('selL').innerHTML=db.plans.map(p=>`<button class="main-btn" onclick="initNewWorkout('${p.id}')">${p.name}</button>`).join(''); }
+function initFreeWorkout() { editingLogIndex=null; startWorkoutLogic('Freies Training',[]); }
+function addSpontEx() { const id=document.getElementById('spontSelect').value; if(!id)return; const b=db.ex.find(e=>e.id==id); const s=b.type==='cardio'?[{min:'',hr:'',int:''}]:b.type==='bw'?[{r:'12'},{r:'12'},{r:'12'}]:[{w:'',r:'12'},{w:'',r:'10'},{w:'',r:'8'}]; renderExCard({id,sets:s,note:''}); autosave(); }
+function showQuickAddEx() { const n=prompt('Name:'); if(!n)return; const t=prompt('Typ (kraft, bw, cardio):','kraft'); db.ex.push({id:Date.now().toString(),name:n,group:'Neu',type:t,img:null}); save(); addSpontEx(); }
+
+// ══════════════════════════════════════════
+// GEWICHT
+// ══════════════════════════════════════════
+function renderWeight() {
+    db.weight.sort((a,b)=>new Date(b.date)-new Date(a.date));
+    document.getElementById('wList').innerHTML = db.weight.map((w,i) =>
+        `<div class="card flex-between"><div><span>${w.date}</span><br><strong>${w.val} kg</strong></div><div><button class="edit-btn" onclick="editWeight(${i})">Edit</button> <button class="danger-btn" onclick="deleteWeight(${i})">X</button></div></div>`
+    ).join('');
+}
+function saveWeight() { db.weight.push({date:document.getElementById('wD').value,val:document.getElementById('wV').value}); save(); renderWeight(); }
+function editWeight(i) { const e=db.weight[i]; const d=prompt('Datum:',e.date); if(!d)return; const v=prompt('Gewicht:',e.val); if(!v)return; db.weight[i]={date:d,val:v}; save(); renderWeight(); }
+function deleteWeight(i) { if(confirm('Löschen?')){db.weight.splice(i,1);save();renderWeight();} }
+
+// ══════════════════════════════════════════
+// PAPIERKORB
+// ══════════════════════════════════════════
+function renderTrash() {
+    const c = document.getElementById('trashLogs');
+    if (!db.trash?.logs?.length) { c.innerHTML="<p style='color:#666'>Papierkorb ist leer</p>"; return; }
+    c.innerHTML = db.trash.logs.map((log,i) =>
+        `<div class="card flex-between"><div><strong>${log.date}</strong><br><small>${log.exercises.length} Übungen</small></div><div><button class="edit-btn" onclick="restoreLog(${i})">↩️</button> <button class="danger-btn" onclick="deleteForever(${i})">X</button></div></div>`
+    ).join('');
+}
+function restoreLog(i) { db.logs.push(db.trash.logs.splice(i,1)[0]); save(); renderTrash(); renderAnalysis(); }
+function deleteForever(i) { if(confirm('Endgültig löschen?')){db.trash.logs.splice(i,1);save();renderTrash();} }
+
+// ══════════════════════════════════════════
+// EXPORT
+// ══════════════════════════════════════════
+function today() { return new Date().toISOString().split('T')[0]; }
+function downloadJSON(data, filename) {
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url);
+}
+function exportData() { db.settings.lastBackup=Date.now(); save(); checkBackupReminder(); downloadJSON(db,`TrackyFit_FullBackup_${today()}.json`); }
+function exportExercises() { downloadJSON({ex:db.ex},`TrackyFit_Uebungen_${today()}.json`); }
+function exportPlans()     { downloadJSON({plans:db.plans},`TrackyFit_Plaene_${today()}.json`); }
+function exportLogs()      { downloadJSON({logs:db.logs},`TrackyFit_Verlauf_${today()}.json`); }
+
+// ══════════════════════════════════════════
+// IMPORT
+// ══════════════════════════════════════════
+function previewImportFile() {
+    const file=document.getElementById('importFile').files[0]; if(!file)return;
+    document.getElementById('importFileName').textContent=file.name;
+    document.getElementById('importFileSize').textContent=(file.size/1024).toFixed(1)+' KB';
+    document.getElementById('importFileInfo').style.display='block';
+    const reader=new FileReader();
+    reader.onload=e=>{
+        try {
+            importedFileData=JSON.parse(e.target.result);
+            importedFileData.ex=importedFileData.ex||[];
+            importedFileData.plans=importedFileData.plans||[];
+            importedFileData.logs=importedFileData.logs||[];
+            importedFileData.weight=importedFileData.weight||[];
+        } catch { importedFileData=null; alert('❌ Ungültige Datei!'); }
+    };
+    reader.readAsText(file);
+    document.getElementById('importFeedback').style.display='none';
+}
+function openImportModal() { if(!importedFileData){alert('⚠️ Bitte Datei auswählen!');return;} document.getElementById('importModal').classList.add('open'); }
+function closeImportModal() { document.getElementById('importModal').classList.remove('open'); }
+
+async function runImportWizard() {
+    if(!importedFileData){alert('Keine Datei!');return;}
+    const doEx=document.getElementById('impEx').checked, doPlans=document.getElementById('impPlans').checked, doLogs=document.getElementById('impLogs').checked, doWeight=document.getElementById('impWeight').checked;
+    if(!doEx&&!doPlans&&!doLogs&&!doWeight){alert('Bitte auswählen!');return;}
+    closeImportModal();
+    const stats={ex:{neu:0,übersprungen:0,überschrieben:0},plans:{neu:0,übersprungen:0,überschrieben:0},logs:{neu:0,übersprungen:0,überschrieben:0},weight:{neu:0,übersprungen:0}};
+
+    if(doEx) for(const item of importedFileData.ex){
+        const ex=db.ex.find(e=>e.id===item.id);
+        if(ex){ if(ex.name===item.name&&ex.group===item.group&&ex.type===item.type){stats.ex.übersprungen++;}else if(confirm(`💪 Duplikat:\n"${ex.name}" → "${item.name}"\nÜberschreiben?`)){db.ex[db.ex.findIndex(e=>e.id===item.id)]=item;stats.ex.überschrieben++;}else stats.ex.übersprungen++; }
+        else{db.ex.push(item);stats.ex.neu++;}
+    }
+    if(doPlans) for(const item of importedFileData.plans){
+        const pl=db.plans.find(p=>p.id===item.id);
+        if(pl){ if(pl.name===item.name){stats.plans.übersprungen++;}else if(confirm(`📋 Duplikat:\n"${pl.name}" → "${item.name}"\nÜberschreiben?`)){db.plans[db.plans.findIndex(p=>p.id===item.id)]=item;stats.plans.überschrieben++;}else stats.plans.übersprungen++; }
+        else{db.plans.push(item);stats.plans.neu++;}
+    }
+    if(doLogs){
+        const ids=new Set(db.logs.map(l=>l.id));
+        for(const raw of importedFileData.logs){
+            const fl={id:raw.id||(Date.now()+Math.random()).toString(),parentId:raw.parentId||raw.id,version:raw.version||1,date:raw.date||new Date().toLocaleDateString('de-DE'),exercises:raw.exercises||[]};
+            if(ids.has(fl.id)){const ex=db.logs.find(l=>l.id===fl.id);if(confirm(`📈 Duplikat:\n${ex.date} v${ex.version||1} → v${fl.version}\nÜberschreiben?`)){db.logs[db.logs.findIndex(l=>l.id===fl.id)]=fl;stats.logs.überschrieben++;}else stats.logs.übersprungen++;}
+            else{db.logs.push(fl);ids.add(fl.id);stats.logs.neu++;}
         }
-        save();
-        const box=document.getElementById('importFeedback'), cont=document.getElementById('importFeedbackContent');
-        const row=(icon,label,s)=>`<div class="fb-row"><span>${icon} ${label}</span><span>+${s.neu} neu${s.überschrieben?', '+s.überschrieben+' überschr.':''}${s.übersprungen?', '+s.übersprungen+' übersprungen':''}</span></div>`;
-        let html='';
-        if(doEx) html+=row('💪','Übungen',stats.ex);
-        if(doPlans) html+=row('📋','Pläne',stats.plans);
-        if(doLogs) html+=row('📈','Logs',stats.logs);
-        if(doWeight) html+=row('⚖️','Gewicht',stats.weight);
-        const total=(doEx?stats.ex.neu:0)+(doPlans?stats.plans.neu:0)+(doLogs?stats.logs.neu:0)+(doWeight?stats.weight.neu:0);
-        if(!total) html+=`<p class="fb-warn">ℹ️ Keine neuen Daten – alles bereits vorhanden.</p>`;
-        cont.innerHTML=html; box.style.display='block';
     }
-
-    // ══════════════════════════════════════════
-    // UTILS
-    // ══════════════════════════════════════════
-    function compress(f) {
-        return new Promise(r=>{
-            const reader=new FileReader();
-            reader.onload=e=>{const img=new Image();img.onload=()=>{const cv=document.createElement('canvas');cv.width=300;cv.height=300;cv.getContext('2d').drawImage(img,0,0,300,300);r(cv.toDataURL('image/jpeg',0.7));};img.src=e.target.result;};
-            reader.readAsDataURL(f);
-        });
+    if(doWeight) for(const item of importedFileData.weight){
+        if(db.weight.some(w=>w.date===item.date&&String(w.val)===String(item.val)))stats.weight.übersprungen++;
+        else{db.weight.push(item);stats.weight.neu++;}
     }
+    save();
+    const box=document.getElementById('importFeedback'), cont=document.getElementById('importFeedbackContent');
+    const row=(icon,label,s)=>`<div class="fb-row"><span>${icon} ${label}</span><span>+${s.neu} neu${s.überschrieben?', '+s.überschrieben+' überschr.':''}${s.übersprungen?', '+s.übersprungen+' übersprungen':''}</span></div>`;
+    let html='';
+    if(doEx) html+=row('💪','Übungen',stats.ex);
+    if(doPlans) html+=row('📋','Pläne',stats.plans);
+    if(doLogs) html+=row('📈','Logs',stats.logs);
+    if(doWeight) html+=row('⚖️','Gewicht',stats.weight);
+    const total=(doEx?stats.ex.neu:0)+(doPlans?stats.plans.neu:0)+(doLogs?stats.logs.neu:0)+(doWeight?stats.weight.neu:0);
+    if(!total) html+=`<p class="fb-warn">ℹ️ Keine neuen Daten – alles bereits vorhanden.</p>`;
+    cont.innerHTML=html; box.style.display='block';
+}
 
-    window.onload = initApp;
+// ══════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════
+function compress(f) {
+    return new Promise(r=>{
+        const reader=new FileReader();
+        reader.onload=e=>{const img=new Image();img.onload=()=>{const cv=document.createElement('canvas');cv.width=300;cv.height=300;cv.getContext('2d').drawImage(img,0,0,300,300);r(cv.toDataURL('image/jpeg',0.7));};img.src=e.target.result;};
+        reader.readAsDataURL(f);
+    });
+}
+
+window.onload = initApp;
+
+
 </script>
 </body>
 </html>
